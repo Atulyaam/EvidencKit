@@ -1,0 +1,8 @@
+{
+  "incident_id": "inc-sample-001",
+  "title": "Production Order Service DB Pool Exhaustion",
+  "description": "Critical failure cascade triggered by premature deploy of commit 7f8b91a0c4 causing db pool starvation.",
+  "severity": "critical",
+  "environment": "production",
+  "files": ["application-events.jsonl", "git-history.json", "ci-events.json", "deployments.json"]
+}

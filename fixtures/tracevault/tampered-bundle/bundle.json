@@ -1,0 +1,76 @@
+{
+  "manifest": {
+    "format_name": "evidencekit-export",
+    "format_version": "1.0",
+    "stream_id": "stream-tampered-demo",
+    "stream_type": "tracevault.case",
+    "created_at": "2026-11-05T15:00:00.000Z",
+    "event_count": 2,
+    "first_sequence": 0,
+    "last_sequence": 1,
+    "chain_head_hash": "e1f181f08cb36d3c08b31a3196f7c8ec35c24976c66cf0656606fef8331fa585",
+    "hash_algorithm": "sha-256",
+    "canonicalization": "RFC8785-JCS",
+    "artifact_manifest": []
+  },
+  "events": [
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "0192d8c0-0000-7000-8000-000000000001",
+        "stream_type": "tracevault.case",
+        "stream_id": "stream-tampered-demo",
+        "event_name": "incident.created",
+        "occurred_at": "2026-11-05T14:50:00.000Z",
+        "observed_at": "2026-11-05T14:50:01.000Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "tracevault",
+          "adapter": "ui",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "info",
+        "attributes": {
+          "creator": "admin@company.com"
+        }
+      },
+      "stream_sequence": 0,
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "416e788bc59e9a4fba734a706b83f4f131a2432a613f8c860ad8e9bcff02d609"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "0192d8c0-0000-7000-8000-000000000002",
+        "stream_type": "tracevault.case",
+        "stream_id": "stream-tampered-demo",
+        "event_name": "access.escalated",
+        "occurred_at": "2026-11-05T14:55:00.000Z",
+        "observed_at": "2026-11-05T14:55:01.000Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "auth-service",
+          "adapter": "auth-adapter",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "critical",
+        "attributes": {
+          "user": "attacker",
+          "role": "SUPERADMIN_TAMPERED_POST_CAPTURE"
+        }
+      },
+      "stream_sequence": 1,
+      "previous_hash": "416e788bc59e9a4fba734a706b83f4f131a2432a613f8c860ad8e9bcff02d609",
+      "event_hash": "e1f181f08cb36d3c08b31a3196f7c8ec35c24976c66cf0656606fef8331fa585"
+    }
+  ],
+  "verification_report": {
+    "status": "verified",
+    "stream_id": "stream-tampered-demo",
+    "total_events": 2,
+    "first_sequence": 0,
+    "last_sequence": 1,
+    "head_hash": "e1f181f08cb36d3c08b31a3196f7c8ec35c24976c66cf0656606fef8331fa585",
+    "verified_at": "2026-11-05T15:00:00.000Z"
+  }
+}

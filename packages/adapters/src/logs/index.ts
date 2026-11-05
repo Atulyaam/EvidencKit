@@ -17,25 +17,37 @@ export function parseAppLogsToEvents(lines: string[], streamId: string, artifact
     if (!line) continue;
 
     try {
-      const parsed: AppLogEntry = JSON.parse(line);
-      const level = parsed.level.toLowerCase();
+      const parsedRaw: any = JSON.parse(line);
+      const {
+        timestamp,
+        level: rawLevel,
+        message,
+        trace_id,
+        span_id,
+        context,
+        system: rawSystem,
+        ...extra
+      } = parsedRaw;
+      const level = (rawLevel || "info").toLowerCase();
       let severity: EventSeverity = "info";
       if (level === "error" || level === "fatal") severity = "error";
       else if (level === "warn" || level === "warning") severity = "warning";
       else if (level === "debug") severity = "debug";
+      else if (level === "critical") severity = "critical";
 
       const correlations = [];
-      if (parsed.trace_id) correlations.push(parsed.trace_id);
-      if (parsed.span_id) correlations.push(parsed.span_id);
+      if (trace_id) correlations.push(trace_id);
+      if (span_id) correlations.push(span_id);
+      if (extra.correlation_id) correlations.push(extra.correlation_id);
 
       const raw: RawEventInput = {
         stream_type: "tracevault.case",
         stream_id: streamId,
         event_name: `app.log.${severity}`,
-        occurred_at: parsed.timestamp,
+        occurred_at: timestamp,
         time_confidence: "source_timestamp",
         source: {
-          system: "application",
+          system: rawSystem || "application",
           artifact_id: artifactId,
           adapter: "jsonl-log",
           adapter_version: "1.0.0"
@@ -43,8 +55,9 @@ export function parseAppLogsToEvents(lines: string[], streamId: string, artifact
         severity,
         correlation_ids: correlations,
         attributes: {
-          message: parsed.message,
-          ...(parsed.context || {})
+          message: message || "",
+          ...extra,
+          ...(context || {})
         },
         evidence_refs: [
           {

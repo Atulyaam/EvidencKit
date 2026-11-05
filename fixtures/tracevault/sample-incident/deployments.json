@@ -1,0 +1,10 @@
+[
+  {
+    "deployment_id": "dep-v2.4.1-prod",
+    "environment": "production",
+    "service": "order-service",
+    "status": "failure",
+    "timestamp": "2026-11-05T14:01:45.000Z",
+    "commit_sha": "7f8b91a0c4"
+  }
+]

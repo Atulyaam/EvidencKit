@@ -1,0 +1,26 @@
+{
+  "manifest": {
+    "format_name": "invalid-format",
+    "format_version": "99.0",
+    "stream_id": "bad-stream",
+    "stream_type": "unknown.type",
+    "created_at": "not-a-datetime",
+    "event_count": -5,
+    "chain_head_hash": "short-hash",
+    "hash_algorithm": "md5",
+    "canonicalization": "none",
+    "artifact_manifest": []
+  },
+  "events": [
+    {
+      "event": {
+        "event_id": "not-a-uuid",
+        "stream_type": "invalid",
+        "event_name": ""
+      },
+      "stream_sequence": "not-a-number",
+      "previous_hash": "invalid",
+      "event_hash": "invalid"
+    }
+  ]
+}

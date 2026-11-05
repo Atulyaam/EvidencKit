@@ -1,0 +1,10 @@
+[
+  {
+    "job_id": "gh-run-84920",
+    "workflow": "Integration & Migration Tests",
+    "status": "failure",
+    "commit_sha": "7f8b91a0c4",
+    "timestamp": "2026-11-05T13:48:30.000Z",
+    "error": "Error: relation 'orders_pkey' lock timeout exceeded after 10000ms"
+  }
+]

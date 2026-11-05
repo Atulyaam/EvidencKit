@@ -31,12 +31,17 @@ export const cases = pgTable(
       .references(() => workspaces.id, { onDelete: "cascade" })
       .notNull(),
     title: varchar("title", { length: 256 }).notNull(),
+    description: text("description"),
+    severity: varchar("severity", { length: 32 }).notNull().default("high"),
     environment: varchar("environment", { length: 64 }).notNull().default("production"),
     status: varchar("status", { length: 64 }).notNull().default("open"),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
   },
   (table) => ({
-    workspaceIdx: index("cases_workspace_idx").on(table.workspaceId)
+    workspaceIdx: index("cases_workspace_idx").on(table.workspaceId),
+    statusIdx: index("cases_status_idx").on(table.status),
+    severityIdx: index("cases_severity_idx").on(table.severity)
   })
 );
 

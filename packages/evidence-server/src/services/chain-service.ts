@@ -152,6 +152,38 @@ export class ChainService {
     });
   }
 
+  public async getEventsFromDb(streamId: string, db?: DbClient): Promise<ChainedEvent[]> {
+    const database = db || getDb();
+    const rows = await database
+      .select()
+      .from(events)
+      .where(eq(events.streamId, streamId))
+      .orderBy(events.ingestSequence);
+
+    return rows.map((r) => ({
+      event: r.envelopeJson as EvidenceEvent,
+      stream_sequence: r.ingestSequence,
+      previous_hash: r.previousHash,
+      event_hash: r.eventHash
+    }));
+  }
+
+  /**
+   * Retrieves all chained events for a stream (checking in-memory first, then DB).
+   */
+  public async getAllEvents(streamId: string, db?: DbClient): Promise<ChainedEvent[]> {
+    const inMem = this.getEventsInMemory(streamId);
+    if (inMem.length > 0) return inMem;
+    try {
+      if (process.env.DATABASE_URL) {
+        return await this.getEventsFromDb(streamId, db);
+      }
+    } catch {
+      // Fallback to in-memory if DB is unreachable
+    }
+    return inMem;
+  }
+
   /**
    * Reads all chained events from PostgreSQL and verifies chain integrity.
    */

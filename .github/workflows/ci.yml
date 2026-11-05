@@ -40,3 +40,4 @@ jobs:
 
       - name: Build applications and shared packages
         run: pnpm build
+

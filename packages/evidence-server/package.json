@@ -9,12 +9,15 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@evidencekit/adapters": "workspace:*",
     "@evidencekit/core": "workspace:*",
     "@evidencekit/db": "workspace:*",
     "drizzle-orm": "^0.39.3",
+    "jszip": "^3.10.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/jszip": "^3.4.1",
     "@types/node": "^22.8.7",
     "typescript": "^5.6.3"
   }

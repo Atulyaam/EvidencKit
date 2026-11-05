@@ -120,4 +120,23 @@ describe("Phase 2 — Timeline Engine (Dual-Ordering & Query)", () => {
     expect(page2.events.length).toBe(1);
     expect(page2.hasMore).toBe(false);
   });
+
+  it("filters events using text search across event names and attributes", () => {
+    const items = [
+      makeChainedEvent("1", 0, "2026-11-16T10:01:00.000Z", "info", "system-a", "git.push"),
+      makeChainedEvent("2", 1, "2026-11-16T10:02:00.000Z", "error", "system-b", "ci.job.failed"),
+      makeChainedEvent(
+        "3",
+        2,
+        "2026-11-16T10:03:00.000Z",
+        "info",
+        "system-c",
+        "deployment.completed"
+      )
+    ];
+
+    const searchResult = queryTimeline(items, { search: "ci.job" });
+    expect(searchResult.total).toBe(1);
+    expect(searchResult.events[0]!.event.event_name).toBe("ci.job.failed");
+  });
 });

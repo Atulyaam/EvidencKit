@@ -5,6 +5,7 @@ export interface TimelineQueryOptions {
   severity?: EventSeverity;
   system?: string;
   eventName?: string;
+  search?: string;
   offset?: number;
   limit?: number;
 }
@@ -54,7 +55,7 @@ export function queryTimeline(
   events: ChainedEvent[],
   options: TimelineQueryOptions = {}
 ): TimelineQueryResult {
-  const { severity, system, eventName, offset = 0, limit = 50 } = options;
+  const { severity, system, eventName, search, offset = 0, limit = 50 } = options;
 
   let filtered = events;
 
@@ -68,6 +69,16 @@ export function queryTimeline(
 
   if (eventName) {
     filtered = filtered.filter((e) => e.event.event_name === eventName);
+  }
+
+  if (search && search.trim().length > 0) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter((e) => {
+      if (e.event.event_name.toLowerCase().includes(q)) return true;
+      if (e.event.source.system.toLowerCase().includes(q)) return true;
+      const attrStr = JSON.stringify(e.event.attributes).toLowerCase();
+      return attrStr.includes(q);
+    });
   }
 
   const sorted = sortEventsForTimeline(filtered);

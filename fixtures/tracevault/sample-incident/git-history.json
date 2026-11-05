@@ -1,0 +1,16 @@
+[
+  {
+    "sha": "7f8b91a0c4",
+    "author": "engineer@company.com",
+    "message": "fix(orders): bump pg connection timeout to 10s and drop lock statement timeout",
+    "timestamp": "2026-11-05T13:45:00.000Z",
+    "files_changed": ["src/db/pool.ts", "package.json"]
+  },
+  {
+    "sha": "c3d4e5f601",
+    "author": "lead@company.com",
+    "message": "chore: merge branch 'main' into release/v2.4.1",
+    "timestamp": "2026-11-05T13:50:00.000Z",
+    "files_changed": ["README.md"]
+  }
+]

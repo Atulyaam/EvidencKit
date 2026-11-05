@@ -6,3 +6,4 @@ export * from "./provenance/index";
 export * from "./redact/index";
 export * from "./timeline/index";
 export * from "./export/index";
+export * from "./correlation/index";

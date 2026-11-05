@@ -1,0 +1,9 @@
+{
+  "$schema": "https://kiro.dev/schemas/hook.json",
+  "name": "test-chain-core",
+  "description": "Runs core cryptographic and hash-chain validation suite",
+  "trigger": "pre-commit",
+  "action": {
+    "command": "pnpm --filter @evidencekit/core test"
+  }
+}

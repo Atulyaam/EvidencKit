@@ -1,0 +1,9 @@
+{
+  "$schema": "https://kiro.dev/schemas/hook.json",
+  "name": "lint-on-save",
+  "description": "Runs ESLint and Prettier check on file save",
+  "trigger": "on-save",
+  "action": {
+    "command": "pnpm lint"
+  }
+}

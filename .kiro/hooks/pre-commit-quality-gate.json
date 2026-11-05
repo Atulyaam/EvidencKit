@@ -1,0 +1,9 @@
+{
+  "$schema": "https://kiro.dev/schemas/hook.json",
+  "name": "pre-commit-quality-gate",
+  "description": "Executes full typecheck, lint, and core unit test gates",
+  "trigger": "pre-commit",
+  "action": {
+    "command": "pnpm typecheck && pnpm lint && pnpm test"
+  }
+}

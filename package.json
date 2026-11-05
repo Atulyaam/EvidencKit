@@ -1,0 +1,37 @@
+{
+  "name": "evidencekit-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EvidenceKit — Reusable tamper-evident event-evidence engine powering TraceVault and AgentLedger",
+  "scripts": {
+    "dev": "pnpm --parallel --filter tracevault --filter agentledger dev",
+    "dev:tracevault": "pnpm --filter tracevault dev",
+    "dev:agentledger": "pnpm --filter agentledger dev",
+    "build": "pnpm --filter \"@evidencekit/*\" run build && pnpm --filter tracevault build && pnpm --filter agentledger build",
+    "build:tracevault": "pnpm --filter tracevault build",
+    "build:agentledger": "pnpm --filter agentledger build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "echo 'E2E tests will run with playwright after dev servers are ready'",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:generate": "pnpm --filter @evidencekit/db generate",
+    "db:migrate": "pnpm --filter @evidencekit/db migrate",
+    "db:seed": "pnpm --filter @evidencekit/db seed"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/node": "^22.8.7",
+    "@typescript-eslint/eslint-plugin": "^8.12.2",
+    "@typescript-eslint/parser": "^8.12.2",
+    "eslint": "^9.13.0",
+    "fast-check": "^3.23.1",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

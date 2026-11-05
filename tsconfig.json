@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@evidencekit/core": ["packages/evidence-core/src/index.ts"],
+      "@evidencekit/evidence-server": ["packages/evidence-server/src/index.ts"],
+      "@evidencekit/adapters": ["packages/adapters/src/index.ts"],
+      "@evidencekit/agent-sdk": ["packages/agent-sdk/src/index.ts"],
+      "@evidencekit/db": ["packages/db/src/index.ts"],
+      "@evidencekit/ui": ["packages/ui/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*",
+    "apps/*/app/**/*",
+    "apps/*/components/**/*",
+    "apps/*/lib/**/*",
+    "tests/**/*"
+  ],
+  "exclude": ["node_modules", "dist", ".next"]
+}

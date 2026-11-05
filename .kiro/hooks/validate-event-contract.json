@@ -1,0 +1,9 @@
+{
+  "$schema": "https://kiro.dev/schemas/hook.json",
+  "name": "validate-event-contract",
+  "description": "Validates that canonical event envelope matches schema specifications",
+  "trigger": "pre-commit",
+  "action": {
+    "command": "pnpm --filter @evidencekit/core test"
+  }
+}

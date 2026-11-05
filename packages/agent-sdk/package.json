@@ -1,0 +1,19 @@
+{
+  "name": "@evidencekit/agent-sdk",
+  "version": "1.0.0",
+  "description": "Client SDK for instrumenting AI agents, recording tool calls, approvals, and file diffs",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@evidencekit/core": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.7",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,286 @@
+{
+  "manifest": {
+    "format_name": "evidencekit-export",
+    "format_version": "1.0",
+    "stream_id": "case_6344822fd034",
+    "stream_type": "tracevault.case",
+    "created_at": "2026-11-05T17:49:20.679Z",
+    "event_count": 7,
+    "first_sequence": 0,
+    "last_sequence": 6,
+    "chain_head_hash": "5cd9d6373e34e632d3bfeb6c92094f03ef0dc468ed206297c41973c790252672",
+    "hash_algorithm": "sha-256",
+    "canonicalization": "RFC8785-JCS",
+    "artifact_manifest": []
+  },
+  "events": [
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "2f0465e7-58b4-493b-bf98-f19e284ac8a5",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "app.log.info",
+        "occurred_at": "2026-11-05T14:02:10.000Z",
+        "observed_at": "2026-11-05T17:49:17.384Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "api-gateway",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "info",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "Incoming request GET /api/v1/orders",
+          "correlation_id": "req-9821",
+          "headers": {
+            "authorization": "Bearer [REDACTED_AUTH_TOKEN]"
+          }
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "1"
+          }
+        ]
+      },
+      "stream_sequence": 0,
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "dd288786ace2f3a584c05aee8392d2e3ec0f0e6ef2b3a37a28a8852404a79e76"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "8fb8d896-acbe-4751-9234-7e3209fdd7fe",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "app.log.warning",
+        "occurred_at": "2026-11-05T14:02:15.000Z",
+        "observed_at": "2026-11-05T17:49:17.384Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "order-service",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "warning",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "DB pool connection acquisition delayed > 800ms",
+          "correlation_id": "req-9821",
+          "pool": {
+            "active": 98,
+            "max": 100
+          }
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "2"
+          }
+        ]
+      },
+      "stream_sequence": 1,
+      "previous_hash": "dd288786ace2f3a584c05aee8392d2e3ec0f0e6ef2b3a37a28a8852404a79e76",
+      "event_hash": "184a63f0c95efe708a34481ebb49f833a295903843734a531294bf55b2e6434d"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "4d15c0e0-67c9-463f-8e9c-44ad55326bb5",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "app.log.error",
+        "occurred_at": "2026-11-05T14:02:18.000Z",
+        "observed_at": "2026-11-05T17:49:17.385Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "order-service",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "error",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "Unhandled rejection: Connection pool timeout (10000ms limit)",
+          "correlation_id": "req-9821",
+          "stack": "Error: Timeout\n  at pg.Pool.connect (/app/node_modules/pg/lib/pool.js:42)"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "3"
+          }
+        ]
+      },
+      "stream_sequence": 2,
+      "previous_hash": "184a63f0c95efe708a34481ebb49f833a295903843734a531294bf55b2e6434d",
+      "event_hash": "9abf4550512dc8cfd6a3392bbeeedbe7e480279733e91da3b8dc51691c9e18ca"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "4cce0ad9-aa9f-4a3f-8ea8-0f1ecc5942a5",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "app.log.critical",
+        "occurred_at": "2026-11-05T14:02:22.000Z",
+        "observed_at": "2026-11-05T17:49:17.385Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "api-gateway",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "critical",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "502 Bad Gateway to upstream order-service",
+          "correlation_id": "req-9821",
+          "upstream_addr": "10.0.4.12:8080"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "4"
+          }
+        ]
+      },
+      "stream_sequence": 3,
+      "previous_hash": "9abf4550512dc8cfd6a3392bbeeedbe7e480279733e91da3b8dc51691c9e18ca",
+      "event_hash": "b8dc72b0944a49213a8ff554e8ae5a5f4d2ff72dbecde8818c5d8f4e13992daf"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "3d3edee7-b87a-4a06-93a1-2f335f0244ee",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "app.log.error",
+        "occurred_at": "2026-11-05T14:03:00.000Z",
+        "observed_at": "2026-11-05T17:49:17.385Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "order-service",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "error",
+        "correlation_ids": ["req-9825"],
+        "attributes": {
+          "message": "Connection pool fully exhausted. Active: 100/100, Queued: 45",
+          "correlation_id": "req-9825"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "5"
+          }
+        ]
+      },
+      "stream_sequence": 4,
+      "previous_hash": "b8dc72b0944a49213a8ff554e8ae5a5f4d2ff72dbecde8818c5d8f4e13992daf",
+      "event_hash": "c73aa0a177118f7f7ef62c25803ea4f4eaeca28f812b329f31805d6beb3579cb"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "73ccedcd-3432-47b0-abf8-f4c8b9459658",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "git.commit.pushed",
+        "occurred_at": "2026-11-05T13:45:00.000Z",
+        "observed_at": "2026-11-05T17:49:17.595Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "git",
+          "artifact_id": "art_e35a4d0ab598",
+          "adapter": "git-json",
+          "adapter_version": "1.0.0"
+        },
+        "actor": {
+          "type": "user",
+          "id": "engineer@company.com"
+        },
+        "severity": "info",
+        "correlation_ids": ["7f8b91a0c4"],
+        "attributes": {
+          "sha": "7f8b91a0c4",
+          "author": "engineer@company.com",
+          "message": "fix(orders): bump pg connection timeout to 10s and drop lock statement timeout",
+          "changed_files_count": 0
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_e35a4d0ab598",
+            "locator_type": "record_number",
+            "locator": "1"
+          }
+        ]
+      },
+      "stream_sequence": 5,
+      "previous_hash": "c73aa0a177118f7f7ef62c25803ea4f4eaeca28f812b329f31805d6beb3579cb",
+      "event_hash": "bb3d9d436ca6c2b3fc7431a9ae688bb3b8c8ac8551bdc3ac032abd845b9ef70e"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "9eae3e59-66c2-486c-89d5-0a3f40e18e32",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6344822fd034",
+        "event_name": "git.commit.pushed",
+        "occurred_at": "2026-11-05T13:50:00.000Z",
+        "observed_at": "2026-11-05T17:49:17.595Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "git",
+          "artifact_id": "art_e35a4d0ab598",
+          "adapter": "git-json",
+          "adapter_version": "1.0.0"
+        },
+        "actor": {
+          "type": "user",
+          "id": "lead@company.com"
+        },
+        "severity": "info",
+        "correlation_ids": ["c3d4e5f601"],
+        "attributes": {
+          "sha": "c3d4e5f601",
+          "author": "lead@company.com",
+          "message": "chore: merge branch 'main' into release/v2.4.1",
+          "changed_files_count": 0
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_e35a4d0ab598",
+            "locator_type": "record_number",
+            "locator": "2"
+          }
+        ]
+      },
+      "stream_sequence": 6,
+      "previous_hash": "bb3d9d436ca6c2b3fc7431a9ae688bb3b8c8ac8551bdc3ac032abd845b9ef70e",
+      "event_hash": "5cd9d6373e34e632d3bfeb6c92094f03ef0dc468ed206297c41973c790252672"
+    }
+  ],
+  "verification_report": {
+    "status": "verified",
+    "stream_id": "case_6344822fd034",
+    "total_events": 7,
+    "first_sequence": 0,
+    "last_sequence": 6,
+    "head_hash": "5cd9d6373e34e632d3bfeb6c92094f03ef0dc468ed206297c41973c790252672",
+    "verified_at": "2026-11-05T17:49:20.679Z"
+  }
+}

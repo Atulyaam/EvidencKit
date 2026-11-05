@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { Badge, IntegrityStatus } from "@evidencekit/ui";
 
 interface IncidentLayoutProps {
   children: React.ReactNode;
-  params: Promise<{ id: string }> | { id: string };
+  params?: { id: string };
 }
 
 interface IncidentData {
@@ -23,9 +23,8 @@ interface IncidentData {
 }
 
 export default function IncidentLayout({ children, params }: IncidentLayoutProps) {
-  // Unwrap params safely for both Next 14 and 15
-  const resolvedParams = "then" in params ? use(params) : params;
-  const incidentId = resolvedParams.id;
+  const routeParams = useParams();
+  const incidentId = (routeParams?.id as string) || params?.id || "";
   const pathname = usePathname();
 
   const [incident, setIncident] = useState<IncidentData | null>(null);

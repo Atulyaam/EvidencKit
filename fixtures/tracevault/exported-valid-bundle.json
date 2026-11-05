@@ -1,0 +1,206 @@
+{
+  "manifest": {
+    "format_name": "evidencekit-export",
+    "format_version": "1.0",
+    "stream_id": "case_6b59168d1a66",
+    "stream_type": "tracevault.case",
+    "created_at": "2026-11-05T16:47:11.589Z",
+    "event_count": 5,
+    "first_sequence": 0,
+    "last_sequence": 4,
+    "chain_head_hash": "9c07f7d3deda75d398f0299144e44db23b1d93d4ae83fad027f6ba0ef880a311",
+    "hash_algorithm": "sha-256",
+    "canonicalization": "RFC8785-JCS",
+    "artifact_manifest": []
+  },
+  "events": [
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "f946fbe2-eb19-4ddd-b2ee-18d86df63292",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6b59168d1a66",
+        "event_name": "app.log.info",
+        "occurred_at": "2026-11-05T14:02:10.000Z",
+        "observed_at": "2026-11-05T16:47:10.967Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "api-gateway",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "info",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "Incoming request GET /api/v1/orders",
+          "correlation_id": "req-9821",
+          "headers": {
+            "authorization": "Bearer [REDACTED_AUTH_TOKEN]"
+          }
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "1"
+          }
+        ]
+      },
+      "stream_sequence": 0,
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "bf27351dba554b538974e4db145e8781ddd43522411aeb3eba23748d29a138fd"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "f0abf46f-e13a-4556-99c0-5301295d502e",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6b59168d1a66",
+        "event_name": "app.log.warning",
+        "occurred_at": "2026-11-05T14:02:15.000Z",
+        "observed_at": "2026-11-05T16:47:10.967Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "order-service",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "warning",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "DB pool connection acquisition delayed > 800ms",
+          "correlation_id": "req-9821",
+          "pool": {
+            "active": 98,
+            "max": 100
+          }
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "2"
+          }
+        ]
+      },
+      "stream_sequence": 1,
+      "previous_hash": "bf27351dba554b538974e4db145e8781ddd43522411aeb3eba23748d29a138fd",
+      "event_hash": "30e24f863278e27d9b88921ccd0756783efd8f268c54c60720f3613b4c3d8bd0"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "1bc7b567-88be-4a67-a69a-e3238f37e0ba",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6b59168d1a66",
+        "event_name": "app.log.error",
+        "occurred_at": "2026-11-05T14:02:18.000Z",
+        "observed_at": "2026-11-05T16:47:10.967Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "order-service",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "error",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "Unhandled rejection: Connection pool timeout (10000ms limit)",
+          "correlation_id": "req-9821",
+          "stack": "Error: Timeout\n  at pg.Pool.connect (/app/node_modules/pg/lib/pool.js:42)"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "3"
+          }
+        ]
+      },
+      "stream_sequence": 2,
+      "previous_hash": "30e24f863278e27d9b88921ccd0756783efd8f268c54c60720f3613b4c3d8bd0",
+      "event_hash": "f4e3b0f24b71b8e83b8a970cae8bee747152649b7d2057ee9d3b07c3bd0b6920"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "bd160a44-3811-4040-87e6-10c0bd8a8cbb",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6b59168d1a66",
+        "event_name": "app.log.critical",
+        "occurred_at": "2026-11-05T14:02:22.000Z",
+        "observed_at": "2026-11-05T16:47:10.967Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "api-gateway",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "critical",
+        "correlation_ids": ["req-9821"],
+        "attributes": {
+          "message": "502 Bad Gateway to upstream order-service",
+          "correlation_id": "req-9821",
+          "upstream_addr": "10.0.4.12:8080"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "4"
+          }
+        ]
+      },
+      "stream_sequence": 3,
+      "previous_hash": "f4e3b0f24b71b8e83b8a970cae8bee747152649b7d2057ee9d3b07c3bd0b6920",
+      "event_hash": "5bd6c598a15e8ab0e2f32dbcd0528648746aec80865fb4f2c2c13d640b094ce3"
+    },
+    {
+      "event": {
+        "schema_version": "1.0",
+        "event_id": "f16015f0-c352-4e75-aeaa-cc4f1d97e470",
+        "stream_type": "tracevault.case",
+        "stream_id": "case_6b59168d1a66",
+        "event_name": "app.log.error",
+        "occurred_at": "2026-11-05T14:03:00.000Z",
+        "observed_at": "2026-11-05T16:47:10.967Z",
+        "time_confidence": "source_timestamp",
+        "source": {
+          "system": "order-service",
+          "artifact_id": "art_b59d96fb6170",
+          "adapter": "jsonl-log",
+          "adapter_version": "1.0.0"
+        },
+        "severity": "error",
+        "correlation_ids": ["req-9825"],
+        "attributes": {
+          "message": "Connection pool fully exhausted. Active: 100/100, Queued: 45",
+          "correlation_id": "req-9825"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "art_b59d96fb6170",
+            "locator_type": "line_number",
+            "locator": "5"
+          }
+        ]
+      },
+      "stream_sequence": 4,
+      "previous_hash": "5bd6c598a15e8ab0e2f32dbcd0528648746aec80865fb4f2c2c13d640b094ce3",
+      "event_hash": "9c07f7d3deda75d398f0299144e44db23b1d93d4ae83fad027f6ba0ef880a311"
+    }
+  ],
+  "verification_report": {
+    "status": "verified",
+    "stream_id": "case_6b59168d1a66",
+    "total_events": 5,
+    "first_sequence": 0,
+    "last_sequence": 4,
+    "head_hash": "9c07f7d3deda75d398f0299144e44db23b1d93d4ae83fad027f6ba0ef880a311",
+    "verified_at": "2026-11-05T16:47:11.588Z"
+  }
+}

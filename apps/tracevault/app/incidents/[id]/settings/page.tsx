@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { Button, Input, Card, CardHeader, CardTitle, CardContent } from "@evidencekit/ui";
 
 interface SettingsPageProps {
-  params: Promise<{ id: string }> | { id: string };
+  params?: { id: string };
 }
 
 export default function IncidentSettingsPage({ params }: SettingsPageProps) {
   const router = useRouter();
-  const resolvedParams = "then" in params ? use(params) : params;
-  const incidentId = resolvedParams.id;
+  const routeParams = useParams();
+  const incidentId = (routeParams?.id as string) || params?.id || "";
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");

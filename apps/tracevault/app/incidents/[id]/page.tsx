@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
 import { CandidateCorrelation } from "@evidencekit/core";
 
 interface IncidentOverviewProps {
-  params: Promise<{ id: string }> | { id: string };
+  params?: { id: string };
 }
 
 export default function IncidentOverviewPage({ params }: IncidentOverviewProps) {
-  const resolvedParams = "then" in params ? use(params) : params;
-  const incidentId = resolvedParams.id;
+  const routeParams = useParams();
+  const incidentId = (routeParams?.id as string) || params?.id || "";
 
   const [incident, setIncident] = useState<any>(null);
   const [correlations, setCorrelations] = useState<CandidateCorrelation[]>([]);

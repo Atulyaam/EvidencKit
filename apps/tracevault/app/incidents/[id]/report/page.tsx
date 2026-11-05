@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
 import { IncidentInvestigationReport } from "@evidencekit/evidence-server";
 
 interface ReportPageProps {
-  params: Promise<{ id: string }> | { id: string };
+  params?: { id: string };
 }
 
 export default function IncidentReportPage({ params }: ReportPageProps) {
-  const resolvedParams = "then" in params ? use(params) : params;
-  const incidentId = resolvedParams.id;
+  const routeParams = useParams();
+  const incidentId = (routeParams?.id as string) || params?.id || "";
 
   const [report, setReport] = useState<IncidentInvestigationReport | null>(null);
   const [markdown, setMarkdown] = useState<string>("");
@@ -153,7 +154,12 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
               </div>
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
-              <p className="text-sm text-zinc-300 leading-relaxed">{report.summary}</p>
+              <div>
+                <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  Executive Summary
+                </div>
+                <p className="text-sm text-zinc-300 leading-relaxed">{report.summary}</p>
+              </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-zinc-800 text-xs">
                 <div>

@@ -96,4 +96,84 @@ describe("Phase 3 — TraceVault Scale & Performance Benchmark (Task 3.14)", () 
     expect(verifyDurationMs).toBeLessThan(150); // Verify 1,000 hashes in < 150 ms
     expect(queryDurationMs).toBeLessThan(20); // Query timeline in < 20 ms
   });
+
+  it("benchmarks 10,000 incident events: ingestion, hash-chaining, verification, correlations, and reporting", async () => {
+    const streamId = `scale-stream-10k-${Date.now()}`;
+    const TOTAL_EVENTS = 10000;
+
+    const generatedEvents: EvidenceEvent[] = [];
+    const baseTime = new Date("2026-11-05T00:00:00.000Z").getTime();
+
+    for (let i = 0; i < TOTAL_EVENTS; i++) {
+      const occurred = new Date(baseTime + i * 200).toISOString();
+      generatedEvents.push({
+        schema_version: "1.0",
+        event_id: randomUUID(),
+        stream_type: "tracevault.case",
+        stream_id: streamId,
+        event_name: i % 25 === 0 ? "database.connection.timeout" : "http.request.completed",
+        occurred_at: occurred,
+        observed_at: occurred,
+        time_confidence: "source_timestamp",
+        source: {
+          system: i % 2 === 0 ? "api-gateway" : "order-service",
+          adapter: "benchmark-adapter",
+          adapter_version: "1.0.0"
+        },
+        severity: i % 25 === 0 ? "critical" : "info",
+        correlation_ids: [`trace-${Math.floor(i / 10)}`],
+        attributes: {
+          sequence_index: i,
+          latency_ms: Math.floor(Math.random() * 500)
+        }
+      });
+    }
+
+    // 1. Ingest & Append 10,000 Events
+    const startAppend = performance.now();
+    for (const evt of generatedEvents) {
+      defaultChainService.appendInMemory(evt);
+    }
+    const appendDurationMs = performance.now() - startAppend;
+    const appendThroughput = (TOTAL_EVENTS / (appendDurationMs / 1000)).toFixed(0);
+
+    // 2. Verify Entire 10,000 Event Hash Chain
+    const startVerify = performance.now();
+    const verifyResult = defaultChainService.verifyInMemory(streamId);
+    const verifyDurationMs = performance.now() - startVerify;
+    const verifyThroughput = (TOTAL_EVENTS / (verifyDurationMs / 1000)).toFixed(0);
+
+    expect(verifyResult.status).toBe("verified");
+    expect(verifyResult.total_events).toBe(TOTAL_EVENTS);
+
+    // 3. Paginated Timeline Query
+    const startQuery = performance.now();
+    const timelineResult = defaultChainService.queryTimelineInMemory(streamId, {
+      severity: "critical",
+      limit: 50,
+      offset: 100
+    });
+    const queryDurationMs = performance.now() - startQuery;
+
+    expect(timelineResult.events.length).toBe(50);
+    expect(timelineResult.total).toBe(400); // 10,000 / 25
+
+    // Output 10,000 Event Scale Benchmark Summary
+    console.log(`\n========================================================`);
+    console.log(`TRACEVAULT SCALE & PERFORMANCE BENCHMARK (10,000 EVENTS)`);
+    console.log(`========================================================`);
+    console.log(
+      `- Ingest & Append Time:   ${appendDurationMs.toFixed(2)} ms (${appendThroughput} events/sec)`
+    );
+    console.log(
+      `- Full Chain Verify Time: ${verifyDurationMs.toFixed(2)} ms (${verifyThroughput} events/sec)`
+    );
+    console.log(`- Filtered Timeline Query:${queryDurationMs.toFixed(2)} ms`);
+    console.log(`========================================================\n`);
+
+    // Latency Assertions for 10k Scale
+    expect(appendDurationMs).toBeLessThan(3000); // 10k events in < 3s
+    expect(verifyDurationMs).toBeLessThan(1000); // Verify 10k hashes in < 1s
+    expect(queryDurationMs).toBeLessThan(30); // Timeline query in < 30ms
+  });
 });

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { ChainedEvent } from "@evidencekit/core";
 import {
   Timeline,
@@ -14,12 +15,12 @@ import {
 } from "@evidencekit/ui";
 
 interface TimelinePageProps {
-  params: Promise<{ id: string }> | { id: string };
+  params?: { id: string };
 }
 
 export default function ForensicTimelinePage({ params }: TimelinePageProps) {
-  const resolvedParams = "then" in params ? use(params) : params;
-  const incidentId = resolvedParams.id;
+  const routeParams = useParams();
+  const incidentId = (routeParams?.id as string) || params?.id || "";
 
   const [events, setEvents] = useState<ChainedEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<ChainedEvent | null>(null);

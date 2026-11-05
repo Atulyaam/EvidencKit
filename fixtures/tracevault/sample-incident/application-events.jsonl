@@ -3,3 +3,4 @@
 {"timestamp":"2026-11-05T14:02:18.000Z","level":"error","system":"order-service","message":"Unhandled rejection: Connection pool timeout (10000ms limit)","correlation_id":"req-9821","stack":"Error: Timeout\n  at pg.Pool.connect (/app/node_modules/pg/lib/pool.js:42)"}
 {"timestamp":"2026-11-05T14:02:22.000Z","level":"critical","system":"api-gateway","message":"502 Bad Gateway to upstream order-service","correlation_id":"req-9821","upstream_addr":"10.0.4.12:8080"}
 {"timestamp":"2026-11-05T14:03:00.000Z","level":"error","system":"order-service","message":"Connection pool fully exhausted. Active: 100/100, Queued: 45","correlation_id":"req-9825"}
+

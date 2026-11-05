@@ -1,13 +1,19 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
 
 interface EvidencePageProps {
-  params: Promise<{ id: string }> | { id: string };
+  params?: { id: string };
 }
 
 interface ValidationPreview {
+  sourceType: string;
+  totalRecordsDetected: number;
+  previewEvents: any[];
+  warnings?: string[];
+  errors?: string[];
   detected_adapter: string;
   total_records: number;
   valid_events: number;
@@ -17,8 +23,8 @@ interface ValidationPreview {
 }
 
 export default function EvidenceUploadPage({ params }: EvidencePageProps) {
-  const resolvedParams = "then" in params ? use(params) : params;
-  const incidentId = resolvedParams.id;
+  const routeParams = useParams();
+  const incidentId = (routeParams?.id as string) || params?.id || "";
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -51,7 +57,25 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
       }
 
       const data = await res.json();
-      setPreview(data);
+      const total = data.totalRecordsDetected ?? data.total_records ?? 0;
+      const valid = data.previewEvents?.length ?? data.valid_events ?? total;
+      const errList = data.errors || data.validation_errors || [];
+      const warnList = data.warnings || [];
+      const samples = data.previewEvents || data.sample_events || [];
+
+      setPreview({
+        sourceType: data.sourceType || data.detected_adapter || "unknown",
+        totalRecordsDetected: total,
+        previewEvents: samples,
+        warnings: warnList,
+        errors: errList,
+        detected_adapter: data.sourceType || data.detected_adapter || "unknown",
+        total_records: total,
+        valid_events: valid,
+        rejected_records: total - valid > 0 ? total - valid : 0,
+        validation_errors: [...errList, ...warnList],
+        sample_events: samples
+      });
     } catch (err: any) {
       setError(err.message);
       setPreview(null);
@@ -81,8 +105,10 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
       }
 
       const result = await res.json();
+      const count = result.recordsAccepted ?? result.ingested_count ?? preview?.valid_events ?? 0;
+      const head = result.chainHeadHash ?? result.head_hash ?? "";
       setSuccessMsg(
-        `Successfully ingested ${result.ingested_count} events into hash chain! Current head: ${result.head_hash?.slice(0, 16)}...`
+        `Successfully ingested ${count} events into hash chain! Current head: ${head.slice(0, 16)}...`
       );
       setPreview(null);
       setSelectedFile(null);
@@ -168,7 +194,7 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
                 </div>
               </div>
 
-              {preview.validation_errors.length > 0 && (
+              {Boolean(preview.validation_errors && preview.validation_errors.length > 0) && (
                 <div className="rounded-md border border-amber-900/50 bg-amber-950/20 p-3 text-xs text-amber-300 space-y-1">
                   <div className="font-semibold">Validation Warnings / Rejections:</div>
                   <ul className="list-disc pl-5 font-mono text-[11px] space-y-0.5">

@@ -84,7 +84,8 @@ export const DEFAULT_AGENT_POLICY: AgentPolicy = {
       operation: "*",
       riskLevel: "critical",
       action: "DENY",
-      reason: "UNAUTHORIZED_TOOL_CLASS: Arbitrary shell execution is prohibited by security policy.",
+      reason:
+        "UNAUTHORIZED_TOOL_CLASS: Arbitrary shell execution is prohibited by security policy.",
       precedence: 10
     },
     {
@@ -113,13 +114,15 @@ export const DEFAULT_AGENT_POLICY: AgentPolicy = {
     {
       id: "rule_require_approval_security_config",
       name: "Require Approval for Security Configurations",
-      description: "Modifying security policies or protected service configurations requires owner authorization.",
+      description:
+        "Modifying security policies or protected service configurations requires owner authorization.",
       tool: "modify_file",
       operation: "write",
       pathPattern: "*protected*",
       riskLevel: "high",
       action: "REQUIRE_APPROVAL",
-      reason: "PROTECTED_RESOURCE: Modifications to protected configuration files require explicit human authorization.",
+      reason:
+        "PROTECTED_RESOURCE: Modifications to protected configuration files require explicit human authorization.",
       precedence: 30
     },
     {
@@ -176,7 +179,8 @@ export const DEFAULT_AGENT_POLICY: AgentPolicy = {
       pathPattern: "!*protected*",
       riskLevel: "medium",
       action: "ALLOW",
-      reason: "SANDBOX_WRITE: Edits to non-protected files within the sandbox boundary are permitted.",
+      reason:
+        "SANDBOX_WRITE: Edits to non-protected files within the sandbox boundary are permitted.",
       precedence: 70
     },
     {
@@ -202,7 +206,9 @@ export function matchesPathPattern(targetPath: string, pattern?: string): boolea
 
   const normalizedTarget = targetPath.toLowerCase().replace(/\\/g, "/");
   const isNegated = pattern.startsWith("!");
-  const effectivePattern = (isNegated ? pattern.slice(1) : pattern).toLowerCase().replace(/\\/g, "/");
+  const effectivePattern = (isNegated ? pattern.slice(1) : pattern)
+    .toLowerCase()
+    .replace(/\\/g, "/");
 
   // Simple wildcard matching
   const regexStr = effectivePattern
@@ -211,7 +217,8 @@ export function matchesPathPattern(targetPath: string, pattern?: string): boolea
     .replace(/\?/g, ".");
   const regex = new RegExp(`^${regexStr}$|${regexStr.replace(/^\.\*/, "").replace(/\.\*$/, "")}`);
 
-  const matches = regex.test(normalizedTarget) || normalizedTarget.includes(effectivePattern.replace(/\*/g, ""));
+  const matches =
+    regex.test(normalizedTarget) || normalizedTarget.includes(effectivePattern.replace(/\*/g, ""));
   return isNegated ? !matches : matches;
 }
 
@@ -228,7 +235,9 @@ export function evaluateAgentPolicy(
   const reqPath = request.path || "";
 
   // Sort rules by precedence (lowest number first)
-  const sortedRules = [...policy.rules].sort((a, b) => (a.precedence ?? 100) - (b.precedence ?? 100));
+  const sortedRules = [...policy.rules].sort(
+    (a, b) => (a.precedence ?? 100) - (b.precedence ?? 100)
+  );
 
   for (const rule of sortedRules) {
     // 1. Tool match
@@ -275,7 +284,12 @@ export function evaluateAgentPolicy(
     policyId: policy.id,
     policyVersion: policy.version,
     reason: `DEFAULT_DECISION: No specific rule matched. Applying default decision '${policy.defaultDecision}'.`,
-    riskLevel: policy.defaultDecision === "DENY" ? "critical" : policy.defaultDecision === "REQUIRE_APPROVAL" ? "high" : "low",
+    riskLevel:
+      policy.defaultDecision === "DENY"
+        ? "critical"
+        : policy.defaultDecision === "REQUIRE_APPROVAL"
+          ? "high"
+          : "low",
     requestedAction: {
       toolName: request.toolName,
       operation: request.operation,

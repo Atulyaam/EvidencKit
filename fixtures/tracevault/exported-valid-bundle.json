@@ -1,28 +1,38 @@
 {
   "manifest": {
     "format_name": "evidencekit-export",
-    "format_version": "1.0",
-    "stream_id": "case_1cc6c82328eb",
+    "format_version": "2.0",
+    "export_id": "exp_1793950070908",
+    "stream_id": "case_f416ab843139",
     "stream_type": "tracevault.case",
-    "created_at": "2026-11-06T06:34:42.380Z",
+    "workspace_id": "default",
+    "created_at": "2026-11-06T07:27:50.908Z",
     "event_count": 5,
     "first_sequence": 0,
     "last_sequence": 4,
-    "chain_head_hash": "7d38ec29a603697e4ecf63220edf0c4c9255362f630dcbcec0a7945fcc737e69",
+    "chain_head_hash": "db8b40b4368b6478d4d03f5e9479d375e9ac8d82c6fe342df68bcbe8a3110817",
     "hash_algorithm": "sha-256",
     "canonicalization": "RFC8785-JCS",
     "artifact_manifest": []
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "ek-signer-prod-2026",
+    "public_key": "MCowBQYDK2VwAyEAJU77BOGf5moPTG8aKNrUtV79/cy3YsDkj6eAqU/4L2E=",
+    "public_key_fingerprint": "695bd86158dd7e06462222094392374b5107500bdc2a1ca093253f1526bd7706",
+    "signature_value": "W9TFgbn1GD6uLexkPquy95GOVlBLYZZaaEH4x86OfiaTqlnRCbCOsh5AO00XK2yJF/yswBkgD4oMLmMGjOQwBA==",
+    "signed_at": "2026-11-06T07:27:50.911Z"
   },
   "events": [
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "2fc01a3e-39d2-430a-8377-2dc6eea49912",
+        "event_id": "3502e004-ae6b-4234-b591-aba40f00da76",
         "stream_type": "tracevault.case",
-        "stream_id": "case_1cc6c82328eb",
+        "stream_id": "case_f416ab843139",
         "event_name": "app.log.info",
         "occurred_at": "2026-11-05T14:02:10.000Z",
-        "observed_at": "2026-11-06T06:34:41.761Z",
+        "observed_at": "2026-11-06T07:27:50.267Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "api-gateway",
@@ -31,7 +41,9 @@
           "adapter_version": "1.0.0"
         },
         "severity": "info",
-        "correlation_ids": ["req-9821"],
+        "correlation_ids": [
+          "req-9821"
+        ],
         "attributes": {
           "message": "Incoming request GET /api/v1/orders",
           "correlation_id": "req-9821",
@@ -49,17 +61,17 @@
       },
       "stream_sequence": 0,
       "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "event_hash": "5c1f39d35a7c8025f03a9d27f3b1f13fcab33896f934ee36009dcc7fd33fdbaf"
+      "event_hash": "42f828069f928a3532b97ebd757ca5a397d4255f2ff0896ba5a36c88aaa2dcad"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "84489fb6-5a9b-4f01-abc0-a1807bab98c0",
+        "event_id": "e9954c10-6e63-4fd2-b296-b224ed8fa2f7",
         "stream_type": "tracevault.case",
-        "stream_id": "case_1cc6c82328eb",
+        "stream_id": "case_f416ab843139",
         "event_name": "app.log.warning",
         "occurred_at": "2026-11-05T14:02:15.000Z",
-        "observed_at": "2026-11-06T06:34:41.761Z",
+        "observed_at": "2026-11-06T07:27:50.268Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -68,7 +80,9 @@
           "adapter_version": "1.0.0"
         },
         "severity": "warning",
-        "correlation_ids": ["req-9821"],
+        "correlation_ids": [
+          "req-9821"
+        ],
         "attributes": {
           "message": "DB pool connection acquisition delayed > 800ms",
           "correlation_id": "req-9821",
@@ -86,18 +100,18 @@
         ]
       },
       "stream_sequence": 1,
-      "previous_hash": "5c1f39d35a7c8025f03a9d27f3b1f13fcab33896f934ee36009dcc7fd33fdbaf",
-      "event_hash": "297e194db3a5bcf34ed65d98e053e48fccea191ceb63ce726ce4f4907cd47f5f"
+      "previous_hash": "42f828069f928a3532b97ebd757ca5a397d4255f2ff0896ba5a36c88aaa2dcad",
+      "event_hash": "4a60f624ccea6f2c561b7e7d4ef4e85a0a65aa4944e49046c9d7dae4be4ee673"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "8c712b89-964a-40b5-aa6f-d534e71d2686",
+        "event_id": "27e0d190-a7c6-4073-8cdd-a7f712c13393",
         "stream_type": "tracevault.case",
-        "stream_id": "case_1cc6c82328eb",
+        "stream_id": "case_f416ab843139",
         "event_name": "app.log.error",
         "occurred_at": "2026-11-05T14:02:18.000Z",
-        "observed_at": "2026-11-06T06:34:41.762Z",
+        "observed_at": "2026-11-06T07:27:50.268Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -106,7 +120,9 @@
           "adapter_version": "1.0.0"
         },
         "severity": "error",
-        "correlation_ids": ["req-9821"],
+        "correlation_ids": [
+          "req-9821"
+        ],
         "attributes": {
           "message": "Unhandled rejection: Connection pool timeout (10000ms limit)",
           "correlation_id": "req-9821",
@@ -121,18 +137,18 @@
         ]
       },
       "stream_sequence": 2,
-      "previous_hash": "297e194db3a5bcf34ed65d98e053e48fccea191ceb63ce726ce4f4907cd47f5f",
-      "event_hash": "a37de05fe07b13bf643e3990cf21c57cba8dfdec8c752a77bcd52372dc58b3d7"
+      "previous_hash": "4a60f624ccea6f2c561b7e7d4ef4e85a0a65aa4944e49046c9d7dae4be4ee673",
+      "event_hash": "8bb0bd4369b283b9328934f051c19018170b363ae1eef596824475ecfb7e37a6"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "99a1d1d5-10bb-4c6b-9d59-87249a0afa64",
+        "event_id": "cc05cb69-216d-4979-8612-8f62a1091b6d",
         "stream_type": "tracevault.case",
-        "stream_id": "case_1cc6c82328eb",
+        "stream_id": "case_f416ab843139",
         "event_name": "app.log.critical",
         "occurred_at": "2026-11-05T14:02:22.000Z",
-        "observed_at": "2026-11-06T06:34:41.762Z",
+        "observed_at": "2026-11-06T07:27:50.268Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "api-gateway",
@@ -141,7 +157,9 @@
           "adapter_version": "1.0.0"
         },
         "severity": "critical",
-        "correlation_ids": ["req-9821"],
+        "correlation_ids": [
+          "req-9821"
+        ],
         "attributes": {
           "message": "502 Bad Gateway to upstream order-service",
           "correlation_id": "req-9821",
@@ -156,18 +174,18 @@
         ]
       },
       "stream_sequence": 3,
-      "previous_hash": "a37de05fe07b13bf643e3990cf21c57cba8dfdec8c752a77bcd52372dc58b3d7",
-      "event_hash": "d3e2b2e7a91dd1145091606d11d205437c48286b3d64933d3e1bf62cd62f734d"
+      "previous_hash": "8bb0bd4369b283b9328934f051c19018170b363ae1eef596824475ecfb7e37a6",
+      "event_hash": "946c08f8b114b02ad52db9b1d791b9b9bfff3ec12d071e955b9d1e1ba8abf12d"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "0e1809d6-9e4c-43f4-8586-b28fe39ebba8",
+        "event_id": "c59e0e4f-7315-4e4e-8331-07fbdea147e1",
         "stream_type": "tracevault.case",
-        "stream_id": "case_1cc6c82328eb",
+        "stream_id": "case_f416ab843139",
         "event_name": "app.log.error",
         "occurred_at": "2026-11-05T14:03:00.000Z",
-        "observed_at": "2026-11-06T06:34:41.762Z",
+        "observed_at": "2026-11-06T07:27:50.268Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -176,7 +194,9 @@
           "adapter_version": "1.0.0"
         },
         "severity": "error",
-        "correlation_ids": ["req-9825"],
+        "correlation_ids": [
+          "req-9825"
+        ],
         "attributes": {
           "message": "Connection pool fully exhausted. Active: 100/100, Queued: 45",
           "correlation_id": "req-9825"
@@ -190,17 +210,17 @@
         ]
       },
       "stream_sequence": 4,
-      "previous_hash": "d3e2b2e7a91dd1145091606d11d205437c48286b3d64933d3e1bf62cd62f734d",
-      "event_hash": "7d38ec29a603697e4ecf63220edf0c4c9255362f630dcbcec0a7945fcc737e69"
+      "previous_hash": "946c08f8b114b02ad52db9b1d791b9b9bfff3ec12d071e955b9d1e1ba8abf12d",
+      "event_hash": "db8b40b4368b6478d4d03f5e9479d375e9ac8d82c6fe342df68bcbe8a3110817"
     }
   ],
   "verification_report": {
     "status": "verified",
-    "stream_id": "case_1cc6c82328eb",
+    "stream_id": "case_f416ab843139",
     "total_events": 5,
     "first_sequence": 0,
     "last_sequence": 4,
-    "head_hash": "7d38ec29a603697e4ecf63220edf0c4c9255362f630dcbcec0a7945fcc737e69",
-    "verified_at": "2026-11-06T06:34:42.380Z"
+    "head_hash": "db8b40b4368b6478d4d03f5e9479d375e9ac8d82c6fe342df68bcbe8a3110817",
+    "verified_at": "2026-11-06T07:27:50.908Z"
   }
 }

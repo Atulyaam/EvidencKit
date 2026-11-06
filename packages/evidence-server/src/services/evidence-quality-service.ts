@@ -1,8 +1,4 @@
-import {
-  ChainedEvent,
-  EvidenceQualityReport,
-  analyzeEvidenceQuality
-} from "@evidencekit/core";
+import { ChainedEvent, EvidenceQualityReport, analyzeEvidenceQuality } from "@evidencekit/core";
 import { DbClient } from "@evidencekit/db";
 import { defaultChainService } from "./chain-service";
 
@@ -10,10 +6,7 @@ export class EvidenceQualityService {
   /**
    * Generates a deterministic quality report for an incident or agent session evidence stream.
    */
-  public async getQualityReport(
-    streamId: string,
-    db?: DbClient
-  ): Promise<EvidenceQualityReport> {
+  public async getQualityReport(streamId: string, db?: DbClient): Promise<EvidenceQualityReport> {
     let events: ChainedEvent[] = [];
     if (db) {
       try {
@@ -66,8 +59,7 @@ export class EvidenceQualityService {
       lines.push("✓ **Zero structural or provenance defects detected in stream.**");
     } else {
       for (const iss of report.issues) {
-        const icon =
-          iss.severity === "critical" ? "🔴" : iss.severity === "warning" ? "🟡" : "ℹ️";
+        const icon = iss.severity === "critical" ? "🔴" : iss.severity === "warning" ? "🟡" : "ℹ️";
         lines.push(`### ${icon} ${iss.message}`);
         lines.push(`- **Rule Code:** \`${iss.ruleCode}\``);
         lines.push(`- **Severity:** \`${iss.severity.toUpperCase()}\``);
@@ -85,4 +77,3 @@ export class EvidenceQualityService {
 }
 
 export const defaultEvidenceQualityService = new EvidenceQualityService();
-

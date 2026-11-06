@@ -1,11 +1,6 @@
 import { describe, it, expect } from "vitest";
-import {
-  analyzeEvidenceQuality,
-  QUALITY_DISCLAIMER,
-  ChainedEvent,
-  EvidenceEvent
-} from "@evidencekit/core";
-import { defaultEvidenceQualityService, defaultChainService } from "@evidencekit/evidence-server";
+import { analyzeEvidenceQuality, QUALITY_DISCLAIMER, ChainedEvent } from "@evidencekit/core";
+import { defaultEvidenceQualityService } from "@evidencekit/evidence-server";
 import { randomUUID } from "node:crypto";
 
 describe("Phase 4.5 — Evidence Quality & Coverage Test Suite", () => {
@@ -62,7 +57,9 @@ describe("Phase 4.5 — Evidence Quality & Coverage Test Suite", () => {
 
     // Source coverage breakdown
     expect(report.sourceCoverage.length).toBe(2);
-    expect(report.sourceCoverage.find((s) => s.sourceSystem === "api-gateway")?.percentage).toBe(50);
+    expect(report.sourceCoverage.find((s) => s.sourceSystem === "api-gateway")?.percentage).toBe(
+      50
+    );
     expect(report.sourceCoverage.find((s) => s.sourceSystem === "database")?.percentage).toBe(50);
   });
 

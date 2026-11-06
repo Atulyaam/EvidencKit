@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { defaultChainService } from "@evidencekit/evidence-server";
-import { createExportBundle } from "@evidencekit/core";
+import { defaultChainService, defaultExportBundleService } from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
@@ -15,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    const bundle = createExportBundle(params.id, "agentledger.session", allEvents);
+    const bundle = await defaultExportBundleService.exportBundleJson(params.id);
 
     const download = req.nextUrl.searchParams.get("download");
     if (download === "true") {

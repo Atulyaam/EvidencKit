@@ -178,14 +178,9 @@ describe("Phase 4.5 — Unified Evidence Graph Test Suite", () => {
     ]);
 
     // Query graph for ws1
-    const graphWs1 = await defaultEvidenceGraphService.getEvidenceGraph(
-      { workspaceId: ws1 },
-      db
-    );
+    const graphWs1 = await defaultEvidenceGraphService.getEvidenceGraph({ workspaceId: ws1 }, db);
 
-    const ws1CaseIds = graphWs1.nodes
-      .filter((n) => n.type === "incident")
-      .map((n) => n.id);
+    const ws1CaseIds = graphWs1.nodes.filter((n) => n.type === "incident").map((n) => n.id);
 
     expect(ws1CaseIds).toContain(caseId1);
     expect(ws1CaseIds).not.toContain(caseId2);

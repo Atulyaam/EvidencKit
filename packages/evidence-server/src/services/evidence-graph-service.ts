@@ -1,18 +1,5 @@
-import {
-  GraphNode,
-  GraphEdge,
-  GraphQueryParams,
-  EvidenceGraphResult
-} from "@evidencekit/core";
-import {
-  DbClient,
-  cases,
-  agentSessions,
-  events,
-  agentApprovals,
-  eq,
-  desc
-} from "@evidencekit/db";
+import { GraphNode, GraphEdge, GraphQueryParams, EvidenceGraphResult } from "@evidencekit/core";
+import { DbClient, cases, agentSessions, events, agentApprovals, eq, desc } from "@evidencekit/db";
 import { defaultChainService } from "./chain-service";
 
 export class EvidenceGraphService {
@@ -51,9 +38,7 @@ export class EvidenceGraphService {
     const nodeIds = new Set(filteredNodes.map((n) => n.id));
 
     // Filter edges to only include ones where both source and target are in filteredNodes
-    let filteredEdges = edges.filter(
-      (e) => nodeIds.has(e.source) && nodeIds.has(e.target)
-    );
+    let filteredEdges = edges.filter((e) => nodeIds.has(e.source) && nodeIds.has(e.target));
 
     if (relationshipType === "explicit") {
       filteredEdges = filteredEdges.filter((e) => e.type === "explicit");

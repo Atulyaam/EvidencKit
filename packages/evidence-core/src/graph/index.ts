@@ -48,7 +48,8 @@ export const GraphQueryParamsSchema = z.object({
   limit: z.number().min(1).max(500).default(100),
   cursor: z.string().optional()
 });
-export type GraphQueryParams = z.infer<typeof GraphQueryParamsSchema>;
+export type GraphQueryParams = z.input<typeof GraphQueryParamsSchema>;
+export type GraphQueryParamsOutput = z.infer<typeof GraphQueryParamsSchema>;
 
 export const EvidenceGraphResultSchema = z.object({
   workspaceId: z.string(),
@@ -62,4 +63,3 @@ export const EvidenceGraphResultSchema = z.object({
   nextCursor: z.string().optional()
 });
 export type EvidenceGraphResult = z.infer<typeof EvidenceGraphResultSchema>;
-

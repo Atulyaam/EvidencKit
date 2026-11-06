@@ -28,12 +28,8 @@ export interface KeyPairResult {
 export function generateEd25519KeyPair(keyId: string = "ek-signer-2026"): KeyPairResult {
   const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
 
-  const publicKeyBase64 = publicKey
-    .export({ type: "spki", format: "der" })
-    .toString("base64");
-  const privateKeyBase64 = privateKey
-    .export({ type: "pkcs8", format: "der" })
-    .toString("base64");
+  const publicKeyBase64 = publicKey.export({ type: "spki", format: "der" }).toString("base64");
+  const privateKeyBase64 = privateKey.export({ type: "pkcs8", format: "der" }).toString("base64");
 
   const fingerprint = crypto
     .createHash("sha256")
@@ -52,10 +48,7 @@ export function generateEd25519KeyPair(keyId: string = "ek-signer-2026"): KeyPai
  * Computes the SHA-256 fingerprint (hex) of a Base64-encoded public key.
  */
 export function computePublicKeyFingerprint(publicKeyBase64: string): string {
-  return crypto
-    .createHash("sha256")
-    .update(Buffer.from(publicKeyBase64, "base64"))
-    .digest("hex");
+  return crypto.createHash("sha256").update(Buffer.from(publicKeyBase64, "base64")).digest("hex");
 }
 
 /**
@@ -129,8 +122,7 @@ export function verifyManifestSignature(
     // 2. Validate public key fingerprint
     const computedFingerprint = computePublicKeyFingerprint(signatureReceipt.public_key);
     if (
-      computedFingerprint.toLowerCase() !==
-      signatureReceipt.public_key_fingerprint.toLowerCase()
+      computedFingerprint.toLowerCase() !== signatureReceipt.public_key_fingerprint.toLowerCase()
     ) {
       return {
         valid: false,
@@ -160,7 +152,8 @@ export function verifyManifestSignature(
         status: "invalid",
         keyId: signatureReceipt.key_id,
         fingerprint: signatureReceipt.public_key_fingerprint,
-        error: "Ed25519 digital signature verification failed. Manifest was altered or signed with a different key.",
+        error:
+          "Ed25519 digital signature verification failed. Manifest was altered or signed with a different key.",
         disclaimer: SIGNATURE_DISCLAIMER
       };
     }
@@ -182,4 +175,3 @@ export function verifyManifestSignature(
     };
   }
 }
-

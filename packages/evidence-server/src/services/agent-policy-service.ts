@@ -48,7 +48,9 @@ export class AgentPolicyService {
     workspaceId: string,
     policyData: Omit<AgentPolicy, "id" | "createdAt" | "updatedAt">
   ): AgentPolicy {
-    const existingList = this.policies.get(workspaceId) || [{ ...DEFAULT_AGENT_POLICY, workspaceId }];
+    const existingList = this.policies.get(workspaceId) || [
+      { ...DEFAULT_AGENT_POLICY, workspaceId }
+    ];
     const now = new Date().toISOString();
 
     const newVersion: AgentPolicy = {
@@ -112,7 +114,12 @@ export class AgentPolicyService {
         adapter_version: "1.0.0"
       },
       actor: { type: "agent", id: request.agentName },
-      severity: result.decision === "DENY" ? "critical" : result.decision === "REQUIRE_APPROVAL" ? "warning" : "info",
+      severity:
+        result.decision === "DENY"
+          ? "critical"
+          : result.decision === "REQUIRE_APPROVAL"
+            ? "warning"
+            : "info",
       correlation_ids: [result.matchedRuleId],
       attributes: {
         tool_name: request.toolName,
@@ -163,4 +170,3 @@ export class AgentPolicyService {
 }
 
 export const defaultAgentPolicyService = new AgentPolicyService();
-

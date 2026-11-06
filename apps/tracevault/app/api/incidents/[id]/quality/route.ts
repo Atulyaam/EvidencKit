@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { defaultEvidenceQualityService } from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const { searchParams } = new URL(req.url);
@@ -38,4 +35,3 @@ export async function GET(
     );
   }
 }
-

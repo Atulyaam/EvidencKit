@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge
-} from "@evidencekit/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -19,11 +13,7 @@ import {
 } from "lucide-react";
 import { EvidenceQualityReport } from "@evidencekit/core";
 
-export default function IncidentQualityPage({
-  params
-}: {
-  params: { id: string };
-}) {
+export default function IncidentQualityPage({ params }: { params: { id: string } }) {
   const [report, setReport] = useState<EvidenceQualityReport | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -65,8 +55,7 @@ export default function IncidentQualityPage({
   const score = report.completenessScore;
   const scoreColor =
     score >= 90 ? "text-emerald-400" : score >= 70 ? "text-amber-400" : "text-red-400";
-  const scoreBg =
-    score >= 90 ? "bg-emerald-500" : score >= 70 ? "bg-amber-500" : "bg-red-500";
+  const scoreBg = score >= 90 ? "bg-emerald-500" : score >= 70 ? "bg-amber-500" : "bg-red-500";
 
   return (
     <div className="space-y-6">
@@ -78,7 +67,8 @@ export default function IncidentQualityPage({
             Evidence Quality & Completeness Audit
           </h2>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Deterministic evaluation of stream completeness, timestamp consistency, and source coverage.
+            Deterministic evaluation of stream completeness, timestamp consistency, and source
+            coverage.
           </p>
         </div>
 
@@ -99,9 +89,7 @@ export default function IncidentQualityPage({
           <strong className="text-amber-300 font-semibold uppercase tracking-wider text-[11px] block">
             Forensic Notice: Completeness Assessment vs. Truthfulness
           </strong>
-          <p className="text-[11px] leading-relaxed text-amber-200/80">
-            {report.disclaimer}
-          </p>
+          <p className="text-[11px] leading-relaxed text-amber-200/80">{report.disclaimer}</p>
         </div>
       </div>
 
@@ -110,9 +98,7 @@ export default function IncidentQualityPage({
         {/* Completeness Score Card */}
         <Card className="border-zinc-800 bg-zinc-900/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-zinc-400 font-mono">
-              COMPLETENESS SCORE
-            </CardTitle>
+            <CardTitle className="text-xs text-zinc-400 font-mono">COMPLETENESS SCORE</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className={`text-3xl font-extrabold ${scoreColor}`}>
@@ -131,31 +117,21 @@ export default function IncidentQualityPage({
         {/* Total Events */}
         <Card className="border-zinc-800 bg-zinc-900/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-zinc-400 font-mono">
-              TOTAL ANALYZED
-            </CardTitle>
+            <CardTitle className="text-xs text-zinc-400 font-mono">TOTAL ANALYZED</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-zinc-100">
-              {report.totalEvents}
-            </div>
-            <p className="text-[11px] text-zinc-500 mt-2">
-              Chained events in stream
-            </p>
+            <div className="text-3xl font-extrabold text-zinc-100">{report.totalEvents}</div>
+            <p className="text-[11px] text-zinc-500 mt-2">Chained events in stream</p>
           </CardContent>
         </Card>
 
         {/* Detected Issues */}
         <Card className="border-zinc-800 bg-zinc-900/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-zinc-400 font-mono">
-              DETECTED ISSUES
-            </CardTitle>
+            <CardTitle className="text-xs text-zinc-400 font-mono">DETECTED ISSUES</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
-            <div className="text-3xl font-extrabold text-zinc-100">
-              {report.issueCount.total}
-            </div>
+            <div className="text-3xl font-extrabold text-zinc-100">{report.issueCount.total}</div>
             <div className="flex items-center gap-2 pt-1 text-[11px] font-mono">
               {report.issueCount.critical > 0 && (
                 <span className="text-red-400">{report.issueCount.critical} Critical</span>
@@ -171,17 +147,11 @@ export default function IncidentQualityPage({
         {/* Redacted Tokens */}
         <Card className="border-zinc-800 bg-zinc-900/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-zinc-400 font-mono">
-              SECRETS REDACTED
-            </CardTitle>
+            <CardTitle className="text-xs text-zinc-400 font-mono">SECRETS REDACTED</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-purple-400">
-              {report.redactionCount}
-            </div>
-            <p className="text-[11px] text-zinc-500 mt-2">
-              Tokens sanitized prior to hashing
-            </p>
+            <div className="text-3xl font-extrabold text-purple-400">{report.redactionCount}</div>
+            <p className="text-[11px] text-zinc-500 mt-2">Tokens sanitized prior to hashing</p>
           </CardContent>
         </Card>
       </div>
@@ -210,10 +180,7 @@ export default function IncidentQualityPage({
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-32 bg-zinc-800 h-1.5 rounded-full overflow-hidden hidden sm:block">
-                      <div
-                        className="h-full bg-cyan-500"
-                        style={{ width: `${cov.percentage}%` }}
-                      />
+                      <div className="h-full bg-cyan-500" style={{ width: `${cov.percentage}%` }} />
                     </div>
                     <span className="font-mono text-zinc-400 text-xs w-12 text-right">
                       {cov.percentage}%
@@ -243,7 +210,8 @@ export default function IncidentQualityPage({
               Zero structural or provenance defects detected
             </p>
             <p className="text-xs text-zinc-500">
-              All events in stream contain valid source headers, timestamps, and continuous hash linkage.
+              All events in stream contain valid source headers, timestamps, and continuous hash
+              linkage.
             </p>
           </div>
         ) : (
@@ -299,4 +267,3 @@ export default function IncidentQualityPage({
     </div>
   );
 }
-

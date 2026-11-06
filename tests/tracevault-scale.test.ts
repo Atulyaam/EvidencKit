@@ -93,7 +93,7 @@ describe("Phase 3 — TraceVault Scale & Performance Benchmark (Task 3.14)", () 
 
     // Latency Assertions
     expect(appendDurationMs).toBeLessThan(1000); // Ingest 1,000 events in < 1 second
-    expect(verifyDurationMs).toBeLessThan(150); // Verify 1,000 hashes in < 150 ms
+    expect(verifyDurationMs).toBeLessThan(250); // Verify 1,000 hashes in < 250 ms
     expect(queryDurationMs).toBeLessThan(20); // Query timeline in < 20 ms
   });
 

@@ -2,15 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-  Button,
-  Input
-} from "@evidencekit/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Input } from "@evidencekit/ui";
 import {
   Share2,
   Filter,
@@ -119,7 +111,8 @@ export default function AgentLedgerGraphPage() {
             </Badge>
           </div>
           <p className="text-sm text-zinc-400">
-            Cross-application evidence graph connecting AI agent sessions, tool executions, approval decisions, file changes, and upstream incident triggers.
+            Cross-application evidence graph connecting AI agent sessions, tool executions, approval
+            decisions, file changes, and upstream incident triggers.
           </p>
         </div>
 
@@ -199,7 +192,10 @@ export default function AgentLedgerGraphPage() {
       <div className="p-3 rounded-md bg-amber-950/20 border border-amber-800/40 text-xs text-amber-300/90 flex items-start gap-2.5">
         <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <strong>Causality Disclaimers:</strong> Solid lines represent cryptographic hash-chain connections and explicit container references. Dashed amber lines indicate <em>non-causal candidate relationships</em> inferred from temporal clustering. They do not assert verified root cause.
+          <strong>Causality Disclaimers:</strong> Solid lines represent cryptographic hash-chain
+          connections and explicit container references. Dashed amber lines indicate{" "}
+          <em>non-causal candidate relationships</em> inferred from temporal clustering. They do not
+          assert verified root cause.
         </div>
       </div>
 
@@ -229,9 +225,7 @@ export default function AgentLedgerGraphPage() {
           </div>
 
           {loading ? (
-            <div className="py-16 text-center text-sm text-zinc-500">
-              Loading graph topology...
-            </div>
+            <div className="py-16 text-center text-sm text-zinc-500">Loading graph topology...</div>
           ) : filteredNodes.length === 0 ? (
             <div className="py-16 text-center text-sm text-zinc-500 border border-zinc-800 rounded-lg">
               No evidence nodes matched the current filter.
@@ -275,9 +269,7 @@ export default function AgentLedgerGraphPage() {
                     <div className="flex items-center justify-between text-[10px] font-mono text-zinc-500 mt-2 pt-2 border-t border-zinc-800/60">
                       <span>{new Date(node.timestamp).toLocaleTimeString()}</span>
                       {node.hash && (
-                        <span className="text-purple-400">
-                          SHA: {node.hash.slice(0, 8)}...
-                        </span>
+                        <span className="text-purple-400">SHA: {node.hash.slice(0, 8)}...</span>
                       )}
                     </div>
                   </div>
@@ -338,9 +330,7 @@ export default function AgentLedgerGraphPage() {
                     </span>
                     <div className="space-y-1.5 max-h-48 overflow-y-auto">
                       {(graphData?.edges || [])
-                        .filter(
-                          (e) => e.source === selectedNode.id || e.target === selectedNode.id
-                        )
+                        .filter((e) => e.source === selectedNode.id || e.target === selectedNode.id)
                         .map((edge) => (
                           <div
                             key={edge.id}
@@ -354,9 +344,7 @@ export default function AgentLedgerGraphPage() {
                               <span className="font-bold">{edge.relationship}</span>
                               <span
                                 className={
-                                  edge.isNonCausalCandidate
-                                    ? "text-amber-400"
-                                    : "text-cyan-400"
+                                  edge.isNonCausalCandidate ? "text-amber-400" : "text-cyan-400"
                                 }
                               >
                                 {edge.type}
@@ -401,4 +389,3 @@ export default function AgentLedgerGraphPage() {
     </div>
   );
 }
-

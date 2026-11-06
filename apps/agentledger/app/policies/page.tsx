@@ -1,22 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-  Button,
-  Input
-} from "@evidencekit/ui";
-import {
-  ShieldCheck,
-  Play,
-  History,
-  FileCode,
-  Info
-} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Input } from "@evidencekit/ui";
+import { ShieldCheck, Play, History, FileCode, Info } from "lucide-react";
 import { AgentPolicy, PolicyEvaluationResult } from "@evidencekit/core";
 
 export default function PoliciesPage() {
@@ -95,7 +81,8 @@ export default function PoliciesPage() {
             </Badge>
           </div>
           <p className="text-sm text-zinc-400">
-            Deterministic, server-enforced governance policies regulating autonomous AI agent tool executions and resource access.
+            Deterministic, server-enforced governance policies regulating autonomous AI agent tool
+            executions and resource access.
           </p>
         </div>
 
@@ -132,9 +119,7 @@ export default function PoliciesPage() {
         <CardContent className="pt-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                Target Tool
-              </label>
+              <label className="block text-xs font-medium text-zinc-300 mb-1.5">Target Tool</label>
               <select
                 value={simTool}
                 onChange={(e) => setSimTool(e.target.value)}
@@ -244,14 +229,14 @@ export default function PoliciesPage() {
               </div>
 
               <div className="text-xs text-zinc-300 leading-relaxed bg-zinc-900/60 p-2.5 rounded border border-zinc-800/80">
-                <strong className="text-purple-300">Explainable Reason:</strong>{" "}
-                {simResult.reason}
+                <strong className="text-purple-300">Explainable Reason:</strong> {simResult.reason}
               </div>
 
               <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-1">
                 <span className="flex items-center gap-1.5">
                   <Info className="w-3.5 h-3.5 text-purple-400" />
-                  Approval Required: {simResult.approvalRequired ? "YES (Enforced on Server)" : "NO"}
+                  Approval Required:{" "}
+                  {simResult.approvalRequired ? "YES (Enforced on Server)" : "NO"}
                 </span>
                 <span className="font-mono text-zinc-600">
                   Evaluated at: {new Date(simResult.evaluatedAt).toLocaleTimeString()}
@@ -288,9 +273,7 @@ export default function PoliciesPage() {
                     <span className="text-xs font-mono font-bold text-zinc-500">
                       #{rule.precedence}
                     </span>
-                    <span className="text-sm font-semibold text-zinc-200">
-                      {rule.name}
-                    </span>
+                    <span className="text-sm font-semibold text-zinc-200">{rule.name}</span>
                     <Badge
                       variant={isDeny ? "danger" : isApproval ? "warning" : "success"}
                       className="text-[10px] uppercase font-mono px-2 py-0.5"
@@ -335,7 +318,9 @@ export default function PoliciesPage() {
         </CardHeader>
         <CardContent className="pt-4 text-xs text-zinc-400 space-y-2">
           <p>
-            AgentLedger policies are strictly versioned and immutable once sealed. Updating a policy increments the policy version without modifying historical audit events or retroactively changing previous decisions recorded in the EvidenceKit RFC 8785 hash chain.
+            AgentLedger policies are strictly versioned and immutable once sealed. Updating a policy
+            increments the policy version without modifying historical audit events or retroactively
+            changing previous decisions recorded in the EvidenceKit RFC 8785 hash chain.
           </p>
           <div className="space-y-1.5 pt-2">
             {policyHistory.map((p, idx) => (
@@ -365,4 +350,3 @@ export default function PoliciesPage() {
     </div>
   );
 }
-

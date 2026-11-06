@@ -112,7 +112,8 @@ export function analyzeEvidenceQuality(
         message: `Incomplete Source System Metadata in event #${chained.stream_sequence}`,
         explanation: `Event ${eid} lacks a designated source system identifier.`,
         eventIds: [eid],
-        suggestedRemediation: "Ensure ingestion adapters provide source.system in the event envelope."
+        suggestedRemediation:
+          "Ensure ingestion adapters provide source.system in the event envelope."
       });
     }
 
@@ -146,7 +147,8 @@ export function analyzeEvidenceQuality(
           message: `Clock skew detected in event #${chained.stream_sequence}`,
           explanation: `observed_at (${ev.observed_at}) precedes occurred_at (${ev.occurred_at}) by more than 10s.`,
           eventIds: [eid],
-          suggestedRemediation: "Synchronize host clocks using NTP or adjust client logger timestamps."
+          suggestedRemediation:
+            "Synchronize host clocks using NTP or adjust client logger timestamps."
         });
       }
     }
@@ -182,7 +184,8 @@ export function analyzeEvidenceQuality(
         message: `Duplicate Event Detected (${eids.length} identical hashes)`,
         explanation: `Identical SHA-256 event hash '${hash.slice(0, 16)}...' appears ${eids.length} times in stream.`,
         eventIds: eids,
-        suggestedRemediation: "Deduplicate log sources before batch ingestion to prevent redundancy."
+        suggestedRemediation:
+          "Deduplicate log sources before batch ingestion to prevent redundancy."
       });
     }
   }
@@ -195,7 +198,8 @@ export function analyzeEvidenceQuality(
       message: `${redactionTally} Sensitive Secret(s) Redacted Before Ingestion`,
       explanation: `Automated sanitizer masked ${redactionTally} sensitive tokens (API keys, tokens, or credentials) to prevent credential leakage.`,
       eventIds: [],
-      suggestedRemediation: "No action required; redactions are preserved securely in the cryptographic ledger."
+      suggestedRemediation:
+        "No action required; redactions are preserved securely in the cryptographic ledger."
     });
   }
 

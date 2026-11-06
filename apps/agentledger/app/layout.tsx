@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+            <nav className="hidden lg:flex items-center gap-1 text-sm font-medium">
               <Link
                 href="/"
                 className="px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"

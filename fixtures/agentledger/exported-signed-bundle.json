@@ -1,0 +1,1035 @@
+{
+  "manifest": {
+    "format_name": "evidencekit-export",
+    "format_version": "2.0",
+    "export_id": "exp_1793950063103",
+    "stream_id": "session_39654722c8c14150",
+    "stream_type": "agentledger.session",
+    "workspace_id": "default",
+    "created_at": "2026-11-06T07:27:43.103Z",
+    "event_count": 26,
+    "first_sequence": 0,
+    "last_sequence": 25,
+    "chain_head_hash": "bf98cc2ad77920f10240ae1b09ebe29c1c741ce1ed428666aafc70c0aed98adf",
+    "hash_algorithm": "sha-256",
+    "canonicalization": "RFC8785-JCS",
+    "artifact_manifest": []
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "ek-signer-prod-2026",
+    "public_key": "MCowBQYDK2VwAyEACfxEHatZTNtNNsi+m38rGyyhKbeIHMtxrZAkshMUDbE=",
+    "public_key_fingerprint": "e3e7933c7ce3771d777a74260a937ecee4bcbd4c6f709f2b9f60bbf42defe6d9",
+    "signature_value": "NfpcxYcP2aNL+GF66wsH7o7WT4vmQMctk38wL1W9Z2iBaQ+GJ/V1Rdf6mdUHikOqjv/zyLx6U5NA9VU/AT71Cg==",
+    "signed_at": "2026-11-06T07:27:43.103Z"
+  },
+  "events": [
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "6a5f3606-1e73-4e07-9c02-912beb471201",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "goal": "Audit configurations, optimize timeout parameters, and enforce zero-trust security policy",
+          "status": "created",
+          "metadata": {
+            "model": "deterministic-simulated-agent-v1",
+            "environment": "sandbox-demo",
+            "demoWorkflow": "full-audit-cycle"
+          },
+          "agent_name": "refactoring-assistant",
+          "workspace_id": "ws_demo_default"
+        },
+        "event_name": "agent.session.created",
+        "observed_at": "2026-11-06T07:27:41.289Z",
+        "occurred_at": "2026-11-06T07:27:41.289Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 0,
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event_hash": "3787a375c6617025c2c996c80604a1328f5ac761de70152a78e8fe4e3bad2c5b"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "c0da949a-7d89-4d74-8c2b-d0c77d692b67",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "started_at": "2026-11-06T07:27:41.302Z"
+        },
+        "event_name": "agent.run.started",
+        "observed_at": "2026-11-06T07:27:41.302Z",
+        "occurred_at": "2026-11-06T07:27:41.302Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 1,
+      "previous_hash": "3787a375c6617025c2c996c80604a1328f5ac761de70152a78e8fe4e3bad2c5b",
+      "event_hash": "15dd3dbd13de843865ac395f21363c0f40cfbc16edeb545abfba3c2352f99024"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-governance-engine",
+          "adapter": "policy-evaluator",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "c7d4b214-e1b6-40f9-842d-1a28530e9027",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "READ_ONLY: File directory inspection within the sandbox is permitted.",
+          "decision": "ALLOW",
+          "arguments": {
+            "directory": ""
+          },
+          "operation": "read",
+          "policy_id": "pol_default_v1",
+          "tool_name": "list_files",
+          "risk_level": "low",
+          "target_path": "",
+          "policy_version": "1.0.0",
+          "matched_rule_id": "rule_allow_list_files",
+          "approval_required": false,
+          "matched_rule_name": "Allow Directory Listing"
+        },
+        "event_name": "agent.policy.evaluated",
+        "observed_at": "2026-11-06T07:27:41.313Z",
+        "occurred_at": "2026-11-06T07:27:41.313Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "rule_allow_list_files"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 2,
+      "previous_hash": "15dd3dbd13de843865ac395f21363c0f40cfbc16edeb545abfba3c2352f99024",
+      "event_hash": "10f87d3c2c0c4c0939bf9960c790b1ff8c2d769cda369455a7b253d7b6bfb6c1"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "b05dcfaa-d868-4426-b704-d7b9b66224a2",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "directory": ""
+          },
+          "tool_name": "list_files",
+          "tool_call_id": "tc_9a6e4b2498f84b8a"
+        },
+        "event_name": "agent.tool.started",
+        "observed_at": "2026-11-06T07:27:41.319Z",
+        "occurred_at": "2026-11-06T07:27:41.319Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_9a6e4b2498f84b8a"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 3,
+      "previous_hash": "10f87d3c2c0c4c0939bf9960c790b1ff8c2d769cda369455a7b253d7b6bfb6c1",
+      "event_hash": "e87b78a9750bbb907900fbb27dd8980d7c60e9cc59afb5d3db102eb816c9ceb4"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "2bf86e2e-66eb-4306-9ee1-0d79b05b1cdf",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "output": {
+            "count": 2,
+            "files": [
+              {
+                "name": "README.md",
+                "isDirectory": false,
+                "relativePath": "README.md"
+              },
+              {
+                "name": "src",
+                "isDirectory": true,
+                "relativePath": "src"
+              }
+            ],
+            "directory": "/"
+          },
+          "tool_name": "list_files",
+          "duration_ms": 20,
+          "tool_call_id": "tc_9a6e4b2498f84b8a"
+        },
+        "event_name": "agent.tool.completed",
+        "observed_at": "2026-11-06T07:27:41.329Z",
+        "occurred_at": "2026-11-06T07:27:41.329Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_9a6e4b2498f84b8a"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 4,
+      "previous_hash": "e87b78a9750bbb907900fbb27dd8980d7c60e9cc59afb5d3db102eb816c9ceb4",
+      "event_hash": "7d95203cc81d28e14f747ee6daf1f0cc324ef9cfb9f5e880d6c2ab46246f68cc"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-governance-engine",
+          "adapter": "policy-evaluator",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "4d315bcc-d3b0-4c8a-ab25-71fcb50813d2",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "READ_ONLY: Read operations inside the verified sandbox are permitted.",
+          "decision": "ALLOW",
+          "arguments": {
+            "path": "src/config.ts"
+          },
+          "operation": "read",
+          "policy_id": "pol_default_v1",
+          "tool_name": "read_file",
+          "risk_level": "low",
+          "target_path": "src/config.ts",
+          "policy_version": "1.0.0",
+          "matched_rule_id": "rule_allow_safe_read",
+          "approval_required": false,
+          "matched_rule_name": "Allow Read-Only Operations"
+        },
+        "event_name": "agent.policy.evaluated",
+        "observed_at": "2026-11-06T07:27:41.336Z",
+        "occurred_at": "2026-11-06T07:27:41.336Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "rule_allow_safe_read"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 5,
+      "previous_hash": "7d95203cc81d28e14f747ee6daf1f0cc324ef9cfb9f5e880d6c2ab46246f68cc",
+      "event_hash": "59d68eef6b1dd16b9c7d38e732a3715232da3e8cec64a0858a984d83e7a30b00"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "4d7f40a5-982c-4770-88cf-16841e9a7749",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/config.ts"
+          },
+          "tool_name": "read_file",
+          "tool_call_id": "tc_baed3b58c1014098"
+        },
+        "event_name": "agent.tool.started",
+        "observed_at": "2026-11-06T07:27:41.341Z",
+        "occurred_at": "2026-11-06T07:27:41.341Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_baed3b58c1014098"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 6,
+      "previous_hash": "59d68eef6b1dd16b9c7d38e732a3715232da3e8cec64a0858a984d83e7a30b00",
+      "event_hash": "e640bbea8830dd4efeb203f8b1764af75b9362831e9accf6e5ae9f3ffbdbf5f8"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "9a762844-d72c-405c-8a7c-f74562ea3dc8",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "output": {
+            "path": "src/config.ts",
+            "sha256": "7e7d33a18dfb74ab0b86fa3f99f809673d06f9865375da9a3c9f85b6cd41b8ec",
+            "content": "export const serviceConfig = {\n  timeoutMs: 5000,\n  retries: 3,\n  logLevel: \"info\"\n};\n",
+            "sizeBytes": 86
+          },
+          "tool_name": "read_file",
+          "duration_ms": 18,
+          "tool_call_id": "tc_baed3b58c1014098"
+        },
+        "event_name": "agent.tool.completed",
+        "observed_at": "2026-11-06T07:27:41.353Z",
+        "occurred_at": "2026-11-06T07:27:41.353Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_baed3b58c1014098"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 7,
+      "previous_hash": "e640bbea8830dd4efeb203f8b1764af75b9362831e9accf6e5ae9f3ffbdbf5f8",
+      "event_hash": "ca6704c35f82f2d78251222782d35acad0d6215cc6bce058a8ac1ae749c1a0bc"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "eb66c05f-bf61-443e-bd50-83c9f1737abc",
+        "severity": "warning",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/config.ts",
+            "content": "export const serviceConfig = {\n  timeoutMs: 8000,\n  retries: 3,\n  logLevel: \"info\"\n};\n"
+          },
+          "operation": "Update serviceConfig.timeoutMs to 8000ms for latency resilience",
+          "tool_name": "modify_file",
+          "approval_id": "appr_ffc362718fef4b8a",
+          "tool_call_id": "tc_opt_timeout_1793950061358"
+        },
+        "event_name": "agent.approval.requested",
+        "observed_at": "2026-11-06T07:27:41.360Z",
+        "occurred_at": "2026-11-06T07:27:41.360Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_opt_timeout_1793950061358",
+          "appr_ffc362718fef4b8a"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 8,
+      "previous_hash": "ca6704c35f82f2d78251222782d35acad0d6215cc6bce058a8ac1ae749c1a0bc",
+      "event_hash": "685f180a945b290593d840b2d06cf7a6af9d59f2e6872c39aa21fe8ddad35bca"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "local-dev-owner",
+          "type": "human_reviewer"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "9bbf447d-9360-4db1-ab97-040891653d2d",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "Verified safe: 8000ms timeout complies with standard SLA thresholds",
+          "actor_id": "local-dev-owner",
+          "decision": "approved",
+          "tool_name": "modify_file",
+          "approval_id": "appr_ffc362718fef4b8a",
+          "tool_call_id": "tc_opt_timeout_1793950061358"
+        },
+        "event_name": "agent.approval.decided",
+        "observed_at": "2026-11-06T07:27:41.372Z",
+        "occurred_at": "2026-11-06T07:27:41.372Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_opt_timeout_1793950061358",
+          "appr_ffc362718fef4b8a"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 9,
+      "previous_hash": "685f180a945b290593d840b2d06cf7a6af9d59f2e6872c39aa21fe8ddad35bca",
+      "event_hash": "dc5dda36973e50390498be8fbc9c2cb13ba3f718028324144bbe12a778abd417"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-governance-engine",
+          "adapter": "policy-evaluator",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "447844a1-0c4f-4992-869d-ac57c080ba14",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "SANDBOX_WRITE: Edits to non-protected files within the sandbox boundary are permitted.",
+          "decision": "ALLOW",
+          "arguments": {
+            "path": "src/config.ts",
+            "content": "export const serviceConfig = {\n  timeoutMs: 8000,\n  retries: 3,\n  logLevel: \"info\"\n};\n"
+          },
+          "operation": "write",
+          "policy_id": "pol_default_v1",
+          "tool_name": "modify_file",
+          "risk_level": "medium",
+          "target_path": "src/config.ts",
+          "policy_version": "1.0.0",
+          "matched_rule_id": "rule_allow_unprotected_file_edits",
+          "approval_required": false,
+          "matched_rule_name": "Allow General Workspace Modifications"
+        },
+        "event_name": "agent.policy.evaluated",
+        "observed_at": "2026-11-06T07:27:41.383Z",
+        "occurred_at": "2026-11-06T07:27:41.383Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "rule_allow_unprotected_file_edits"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 10,
+      "previous_hash": "dc5dda36973e50390498be8fbc9c2cb13ba3f718028324144bbe12a778abd417",
+      "event_hash": "33efe080beb706f459f645bc50037525ad3038002552592a8fe81c341a1aa0d6"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "53c521b8-fbda-447c-a81a-52a4867d447a",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/config.ts",
+            "content": "export const serviceConfig = {\n  timeoutMs: 8000,\n  retries: 3,\n  logLevel: \"info\"\n};\n"
+          },
+          "tool_name": "modify_file",
+          "tool_call_id": "tc_opt_timeout_1793950061358"
+        },
+        "event_name": "agent.tool.started",
+        "observed_at": "2026-11-06T07:27:41.388Z",
+        "occurred_at": "2026-11-06T07:27:41.388Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_opt_timeout_1793950061358"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 11,
+      "previous_hash": "33efe080beb706f459f645bc50037525ad3038002552592a8fe81c341a1aa0d6",
+      "event_hash": "f01095d52a80c24850c64540dd04fdc5feb238c8865b4082395f06af76d3e77e"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "859a8cac-62fb-4560-8965-205933ddd0b1",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "path": "src/config.ts",
+          "operation": "modify",
+          "new_sha256": "6436747a0cc5b752bffac0b779778dc31877762f80f9a800c7569f0b3566b7bb",
+          "old_sha256": "7e7d33a18dfb74ab0b86fa3f99f809673d06f9865375da9a3c9f85b6cd41b8ec",
+          "lines_added": 1,
+          "diff_summary": "-   timeoutMs: 5000,\n+   timeoutMs: 8000,",
+          "tool_call_id": "tc_opt_timeout_1793950061358",
+          "lines_removed": 1
+        },
+        "event_name": "agent.file.changed",
+        "observed_at": "2026-11-06T07:27:41.403Z",
+        "occurred_at": "2026-11-06T07:27:41.403Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_opt_timeout_1793950061358"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 12,
+      "previous_hash": "f01095d52a80c24850c64540dd04fdc5feb238c8865b4082395f06af76d3e77e",
+      "event_hash": "0755c7957af119c103ba6ea40397d16ddb1a1c814c76082a1f337332ff0b6d70"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "05c9db75-b41e-418e-ad7d-63b6de631e35",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "output": {
+            "path": "src/config.ts",
+            "newSha256": "6436747a0cc5b752bffac0b779778dc31877762f80f9a800c7569f0b3566b7bb",
+            "oldSha256": "7e7d33a18dfb74ab0b86fa3f99f809673d06f9865375da9a3c9f85b6cd41b8ec",
+            "operation": "modify",
+            "linesAdded": 1,
+            "diffSummary": "-   timeoutMs: 5000,\n+   timeoutMs: 8000,",
+            "linesRemoved": 1
+          },
+          "tool_name": "modify_file",
+          "duration_ms": 28,
+          "tool_call_id": "tc_opt_timeout_1793950061358"
+        },
+        "event_name": "agent.tool.completed",
+        "observed_at": "2026-11-06T07:27:41.410Z",
+        "occurred_at": "2026-11-06T07:27:41.410Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_opt_timeout_1793950061358"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 13,
+      "previous_hash": "0755c7957af119c103ba6ea40397d16ddb1a1c814c76082a1f337332ff0b6d70",
+      "event_hash": "996843f1568144fcb4a8ca68895a3cb4e09e4ade38bc14bdaa73214e0d8ab3b9"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-governance-engine",
+          "adapter": "policy-evaluator",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "b2f0d1f4-a88e-41d3-ad83-83acbfece060",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "READ_ONLY: SHA-256 cryptographic hash computation is permitted.",
+          "decision": "ALLOW",
+          "arguments": {
+            "path": "src/config.ts"
+          },
+          "operation": "read",
+          "policy_id": "pol_default_v1",
+          "tool_name": "calculate_file_hash",
+          "risk_level": "low",
+          "target_path": "src/config.ts",
+          "policy_version": "1.0.0",
+          "matched_rule_id": "rule_allow_calculate_hash",
+          "approval_required": false,
+          "matched_rule_name": "Allow Checksum Calculations"
+        },
+        "event_name": "agent.policy.evaluated",
+        "observed_at": "2026-11-06T07:27:41.416Z",
+        "occurred_at": "2026-11-06T07:27:41.416Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "rule_allow_calculate_hash"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 14,
+      "previous_hash": "996843f1568144fcb4a8ca68895a3cb4e09e4ade38bc14bdaa73214e0d8ab3b9",
+      "event_hash": "66bb0b7ab35cb8ac91d9182e9d264e006364fd4d937b0a204ad0211932b3d1b7"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "c7351080-cb64-4d42-a1ed-dc817097f5fa",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/config.ts"
+          },
+          "tool_name": "calculate_file_hash",
+          "tool_call_id": "tc_072a7663433a451a"
+        },
+        "event_name": "agent.tool.started",
+        "observed_at": "2026-11-06T07:27:41.423Z",
+        "occurred_at": "2026-11-06T07:27:41.423Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_072a7663433a451a"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 15,
+      "previous_hash": "66bb0b7ab35cb8ac91d9182e9d264e006364fd4d937b0a204ad0211932b3d1b7",
+      "event_hash": "f74f2f3d5ff0cc5ecb63aec85589b33bbe01563a96ba641c10a105f506e2b05b"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "fac5e667-92ec-4d73-8a88-17b724a5063f",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "output": {
+            "path": "src/config.ts",
+            "sha256": "6436747a0cc5b752bffac0b779778dc31877762f80f9a800c7569f0b3566b7bb"
+          },
+          "tool_name": "calculate_file_hash",
+          "duration_ms": 18,
+          "tool_call_id": "tc_072a7663433a451a"
+        },
+        "event_name": "agent.tool.completed",
+        "observed_at": "2026-11-06T07:27:41.432Z",
+        "occurred_at": "2026-11-06T07:27:41.432Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_072a7663433a451a"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 16,
+      "previous_hash": "f74f2f3d5ff0cc5ecb63aec85589b33bbe01563a96ba641c10a105f506e2b05b",
+      "event_hash": "2ac5fa5e6df1b72950810f2d1a45da0630c026ffdecc1d84a2af106ffeb3249c"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "f2cd2e36-2d88-4d57-a1f9-10869c86863c",
+        "severity": "warning",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/protected-config.ts",
+            "content": "export const securityPolicy = {\n  enforceMfa: false,\n  auditLevel: \"none\",\n  zeroTrust: false\n};\n"
+          },
+          "operation": "Disable zeroTrust and MFA in protected-config.ts",
+          "tool_name": "modify_file",
+          "approval_id": "appr_78beb967c68845eb",
+          "tool_call_id": "tc_disable_mfa_1793950061438"
+        },
+        "event_name": "agent.approval.requested",
+        "observed_at": "2026-11-06T07:27:41.439Z",
+        "occurred_at": "2026-11-06T07:27:41.439Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_disable_mfa_1793950061438",
+          "appr_78beb967c68845eb"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 17,
+      "previous_hash": "2ac5fa5e6df1b72950810f2d1a45da0630c026ffdecc1d84a2af106ffeb3249c",
+      "event_hash": "60d06ba33b444fb5ee0465e42932f0f7ba0573eb5269d542eb9ab334d25cb696"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "local-dev-owner",
+          "type": "human_reviewer"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "e9d79728-12c4-435d-865a-7c75cb9cfbbb",
+        "severity": "warning",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "REJECTED: Unauthorized attempt to weaken production security policy (MFA disable forbidden)",
+          "actor_id": "local-dev-owner",
+          "decision": "rejected",
+          "tool_name": "modify_file",
+          "approval_id": "appr_78beb967c68845eb",
+          "tool_call_id": "tc_disable_mfa_1793950061438"
+        },
+        "event_name": "agent.approval.decided",
+        "observed_at": "2026-11-06T07:27:41.451Z",
+        "occurred_at": "2026-11-06T07:27:41.451Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_disable_mfa_1793950061438",
+          "appr_78beb967c68845eb"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 18,
+      "previous_hash": "60d06ba33b444fb5ee0465e42932f0f7ba0573eb5269d542eb9ab334d25cb696",
+      "event_hash": "a790e767110a5f922d0b889aa395b40c142eda05008ff689658056d2cbd2d715"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-governance-engine",
+          "adapter": "policy-evaluator",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "9747512f-5de9-4412-ae24-8dc97a541f26",
+        "severity": "warning",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "PROTECTED_RESOURCE: Modifications to protected configuration files require explicit human authorization.",
+          "decision": "REQUIRE_APPROVAL",
+          "arguments": {
+            "path": "src/protected-config.ts",
+            "content": "export const securityPolicy = {\n  enforceMfa: false,\n  auditLevel: \"none\",\n  zeroTrust: false\n};\n"
+          },
+          "operation": "write",
+          "policy_id": "pol_default_v1",
+          "tool_name": "modify_file",
+          "risk_level": "high",
+          "target_path": "src/protected-config.ts",
+          "policy_version": "1.0.0",
+          "matched_rule_id": "rule_require_approval_security_config",
+          "approval_required": true,
+          "matched_rule_name": "Require Approval for Security Configurations"
+        },
+        "event_name": "agent.policy.evaluated",
+        "observed_at": "2026-11-06T07:27:41.463Z",
+        "occurred_at": "2026-11-06T07:27:41.463Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "rule_require_approval_security_config"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 19,
+      "previous_hash": "a790e767110a5f922d0b889aa395b40c142eda05008ff689658056d2cbd2d715",
+      "event_hash": "0d003067af3ea6e7cf8e6c619fde35fa29339ec3c372ffab05983b15da19bf22"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "1ab81eae-48bf-418d-a9cb-cfa4664aa368",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/protected-config.ts",
+            "content": "export const securityPolicy = {\n  enforceMfa: false,\n  auditLevel: \"none\",\n  zeroTrust: false\n};\n"
+          },
+          "tool_name": "modify_file",
+          "tool_call_id": "tc_disable_mfa_1793950061438"
+        },
+        "event_name": "agent.tool.started",
+        "observed_at": "2026-11-06T07:27:41.469Z",
+        "occurred_at": "2026-11-06T07:27:41.469Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_disable_mfa_1793950061438"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 20,
+      "previous_hash": "0d003067af3ea6e7cf8e6c619fde35fa29339ec3c372ffab05983b15da19bf22",
+      "event_hash": "33d8c33b3e927ccc8963f2a00b638905a0baf2d41db853b9b012d69c6530dbd3"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "3cd02224-8d15-491f-b4c6-151a887ad20d",
+        "severity": "warning",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "error": "Authorization denied: Approval 'appr_78beb967c68845eb' is not in approved state for tool call 'tc_disable_mfa_1793950061438'.",
+          "tool_name": "modify_file",
+          "tool_call_id": "tc_disable_mfa_1793950061438"
+        },
+        "event_name": "agent.tool.failed",
+        "observed_at": "2026-11-06T07:27:41.480Z",
+        "occurred_at": "2026-11-06T07:27:41.480Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_disable_mfa_1793950061438"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 21,
+      "previous_hash": "33d8c33b3e927ccc8963f2a00b638905a0baf2d41db853b9b012d69c6530dbd3",
+      "event_hash": "0e70c3510f535592c921215ef1b1708d01dc06040d508038ee8f2bc01721c7c9"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-governance-engine",
+          "adapter": "policy-evaluator",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "1653c2bf-4358-46ae-a285-4ac063a6f571",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "reason": "READ_ONLY: SHA-256 cryptographic hash computation is permitted.",
+          "decision": "ALLOW",
+          "arguments": {
+            "path": "src/protected-config.ts"
+          },
+          "operation": "read",
+          "policy_id": "pol_default_v1",
+          "tool_name": "calculate_file_hash",
+          "risk_level": "low",
+          "target_path": "src/protected-config.ts",
+          "policy_version": "1.0.0",
+          "matched_rule_id": "rule_allow_calculate_hash",
+          "approval_required": false,
+          "matched_rule_name": "Allow Checksum Calculations"
+        },
+        "event_name": "agent.policy.evaluated",
+        "observed_at": "2026-11-06T07:27:41.487Z",
+        "occurred_at": "2026-11-06T07:27:41.487Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "rule_allow_calculate_hash"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 22,
+      "previous_hash": "0e70c3510f535592c921215ef1b1708d01dc06040d508038ee8f2bc01721c7c9",
+      "event_hash": "a1f2f8be5981e7ef9ce972295bfa23206fb6542497e74c5e20beb93d4b562339"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "04c4d89f-be53-44a4-8f94-bff59c64bb50",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "arguments": {
+            "path": "src/protected-config.ts"
+          },
+          "tool_name": "calculate_file_hash",
+          "tool_call_id": "tc_fa2824ea5b4a4727"
+        },
+        "event_name": "agent.tool.started",
+        "observed_at": "2026-11-06T07:27:41.492Z",
+        "occurred_at": "2026-11-06T07:27:41.492Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_fa2824ea5b4a4727"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 23,
+      "previous_hash": "a1f2f8be5981e7ef9ce972295bfa23206fb6542497e74c5e20beb93d4b562339",
+      "event_hash": "1647496556976c3f60878611e751cde790aa6432829112a857ff40b1146c7a89"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "a51b23ef-21de-4657-a1f4-e39eaf3936e0",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "output": {
+            "path": "src/protected-config.ts",
+            "sha256": "e257ddae9a44c0bed6366841c6baa7fa3d99a75f1b9f58a9a0a895d24e3f32f2"
+          },
+          "tool_name": "calculate_file_hash",
+          "duration_ms": 17,
+          "tool_call_id": "tc_fa2824ea5b4a4727"
+        },
+        "event_name": "agent.tool.completed",
+        "observed_at": "2026-11-06T07:27:41.503Z",
+        "occurred_at": "2026-11-06T07:27:41.503Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "correlation_ids": [
+          "tc_fa2824ea5b4a4727"
+        ],
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 24,
+      "previous_hash": "1647496556976c3f60878611e751cde790aa6432829112a857ff40b1146c7a89",
+      "event_hash": "ba5f7558309d1f34f91cf327f7a00285c15c1bc02b76e1c0c56b39804d2bf8ef"
+    },
+    {
+      "event": {
+        "actor": {
+          "id": "refactoring-assistant",
+          "type": "agent"
+        },
+        "source": {
+          "system": "agent-runtime",
+          "adapter": "agent-sdk",
+          "adapter_version": "1.0.0"
+        },
+        "event_id": "1005fea3-6f1d-49bf-8193-5786d550cf45",
+        "severity": "info",
+        "stream_id": "session_39654722c8c14150",
+        "attributes": {
+          "summary": "Demonstration workflow completed successfully. Safe file modification verified with cryptographic digests; unauthorized security mutation was strictly denied and prevented.",
+          "completed_at": "2026-11-06T07:27:41.511Z"
+        },
+        "event_name": "agent.run.completed",
+        "observed_at": "2026-11-06T07:27:41.511Z",
+        "occurred_at": "2026-11-06T07:27:41.511Z",
+        "stream_type": "agentledger.session",
+        "schema_version": "1.0",
+        "time_confidence": "source_timestamp"
+      },
+      "stream_sequence": 25,
+      "previous_hash": "ba5f7558309d1f34f91cf327f7a00285c15c1bc02b76e1c0c56b39804d2bf8ef",
+      "event_hash": "bf98cc2ad77920f10240ae1b09ebe29c1c741ce1ed428666aafc70c0aed98adf"
+    }
+  ],
+  "verification_report": {
+    "status": "verified",
+    "stream_id": "session_39654722c8c14150",
+    "total_events": 26,
+    "first_sequence": 0,
+    "last_sequence": 25,
+    "head_hash": "bf98cc2ad77920f10240ae1b09ebe29c1c741ce1ed428666aafc70c0aed98adf",
+    "verified_at": "2026-11-06T07:27:43.101Z"
+  }
+}

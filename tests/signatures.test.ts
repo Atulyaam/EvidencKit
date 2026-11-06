@@ -1,15 +1,13 @@
 import { describe, it, expect } from "vitest";
 import {
   generateEd25519KeyPair,
-  signExportManifest,
-  verifyManifestSignature,
   SIGNATURE_DISCLAIMER,
   createExportBundle,
   validateImportBundle,
   ChainedEvent,
   EvidenceEvent
 } from "@evidencekit/core";
-import { defaultExportBundleService, defaultChainService } from "@evidencekit/evidence-server";
+import { defaultChainService } from "@evidencekit/evidence-server";
 import { randomUUID } from "node:crypto";
 
 describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {

@@ -5,7 +5,11 @@ import {
   matchesPathPattern,
   AgentPolicy
 } from "@evidencekit/core";
-import { defaultAgentPolicyService, defaultAgentSandboxService, defaultChainService } from "@evidencekit/evidence-server";
+import {
+  defaultAgentPolicyService,
+  defaultAgentSandboxService,
+  defaultChainService
+} from "@evidencekit/evidence-server";
 
 describe("Phase 4.5 — AgentLedger Deterministic Policy Engine Test Suite", () => {
   const testWorkspace = `ws_pol_${Date.now()}`;
@@ -223,4 +227,3 @@ describe("Phase 4.5 — AgentLedger Deterministic Policy Engine Test Suite", () 
     expect(verification.status).toBe("verified");
   });
 });
-

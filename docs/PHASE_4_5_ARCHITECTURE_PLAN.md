@@ -4,13 +4,14 @@
 **Status:** Approved for Implementation  
 **Feature Branch:** `feature/phase-4.5-governance-and-differentiation`  
 **Base Commits:** Phase 4 `342bf85`, Phase 5 `2d8a957`  
-**Monorepo:** EvidenceKit (`apps/tracevault`, `apps/agentledger`, `packages/*`)  
+**Monorepo:** EvidenceKit (`apps/tracevault`, `apps/agentledger`, `packages/*`)
 
 ---
 
 ## 1. Pre-Implementation Audit & Baseline State
 
 ### 1.1 Quality Baseline
+
 - **Prettier:** 100% compliant (`pnpm format:check` PASS).
 - **ESLint:** 0 errors / 0 warnings (`pnpm lint` PASS).
 - **TypeScript:** Strict compilation (`pnpm typecheck` PASS).
@@ -19,17 +20,19 @@
 - **Production Build:** Turbo production build succeeded across all packages and Next.js applications.
 
 ### 1.2 Resolution of `shell_command` Discrepancy & Authoritative Policy
+
 - **Investigation:** In `packages/evidence-server/src/services/agent-sandbox-service.ts`, `ALLOWED_TOOLS` is explicitly locked to:
   `["list_files", "read_file", "create_file", "modify_file", "calculate_file_hash"]`.
 - **Finding:** Earlier high-level narrative audits cited `shell_command` alongside file modifications as examples of sensitive operations in security literature. However, the runtime deliberately disallows arbitrary shell execution to prevent Remote Code Execution (RCE) and system escape vulnerabilities.
 - **Authoritative Policy Decision:**  
-  *Arbitrary shell command execution is categorically forbidden.* We will **not** enable arbitrary shell execution merely to showcase approval modals. In the new deterministic Policy Engine, attempts to execute non-allowlisted tools (such as `shell_command`) evaluate strictly to `DENY` with an explicit reason (`UNAUTHORIZED_TOOL_CLASS: Arbitrary shell execution is prohibited by security policy`) or are rejected prior to execution by the sandbox allowlist.
+  _Arbitrary shell command execution is categorically forbidden._ We will **not** enable arbitrary shell execution merely to showcase approval modals. In the new deterministic Policy Engine, attempts to execute non-allowlisted tools (such as `shell_command`) evaluate strictly to `DENY` with an explicit reason (`UNAUTHORIZED_TOOL_CLASS: Arbitrary shell execution is prohibited by security policy`) or are rejected prior to execution by the sandbox allowlist.
 
 ---
 
 ## 2. Subsystem Architectural Blueprints
 
 ### Part B — AgentLedger Policy Intelligence Engine
+
 A deterministic, versioned policy engine to govern autonomous agent behavior before tool execution.
 
 1. **Policy Schema (`@evidencekit/core/src/policy`):**
@@ -70,6 +73,7 @@ A deterministic, versioned policy engine to govern autonomous agent behavior bef
 ---
 
 ### Part C — Unified Evidence Graph
+
 A cross-application relationship graph connecting entities from both TraceVault and AgentLedger.
 
 1. **Entity Graph Schema (`@evidencekit/core/src/graph`):**
@@ -94,6 +98,7 @@ A cross-application relationship graph connecting entities from both TraceVault 
 ---
 
 ### Part D — Evidence Quality & Coverage Engine
+
 A deterministic forensic validation service assessing evidence completeness and integrity without claiming truthfulness.
 
 1. **Quality Rules (`@evidencekit/core/src/quality`):**
@@ -114,6 +119,7 @@ A deterministic forensic validation service assessing evidence completeness and 
 ---
 
 ### Part E — Signed Evidence Receipts (Ed25519)
+
 Cryptographic digital signatures on exported evidence bundles for third-party non-repudiation.
 
 1. **Ed25519 Cryptographic Layer (`@evidencekit/core/src/signatures`):**
@@ -155,6 +161,7 @@ Cryptographic digital signatures on exported evidence bundles for third-party no
 ---
 
 ### Part F — User Experience Polish & Cross-Navigation
+
 1. **TraceVault Enhancements:**
    - Header & navigation links to Evidence Graph and Evidence Quality reports.
    - Clear distinction between raw evidence events and candidate correlation links.
@@ -168,6 +175,7 @@ Cryptographic digital signatures on exported evidence bundles for third-party no
 ---
 
 ### Part G — Database & Security Invariants
+
 - Extend existing Drizzle schema only where necessary (e.g. `policies` table or persist policies within existing session/workspace records).
 - All authorization and policy decisions enforced strictly on the server.
 - Private signing keys loaded from environment variables (`EVIDENCEKIT_SIGNING_KEY_ED25519`); never sent to client.

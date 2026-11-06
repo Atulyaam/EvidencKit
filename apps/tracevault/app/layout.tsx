@@ -31,13 +31,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               >
                 + New Incident
               </Link>
+              <Link href="/graph" className="text-zinc-400 hover:text-white transition-colors">
+                Evidence Graph
+              </Link>
               <Link href="/verify" className="text-zinc-400 hover:text-white transition-colors">
                 Verify Bundle
               </Link>
             </nav>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-3 text-xs">
+            <a
+              href="http://localhost:3002"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden lg:inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 px-2.5 py-1 rounded border border-zinc-800 hover:bg-zinc-800 transition-colors"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+              AgentLedger App ↗
+            </a>
             <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-800/80 border border-zinc-700/60 font-mono text-[11px] text-zinc-300">
               <span className="text-zinc-500">Workspace:</span>
               <span className="text-blue-400 font-semibold">default</span>

@@ -51,6 +51,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Policies
               </Link>
               <Link
+                href="/graph"
+                className="px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                Evidence Graph
+              </Link>
+              <Link
                 href="/verify"
                 className="px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
               >

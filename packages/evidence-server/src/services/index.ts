@@ -9,3 +9,4 @@ export * from "./agent-sandbox-service";
 export * from "./agent-demo-service";
 export * from "./agent-replay-service";
 export * from "./agent-policy-service";
+export * from "./evidence-graph-service";

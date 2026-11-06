@@ -61,31 +61,16 @@ describe("Phase 4 — AgentLedger Backend Integration Test Suite", () => {
     expect(dbRows[0]?.status).toBe("created");
 
     // 2. Start Session (created -> running)
-    const started = await defaultAgentSessionService.startSession(
-      session.id,
-      ownerContext,
-      testWorkspace,
-      db
-    );
+    const started = await defaultAgentSessionService.startSession(session.id, ownerContext, testWorkspace, db);
     expect(started.status).toBe("running");
     expect(started.startedAt).not.toBeNull();
 
     // 3. Pause Session (running -> paused)
-    const paused = await defaultAgentSessionService.pauseSession(
-      session.id,
-      ownerContext,
-      testWorkspace,
-      db
-    );
+    const paused = await defaultAgentSessionService.pauseSession(session.id, ownerContext, testWorkspace, db);
     expect(paused.status).toBe("paused");
 
     // 4. Resume Session (paused -> running)
-    const resumed = await defaultAgentSessionService.startSession(
-      session.id,
-      ownerContext,
-      testWorkspace,
-      db
-    );
+    const resumed = await defaultAgentSessionService.startSession(session.id, ownerContext, testWorkspace, db);
     expect(resumed.status).toBe("running");
 
     // 5. Invalid Transition Check (cannot transition running to created)
@@ -218,11 +203,7 @@ describe("Phase 4 — AgentLedger Backend Integration Test Suite", () => {
     expect(req.decision).toBe("pending");
 
     // Session transitions to awaiting_approval
-    const awaitingSession = await defaultAgentSessionService.getSession(
-      session.id,
-      testWorkspace,
-      db
-    );
+    const awaitingSession = await defaultAgentSessionService.getSession(session.id, testWorkspace, db);
     expect(awaitingSession?.status).toBe("awaiting_approval");
 
     // 2. Deny Approval

@@ -67,6 +67,7 @@ export default function IncidentLayout({ children, params }: IncidentLayoutProps
     { label: "Overview", href: `/incidents/${incidentId}` },
     { label: "Evidence & Sources", href: `/incidents/${incidentId}/evidence` },
     { label: "Forensic Timeline", href: `/incidents/${incidentId}/timeline` },
+    { label: "Quality Audit", href: `/incidents/${incidentId}/quality` },
     { label: "Investigation Report", href: `/incidents/${incidentId}/report` },
     { label: "Settings & Export", href: `/incidents/${incidentId}/settings` }
   ];

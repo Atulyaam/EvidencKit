@@ -45,6 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 New Session
               </Link>
               <Link
+                href="/policies"
+                className="px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                Policies
+              </Link>
+              <Link
                 href="/verify"
                 className="px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
               >

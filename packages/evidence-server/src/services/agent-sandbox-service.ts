@@ -3,6 +3,7 @@ import path from "node:path";
 import crypto, { randomUUID } from "node:crypto";
 import { defaultChainService } from "./chain-service";
 import { defaultAgentApprovalService } from "./agent-approval-service";
+import { defaultAgentPolicyService } from "./agent-policy-service";
 import { DbClient } from "@evidencekit/db";
 import { EvidenceEvent, sanitizeData } from "@evidencekit/core";
 
@@ -214,9 +215,10 @@ export class AgentSandboxService {
     toolName: string;
     args: Record<string, unknown>;
     approvalId?: string;
+    workspaceId?: string;
     db?: DbClient;
   }): Promise<ToolExecutionResult> {
-    const { sessionId, agentName, toolName, args, approvalId, db } = params;
+    const { sessionId, agentName, toolName, args, approvalId, workspaceId, db } = params;
     const toolCallId = params.toolCallId || `tc_${randomUUID().replace(/-/g, "").slice(0, 16)}`;
     const startTime = Date.now();
     this.initSandbox(sessionId);
@@ -234,7 +236,39 @@ export class AgentSandboxService {
       };
     }
 
-    // 2. Record tool started event
+    // 2. Server-side policy evaluation
+    const cleanPath =
+      typeof args.path === "string"
+        ? args.path
+        : typeof args.directory === "string"
+          ? args.directory
+          : undefined;
+    const policyResult = await defaultAgentPolicyService.evaluateAndRecord(
+      {
+        workspaceId: workspaceId || "default",
+        sessionId,
+        agentName,
+        toolName,
+        path: cleanPath,
+        args
+      },
+      db
+    );
+
+    // If policy evaluates to DENY, reject immediately with zero mutation
+    if (policyResult.decision === "DENY") {
+      const err = `Policy Denied: ${policyResult.reason} (Rule: ${policyResult.matchedRuleId})`;
+      await this.recordToolFailedEvent(sessionId, agentName, toolCallId, toolName, args, err, db);
+      return {
+        toolCallId,
+        toolName,
+        success: false,
+        error: err,
+        durationMs: Date.now() - startTime
+      };
+    }
+
+    // 3. Record tool started event
     await this.recordToolStartedEvent(sessionId, agentName, toolCallId, toolName, args, db);
 
     try {
@@ -290,12 +324,13 @@ export class AgentSandboxService {
           const newContent = String(args.content || "");
           const { safePath, cleanRelPath } = this.resolveSafePath(targetRel, sessionId);
 
-          // Policy check: Protected paths require approved approvalId
-          const isProtected = this.isProtectedPath(cleanRelPath);
+          // Policy check: Protected paths or REQUIRE_APPROVAL action require approved approvalId
+          const isProtected =
+            this.isProtectedPath(cleanRelPath) || policyResult.decision === "REQUIRE_APPROVAL";
           if (isProtected) {
             if (!approvalId) {
               throw new Error(
-                `Approval required: Action on protected path '${cleanRelPath}' requires approval before execution.`
+                `Approval required: Action on protected path '${cleanRelPath}' requires approval before execution (Policy Rule: ${policyResult.matchedRuleId}).`
               );
             }
             const approval = await defaultAgentApprovalService.getApproval(approvalId, db);

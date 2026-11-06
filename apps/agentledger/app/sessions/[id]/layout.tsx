@@ -100,6 +100,7 @@ export default function SessionDetailLayout({
     { name: "Timeline", href: `/sessions/${params.id}/timeline`, icon: History },
     { name: "Replay", href: `/sessions/${params.id}/replay`, icon: Play },
     { name: "Approvals", href: `/sessions/${params.id}/approvals`, icon: AlertTriangle },
+    { name: "Policies", href: `/sessions/${params.id}/policies`, icon: ShieldCheck },
     { name: "Files", href: `/sessions/${params.id}/files`, icon: FileCode },
     { name: "Export", href: `/sessions/${params.id}/export`, icon: Download }
   ];

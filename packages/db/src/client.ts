@@ -1,6 +1,17 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
+import { config } from "dotenv";
+import path from "node:path";
 import * as schema from "./schema/index";
+
+// Load .env from workspace root or current directory
+[
+  path.resolve(process.cwd(), ".env"),
+  path.resolve(process.cwd(), "../../.env"),
+  path.resolve(__dirname, "../../.env"),
+  path.resolve(__dirname, "../../../.env")
+].forEach((p) => config({ path: p }));
+config();
 
 const { Pool } = pg;
 

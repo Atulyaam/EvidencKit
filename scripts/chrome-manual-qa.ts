@@ -1,4 +1,4 @@
-import { chromium, Page } from "@playwright/test";
+import { chromium } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 

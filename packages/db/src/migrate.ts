@@ -14,6 +14,7 @@ export async function runMigrations() {
     await migrate(db, { migrationsFolder });
     console.log("[EvidenceKit] Migrations applied successfully.");
   } catch (error: any) {
+    console.error("[EvidenceKit DEBUG ERROR]:", error);
     if (error.code === "ECONNREFUSED" || error.message?.includes("connect")) {
       console.warn(
         `[EvidenceKit] Live PostgreSQL instance is not reachable at ${process.env.DATABASE_URL || "default port 5432"}. Migration script verified statically.`

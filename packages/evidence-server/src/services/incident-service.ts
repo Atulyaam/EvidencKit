@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { SessionContext, requireOwnerAuthorization } from "../authorization/index";
-import { cases, DbClient } from "@evidencekit/db";
+import { cases, workspaces, DbClient } from "@evidencekit/db";
 import { eq, and, desc, sql, like } from "drizzle-orm";
 
 export const IncidentSeveritySchema = z.enum(["critical", "high", "medium", "low", "info"]);
@@ -109,6 +109,14 @@ export class IncidentService {
 
     if (db) {
       try {
+        await db
+          .insert(workspaces)
+          .values({
+            id: incident.workspaceId,
+            name: `Workspace ${incident.workspaceId}`
+          })
+          .onConflictDoNothing();
+
         await db.insert(cases).values({
           id: incident.id,
           workspaceId: incident.workspaceId,

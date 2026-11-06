@@ -2,12 +2,21 @@ import { z } from "zod";
 import { ChainedEvent, VerificationResult, verifyEventChain } from "../chain/index";
 import { EvidenceEventSchema, StreamType, StreamTypeSchema } from "../schema/index";
 import { ArtifactMetadata, computeArtifactDigest } from "../provenance/index";
+import {
+  SignatureReceipt,
+  SignatureReceiptSchema,
+  signExportManifest,
+  verifyManifestSignature,
+  SignatureVerificationResult
+} from "../signatures/index";
 
 export const ExportManifestSchema = z.object({
   format_name: z.literal("evidencekit-export"),
-  format_version: z.literal("1.0"),
+  format_version: z.union([z.literal("1.0"), z.literal("2.0")]),
+  export_id: z.string().optional(),
   stream_id: z.string().min(1),
   stream_type: StreamTypeSchema,
+  workspace_id: z.string().optional(),
   created_at: z.string().datetime(),
   event_count: z.number().int().nonnegative(),
   first_sequence: z.number().int().nonnegative().optional(),
@@ -28,26 +37,52 @@ export type ExportManifest = z.infer<typeof ExportManifestSchema>;
 
 export interface EvidenceExportBundle {
   manifest: ExportManifest;
+  signature?: SignatureReceipt;
   events: ChainedEvent[];
   verification_report: VerificationResult;
 }
 
+export interface CreateExportBundleOptions {
+  artifacts?: ArtifactMetadata[];
+  workspaceId?: string;
+  signingKey?: {
+    privateKeyBase64: string;
+    publicKeyBase64: string;
+    keyId: string;
+  };
+}
+
 /**
  * Creates an EvidenceKit portable export bundle from chained events and artifacts.
+ * If signing key is provided, produces an Ed25519 digitally signed bundle (format v2.0).
  */
 export function createExportBundle(
   streamId: string,
   streamType: StreamType,
   events: ChainedEvent[],
-  artifacts: ArtifactMetadata[] = []
+  artifactsOrOptions: ArtifactMetadata[] | CreateExportBundleOptions = []
 ): EvidenceExportBundle {
   const verificationReport = verifyEventChain(events);
 
+  let artifacts: ArtifactMetadata[] = [];
+  let workspaceId: string | undefined;
+  let signingKey: CreateExportBundleOptions["signingKey"];
+
+  if (Array.isArray(artifactsOrOptions)) {
+    artifacts = artifactsOrOptions;
+  } else if (artifactsOrOptions && typeof artifactsOrOptions === "object") {
+    artifacts = artifactsOrOptions.artifacts || [];
+    workspaceId = artifactsOrOptions.workspaceId;
+    signingKey = artifactsOrOptions.signingKey;
+  }
+
   const manifest: ExportManifest = {
     format_name: "evidencekit-export",
-    format_version: "1.0",
+    format_version: signingKey ? "2.0" : "1.0",
+    export_id: signingKey ? `exp_${Date.now()}` : undefined,
     stream_id: streamId,
     stream_type: streamType,
+    workspace_id: workspaceId,
     created_at: new Date().toISOString(),
     event_count: events.length,
     first_sequence: events.length > 0 ? events[0]!.stream_sequence : undefined,
@@ -63,8 +98,19 @@ export function createExportBundle(
     }))
   };
 
+  let signature: SignatureReceipt | undefined;
+  if (signingKey) {
+    signature = signExportManifest(
+      manifest as unknown as Record<string, unknown>,
+      signingKey.privateKeyBase64,
+      signingKey.keyId,
+      signingKey.publicKeyBase64
+    );
+  }
+
   return {
     manifest,
+    signature,
     events,
     verification_report: verificationReport
   };
@@ -75,12 +121,14 @@ export interface ImportValidationResult {
   manifest: ExportManifest;
   events: ChainedEvent[];
   verification: VerificationResult;
+  signature_verification: SignatureVerificationResult;
   artifact_errors: string[];
   errors: string[];
 }
 
 /**
  * Validates and independently verifies an imported evidence bundle.
+ * Validates manifest, event schema, SHA-256 chain, artifacts, and Ed25519 digital signature.
  */
 export function validateImportBundle(
   bundleJson: unknown,
@@ -100,6 +148,12 @@ export function validateImportBundle(
         total_events: 0,
         verified_at: new Date().toISOString(),
         error: "Invalid bundle payload: expected object"
+      },
+      signature_verification: {
+        valid: false,
+        status: "error",
+        error: "Invalid bundle payload",
+        disclaimer: "No signature could be evaluated."
       },
       artifact_errors: [],
       errors: ["Bundle JSON must be an object"]
@@ -134,6 +188,12 @@ export function validateImportBundle(
         verified_at: new Date().toISOString(),
         error: "Events is not an array"
       },
+      signature_verification: {
+        valid: false,
+        status: "error",
+        error: "Missing events array",
+        disclaimer: "Signature could not be evaluated."
+      },
       artifact_errors: [],
       errors
     };
@@ -165,7 +225,38 @@ export function validateImportBundle(
   // 3. Independent chain verification
   const verification = verifyEventChain(events, manifest.chain_head_hash);
 
-  // 4. Validate artifact digests if files provided
+  // 4. Ed25519 Digital signature verification
+  const rawSig = raw.signature as SignatureReceipt | undefined;
+  let signatureVerification: SignatureVerificationResult;
+
+  if (rawSig) {
+    const sigParse = SignatureReceiptSchema.safeParse(rawSig);
+    if (!sigParse.success) {
+      signatureVerification = {
+        valid: false,
+        status: "invalid",
+        error: `Malformed signature receipt: ${sigParse.error.message}`,
+        disclaimer: "Signature is malformed."
+      };
+      errors.push(`Invalid signature receipt: ${sigParse.error.message}`);
+    } else {
+      signatureVerification = verifyManifestSignature(
+        manifest as unknown as Record<string, unknown>,
+        sigParse.data
+      );
+      if (!signatureVerification.valid) {
+        errors.push(`Digital signature verification failed: ${signatureVerification.error}`);
+      }
+    }
+  } else {
+    // Legacy unsigned bundle v1.0
+    signatureVerification = verifyManifestSignature(
+      manifest as unknown as Record<string, unknown>,
+      null
+    );
+  }
+
+  // 5. Validate artifact digests if files provided
   if (providedArtifacts && manifest.artifact_manifest) {
     for (const art of manifest.artifact_manifest) {
       const bytes = providedArtifacts.get(art.id);
@@ -181,13 +272,17 @@ export function validateImportBundle(
   }
 
   const valid =
-    errors.length === 0 && artifactErrors.length === 0 && verification.status === "verified";
+    errors.length === 0 &&
+    artifactErrors.length === 0 &&
+    verification.status === "verified" &&
+    (!rawSig || signatureVerification.valid);
 
   return {
     valid,
     manifest,
     events,
     verification,
+    signature_verification: signatureVerification,
     artifact_errors: artifactErrors,
     errors
   };

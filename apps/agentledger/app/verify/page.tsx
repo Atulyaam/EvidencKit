@@ -214,6 +214,52 @@ export default function VerifyBundlePage() {
               </div>
             </div>
 
+            {/* Ed25519 Digital Signature Receipt */}
+            <div className="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400 font-bold font-mono text-xs">
+                    Digital Signature:
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
+                      result.signature_verification?.status === "verified"
+                        ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                        : result.signature_verification?.status === "unsigned"
+                          ? "bg-zinc-900 text-zinc-400 border border-zinc-800"
+                          : "bg-red-950 text-red-300 border border-red-800"
+                    }`}
+                  >
+                    {result.signature_verification?.status === "verified"
+                      ? "Ed25519 Signed & Verified"
+                      : result.signature_verification?.status === "unsigned"
+                        ? "Unsigned Bundle (Legacy v1.0)"
+                        : "Signature Invalid / Failed"}
+                  </span>
+                </div>
+                {result.signature_verification?.keyId && (
+                  <span className="text-[11px] font-mono text-purple-400">
+                    Key ID: {result.signature_verification.keyId}
+                  </span>
+                )}
+              </div>
+
+              {result.signature_verification?.fingerprint && (
+                <div className="text-[11px] font-mono text-zinc-400">
+                  <span className="text-zinc-500">Public Key Fingerprint: </span>
+                  <span className="text-cyan-400 break-all">
+                    {result.signature_verification.fingerprint}
+                  </span>
+                </div>
+              )}
+
+              {result.signature_verification?.disclaimer && (
+                <p className="text-[10px] text-zinc-500 italic pt-1 border-t border-zinc-800/60">
+                  {result.signature_verification.disclaimer}
+                </p>
+              )}
+            </div>
+
             {/* Error List if Failed */}
             {(!result.valid || (result.errors && result.errors.length > 0)) && (
               <div className="space-y-2 pt-2 border-t border-red-900/40">

@@ -10,3 +10,4 @@ export * from "./correlation/index";
 export * from "./policy/index";
 export * from "./graph/index";
 export * from "./quality/index";
+export * from "./signatures/index";

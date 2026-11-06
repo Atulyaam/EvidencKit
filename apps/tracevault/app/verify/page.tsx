@@ -180,6 +180,51 @@ export default function VerifyBundlePage() {
               </div>
             )}
 
+            {/* Ed25519 Digital Signature Receipt */}
+            <div className="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-400 font-bold font-mono">Digital Signature:</span>
+                  <Badge
+                    variant={
+                      result.signature_verification?.status === "verified"
+                        ? "success"
+                        : result.signature_verification?.status === "unsigned"
+                          ? "outline"
+                          : "danger"
+                    }
+                    className="text-[10px] font-mono uppercase"
+                  >
+                    {result.signature_verification?.status === "verified"
+                      ? "Ed25519 Signed & Verified"
+                      : result.signature_verification?.status === "unsigned"
+                        ? "Unsigned Bundle (Legacy v1.0)"
+                        : "Signature Invalid / Failed"}
+                  </Badge>
+                </div>
+                {result.signature_verification?.keyId && (
+                  <span className="text-[11px] font-mono text-purple-400">
+                    Key: {result.signature_verification.keyId}
+                  </span>
+                )}
+              </div>
+
+              {result.signature_verification?.fingerprint && (
+                <div className="text-[11px] font-mono text-zinc-400">
+                  <span className="text-zinc-500">Public Key Fingerprint: </span>
+                  <span className="text-cyan-400 break-all">
+                    {result.signature_verification.fingerprint}
+                  </span>
+                </div>
+              )}
+
+              {result.signature_verification?.disclaimer && (
+                <p className="text-[10px] text-zinc-500 italic pt-1 border-t border-zinc-800/60">
+                  {result.signature_verification.disclaimer}
+                </p>
+              )}
+            </div>
+
             {/* Error or Tamper Alert */}
             {(!result.valid || result.verification?.status !== "verified") && (
               <div className="p-4 rounded-lg bg-rose-950/40 border border-rose-900/60 text-rose-300 space-y-2">

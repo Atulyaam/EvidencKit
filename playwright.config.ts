@@ -21,10 +21,18 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] }
     }
   ],
-  webServer: {
-    command: "pnpm --filter tracevault start -p 3001",
-    url: "http://localhost:3001/api/health",
-    reuseExistingServer: !process.env.CI,
-    timeout: 60000
-  }
+  webServer: [
+    {
+      command: "pnpm --filter tracevault start -p 3001",
+      url: "http://localhost:3001/api/health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 60000
+    },
+    {
+      command: "pnpm --filter agentledger start -p 3002",
+      url: "http://localhost:3002/api/health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 60000
+    }
+  ]
 });

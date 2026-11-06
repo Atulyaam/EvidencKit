@@ -1,4 +1,4 @@
-import { normalizeEvent, EvidenceEvent } from "@evidencekit/core";
+import { normalizeEvent, EvidenceEvent, sanitizeData } from "@evidencekit/core";
 import { ToolCallContext, ApprovalDecision, FileDiffMetadata } from "./types";
 
 export class AgentSessionRecorder {
@@ -11,7 +11,9 @@ export class AgentSessionRecorder {
     this.agentName = agentName;
   }
 
-  public recordSessionCreated(goal: string): EvidenceEvent {
+  public recordSessionCreated(goal: string, metadata?: Record<string, unknown>): EvidenceEvent {
+    const safeGoal = sanitizeData(goal).sanitized;
+    const safeMeta = metadata ? sanitizeData(metadata).sanitized : {};
     return normalizeEvent({
       stream_type: "agentledger.session",
       stream_id: this.sessionId,
@@ -29,12 +31,37 @@ export class AgentSessionRecorder {
       },
       severity: "info",
       attributes: {
-        goal
+        goal: safeGoal,
+        metadata: safeMeta
+      }
+    });
+  }
+
+  public recordRunStarted(): EvidenceEvent {
+    return normalizeEvent({
+      stream_type: "agentledger.session",
+      stream_id: this.sessionId,
+      event_name: "agent.run.started",
+      occurred_at: new Date().toISOString(),
+      time_confidence: "source_timestamp",
+      source: {
+        system: "agent-runtime",
+        adapter: "agent-sdk",
+        adapter_version: this.adapterVersion
+      },
+      actor: {
+        type: "agent",
+        id: this.agentName
+      },
+      severity: "info",
+      attributes: {
+        status: "running"
       }
     });
   }
 
   public recordToolStarted(context: ToolCallContext): EvidenceEvent {
+    const safeArgs = sanitizeData(context.arguments).sanitized as Record<string, unknown>;
     return normalizeEvent({
       stream_type: "agentledger.session",
       stream_id: this.sessionId,
@@ -55,13 +82,14 @@ export class AgentSessionRecorder {
       attributes: {
         tool_call_id: context.toolCallId,
         tool_name: context.toolName,
-        arguments: context.arguments,
+        arguments: safeArgs,
         requires_approval: context.requiresApproval ?? false
       }
     });
   }
 
   public recordApprovalRequested(context: ToolCallContext): EvidenceEvent {
+    const safeArgs = sanitizeData(context.arguments).sanitized as Record<string, unknown>;
     return normalizeEvent({
       stream_type: "agentledger.session",
       stream_id: this.sessionId,
@@ -82,12 +110,13 @@ export class AgentSessionRecorder {
       attributes: {
         tool_call_id: context.toolCallId,
         tool_name: context.toolName,
-        arguments: context.arguments
+        arguments: safeArgs
       }
     });
   }
 
   public recordApprovalDecided(decision: ApprovalDecision): EvidenceEvent {
+    const safeReason = decision.reason ? sanitizeData(decision.reason).sanitized : null;
     return normalizeEvent({
       stream_type: "agentledger.session",
       stream_id: this.sessionId,
@@ -108,12 +137,13 @@ export class AgentSessionRecorder {
       attributes: {
         tool_call_id: decision.toolCallId,
         decision: decision.decision,
-        reason: decision.reason
+        reason: safeReason
       }
     });
   }
 
   public recordToolCompleted(toolCallId: string, result: Record<string, unknown>): EvidenceEvent {
+    const safeResult = sanitizeData(result).sanitized as Record<string, unknown>;
     return normalizeEvent({
       stream_type: "agentledger.session",
       stream_id: this.sessionId,
@@ -133,7 +163,33 @@ export class AgentSessionRecorder {
       correlation_ids: [toolCallId],
       attributes: {
         tool_call_id: toolCallId,
-        result
+        result: safeResult
+      }
+    });
+  }
+
+  public recordToolFailed(toolCallId: string, error: string): EvidenceEvent {
+    const safeError = sanitizeData(error).sanitized as string;
+    return normalizeEvent({
+      stream_type: "agentledger.session",
+      stream_id: this.sessionId,
+      event_name: "agent.tool.failed",
+      occurred_at: new Date().toISOString(),
+      time_confidence: "source_timestamp",
+      source: {
+        system: "agent-runtime",
+        adapter: "agent-sdk",
+        adapter_version: this.adapterVersion
+      },
+      actor: {
+        type: "agent",
+        id: this.agentName
+      },
+      severity: "warning",
+      correlation_ids: [toolCallId],
+      attributes: {
+        tool_call_id: toolCallId,
+        error: safeError
       }
     });
   }
@@ -166,6 +222,7 @@ export class AgentSessionRecorder {
   }
 
   public recordRunCompleted(summary: string): EvidenceEvent {
+    const safeSummary = sanitizeData(summary).sanitized as string;
     return normalizeEvent({
       stream_type: "agentledger.session",
       stream_id: this.sessionId,
@@ -183,7 +240,31 @@ export class AgentSessionRecorder {
       },
       severity: "info",
       attributes: {
-        summary
+        summary: safeSummary
+      }
+    });
+  }
+
+  public recordRunFailed(error: string): EvidenceEvent {
+    const safeError = sanitizeData(error).sanitized as string;
+    return normalizeEvent({
+      stream_type: "agentledger.session",
+      stream_id: this.sessionId,
+      event_name: "agent.run.failed",
+      occurred_at: new Date().toISOString(),
+      time_confidence: "source_timestamp",
+      source: {
+        system: "agent-runtime",
+        adapter: "agent-sdk",
+        adapter_version: this.adapterVersion
+      },
+      actor: {
+        type: "agent",
+        id: this.agentName
+      },
+      severity: "critical",
+      attributes: {
+        error: safeError
       }
     });
   }

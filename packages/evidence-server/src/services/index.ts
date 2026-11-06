@@ -3,3 +3,8 @@ export * from "./incident-service";
 export * from "./evidence-upload-service";
 export * from "./report-service";
 export * from "./export-bundle-service";
+export * from "./agent-session-service";
+export * from "./agent-approval-service";
+export * from "./agent-sandbox-service";
+export * from "./agent-demo-service";
+export * from "./agent-replay-service";

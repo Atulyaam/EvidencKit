@@ -2,13 +2,13 @@
   "manifest": {
     "format_name": "evidencekit-export",
     "format_version": "1.0",
-    "stream_id": "case_6b59168d1a66",
+    "stream_id": "case_11b8d1b91d10",
     "stream_type": "tracevault.case",
-    "created_at": "2026-11-05T16:47:11.589Z",
+    "created_at": "2026-11-06T06:18:05.720Z",
     "event_count": 5,
     "first_sequence": 0,
     "last_sequence": 4,
-    "chain_head_hash": "9c07f7d3deda75d398f0299144e44db23b1d93d4ae83fad027f6ba0ef880a311",
+    "chain_head_hash": "ad453376095b9ed300b9a74e781987b5719a61ce448de014c12ed40d78fab8d2",
     "hash_algorithm": "sha-256",
     "canonicalization": "RFC8785-JCS",
     "artifact_manifest": []
@@ -17,12 +17,12 @@
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "f946fbe2-eb19-4ddd-b2ee-18d86df63292",
+        "event_id": "eb09dde1-a934-471b-aa42-510867684a36",
         "stream_type": "tracevault.case",
-        "stream_id": "case_6b59168d1a66",
+        "stream_id": "case_11b8d1b91d10",
         "event_name": "app.log.info",
         "occurred_at": "2026-11-05T14:02:10.000Z",
-        "observed_at": "2026-11-05T16:47:10.967Z",
+        "observed_at": "2026-11-06T06:18:04.996Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "api-gateway",
@@ -49,17 +49,17 @@
       },
       "stream_sequence": 0,
       "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "event_hash": "bf27351dba554b538974e4db145e8781ddd43522411aeb3eba23748d29a138fd"
+      "event_hash": "dad3000b49c61b57026928fd7f9488348afc6f62a1741e425f755755c6c641f2"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "f0abf46f-e13a-4556-99c0-5301295d502e",
+        "event_id": "43216f21-ba97-4d97-a2a0-c0556f6b49e0",
         "stream_type": "tracevault.case",
-        "stream_id": "case_6b59168d1a66",
+        "stream_id": "case_11b8d1b91d10",
         "event_name": "app.log.warning",
         "occurred_at": "2026-11-05T14:02:15.000Z",
-        "observed_at": "2026-11-05T16:47:10.967Z",
+        "observed_at": "2026-11-06T06:18:04.996Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -86,18 +86,18 @@
         ]
       },
       "stream_sequence": 1,
-      "previous_hash": "bf27351dba554b538974e4db145e8781ddd43522411aeb3eba23748d29a138fd",
-      "event_hash": "30e24f863278e27d9b88921ccd0756783efd8f268c54c60720f3613b4c3d8bd0"
+      "previous_hash": "dad3000b49c61b57026928fd7f9488348afc6f62a1741e425f755755c6c641f2",
+      "event_hash": "57924f1a5748c88bd2c1a5cb9e24ac3b54de24b14aaaa25063ce7fb55c91b77a"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "1bc7b567-88be-4a67-a69a-e3238f37e0ba",
+        "event_id": "a1fdbd8d-9402-4298-ba19-7b6dede28f2b",
         "stream_type": "tracevault.case",
-        "stream_id": "case_6b59168d1a66",
+        "stream_id": "case_11b8d1b91d10",
         "event_name": "app.log.error",
         "occurred_at": "2026-11-05T14:02:18.000Z",
-        "observed_at": "2026-11-05T16:47:10.967Z",
+        "observed_at": "2026-11-06T06:18:04.996Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -121,18 +121,18 @@
         ]
       },
       "stream_sequence": 2,
-      "previous_hash": "30e24f863278e27d9b88921ccd0756783efd8f268c54c60720f3613b4c3d8bd0",
-      "event_hash": "f4e3b0f24b71b8e83b8a970cae8bee747152649b7d2057ee9d3b07c3bd0b6920"
+      "previous_hash": "57924f1a5748c88bd2c1a5cb9e24ac3b54de24b14aaaa25063ce7fb55c91b77a",
+      "event_hash": "a3bfada7cac9ded87128b228527c4544dd87ca8903028f7d8c2e9d5f9e921687"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "bd160a44-3811-4040-87e6-10c0bd8a8cbb",
+        "event_id": "c4c46c29-bb77-4980-8e27-c9b4e5877a3a",
         "stream_type": "tracevault.case",
-        "stream_id": "case_6b59168d1a66",
+        "stream_id": "case_11b8d1b91d10",
         "event_name": "app.log.critical",
         "occurred_at": "2026-11-05T14:02:22.000Z",
-        "observed_at": "2026-11-05T16:47:10.967Z",
+        "observed_at": "2026-11-06T06:18:04.996Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "api-gateway",
@@ -156,18 +156,18 @@
         ]
       },
       "stream_sequence": 3,
-      "previous_hash": "f4e3b0f24b71b8e83b8a970cae8bee747152649b7d2057ee9d3b07c3bd0b6920",
-      "event_hash": "5bd6c598a15e8ab0e2f32dbcd0528648746aec80865fb4f2c2c13d640b094ce3"
+      "previous_hash": "a3bfada7cac9ded87128b228527c4544dd87ca8903028f7d8c2e9d5f9e921687",
+      "event_hash": "415f346bb2156167bf6c4ecd113876ad224a03b70b2a3b665a94a206a61584c6"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "f16015f0-c352-4e75-aeaa-cc4f1d97e470",
+        "event_id": "cf51af4e-1742-423e-8f9e-439eaeda3a9f",
         "stream_type": "tracevault.case",
-        "stream_id": "case_6b59168d1a66",
+        "stream_id": "case_11b8d1b91d10",
         "event_name": "app.log.error",
         "occurred_at": "2026-11-05T14:03:00.000Z",
-        "observed_at": "2026-11-05T16:47:10.967Z",
+        "observed_at": "2026-11-06T06:18:04.996Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -190,17 +190,17 @@
         ]
       },
       "stream_sequence": 4,
-      "previous_hash": "5bd6c598a15e8ab0e2f32dbcd0528648746aec80865fb4f2c2c13d640b094ce3",
-      "event_hash": "9c07f7d3deda75d398f0299144e44db23b1d93d4ae83fad027f6ba0ef880a311"
+      "previous_hash": "415f346bb2156167bf6c4ecd113876ad224a03b70b2a3b665a94a206a61584c6",
+      "event_hash": "ad453376095b9ed300b9a74e781987b5719a61ce448de014c12ed40d78fab8d2"
     }
   ],
   "verification_report": {
     "status": "verified",
-    "stream_id": "case_6b59168d1a66",
+    "stream_id": "case_11b8d1b91d10",
     "total_events": 5,
     "first_sequence": 0,
     "last_sequence": 4,
-    "head_hash": "9c07f7d3deda75d398f0299144e44db23b1d93d4ae83fad027f6ba0ef880a311",
-    "verified_at": "2026-11-05T16:47:11.588Z"
+    "head_hash": "ad453376095b9ed300b9a74e781987b5719a61ce448de014c12ed40d78fab8d2",
+    "verified_at": "2026-11-06T06:18:05.719Z"
   }
 }

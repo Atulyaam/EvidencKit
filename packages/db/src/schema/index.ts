@@ -55,10 +55,15 @@ export const agentSessions = pgTable(
     agentName: varchar("agent_name", { length: 128 }).notNull(),
     goal: text("goal").notNull(),
     status: varchar("status", { length: 64 }).notNull().default("running"),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
+    metadata: jsonb("metadata"),
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
   },
   (table) => ({
-    workspaceIdx: index("agent_sessions_workspace_idx").on(table.workspaceId)
+    workspaceIdx: index("agent_sessions_workspace_idx").on(table.workspaceId),
+    statusIdx: index("agent_sessions_status_idx").on(table.status)
   })
 );
 
@@ -139,12 +144,18 @@ export const agentApprovals = pgTable(
       .references(() => agentSessions.id, { onDelete: "cascade" })
       .notNull(),
     toolCallId: varchar("tool_call_id", { length: 128 }).notNull(),
-    decision: varchar("decision", { length: 64 }).notNull(),
-    actorId: varchar("actor_id", { length: 128 }).notNull(),
-    decidedAt: timestamp("decided_at", { withTimezone: true }).defaultNow().notNull()
+    toolName: varchar("tool_name", { length: 128 }).notNull().default("unknown"),
+    operation: text("operation"),
+    arguments: jsonb("arguments"),
+    decision: varchar("decision", { length: 64 }).notNull().default("pending"),
+    actorId: varchar("actor_id", { length: 128 }).notNull().default("pending"),
+    reason: text("reason"),
+    requestedAt: timestamp("requested_at", { withTimezone: true }).defaultNow().notNull(),
+    decidedAt: timestamp("decided_at", { withTimezone: true })
   },
   (table) => ({
-    sessionIdx: index("agent_approvals_session_idx").on(table.sessionId)
+    sessionIdx: index("agent_approvals_session_idx").on(table.sessionId),
+    decisionIdx: index("agent_approvals_decision_idx").on(table.decision)
   })
 );
 

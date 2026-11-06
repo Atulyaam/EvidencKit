@@ -20,6 +20,7 @@ This guide documents the setup, configuration, and verification of PostgreSQL fo
 If you are developing on Windows with WSL2:
 
 1. **Install PostgreSQL in WSL2:**
+
    ```bash
    wsl -d Ubuntu -u root apt-get update
    wsl -d Ubuntu -u root apt-get install -y postgresql postgresql-contrib
@@ -27,16 +28,20 @@ If you are developing on Windows with WSL2:
 
 2. **Configure PostgreSQL for External Connectivity:**
    Edit `/etc/postgresql/<version>/main/postgresql.conf`:
+
    ```conf
    listen_addresses = '*'
    ```
+
    Edit `/etc/postgresql/<version>/main/pg_hba.conf`:
+
    ```conf
    # Allow local development connections
    host all all all trust
    ```
 
 3. **Start the Service & Set Up Database:**
+
    ```bash
    wsl -d Ubuntu -u root service postgresql start
    wsl -d Ubuntu -u postgres psql -c "CREATE USER postgres WITH PASSWORD 'postgres' SUPERUSER;"
@@ -44,6 +49,7 @@ If you are developing on Windows with WSL2:
    ```
 
 4. **Determine the WSL2 Host IP:**
+
    ```powershell
    wsl -d Ubuntu hostname -I
    # e.g., 172.31.88.58
@@ -53,7 +59,7 @@ If you are developing on Windows with WSL2:
    ```env
    DATABASE_URL=postgresql://postgres:postgres@172.31.88.58:5432/evidencekit
    ```
-   *(Replace `172.31.88.58` with your actual WSL2 IP, or `localhost` if mirrored networking is enabled)*.
+   _(Replace `172.31.88.58` with your actual WSL2 IP, or `localhost` if mirrored networking is enabled)_.
 
 ---
 
@@ -71,6 +77,7 @@ docker run --name evidencekit-postgres \
 ```
 
 Set your `.env`:
+
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/evidencekit
 ```
@@ -108,19 +115,25 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/evidencekit
 Once `DATABASE_URL` is set in `.env`:
 
 ### Run Migrations
+
 Applies Drizzle schema migrations to initialize tables (`workspaces`, `users`, `cases`, `events`, `chain_heads`, `evidence_artifacts`, etc.):
+
 ```bash
 pnpm db:migrate
 ```
 
 ### Seed Demo Data (Optional)
+
 Populates initial sample workspaces, users, and incidents for evaluation:
+
 ```bash
 pnpm db:seed
 ```
 
 ### Generate New Migrations (Developers)
+
 When schema changes are made in `packages/db/src/schema/index.ts`:
+
 ```bash
 pnpm db:generate
 ```
@@ -130,11 +143,13 @@ pnpm db:generate
 ## 4. Verification & Health Check
 
 Run the automated PostgreSQL verification test suite:
+
 ```bash
 pnpm exec vitest run tests/postgres-persistence.test.ts
 ```
 
 Expected output:
+
 ```text
 ✓ tests/postgres-persistence.test.ts (1 test) 116ms
 Test Files  1 passed (1)
@@ -145,10 +160,10 @@ Tests  1 passed (1)
 
 ## 5. Troubleshooting Common Issues
 
-| Issue | Cause | Solution |
-|---|---|---|
-| `ECONNREFUSED 127.0.0.1:5432` | PostgreSQL is not running or listening on localhost | Verify service status: `wsl -d Ubuntu service postgresql status`. Check port listening: `ss -tlpn`. |
-| WSL2 IP unreachable | WSL2 uses dynamic NAT address by default | Obtain current IP with `wsl hostname -I` and update `.env`, or configure Windows port forwarding / WSL mirrored networking (`.wslconfig`). |
-| Foreign key constraint violation on `cases` | `workspace_id` does not exist in `workspaces` table | Ensure the workspace row exists prior to case insertion (EvidenceKit handles this with automatic upsert in `IncidentService`). |
-| Node process hanging after DB queries | Open `pg.Pool` connection pool handles | Ensure `await pool.end()` is invoked in scripts or `afterAll()` in test suites. |
-| Password authentication failed for user | `pg_hba.conf` requires md5/scram or wrong password | Update password or configure `trust` for local loopback in `pg_hba.conf`, then reload `service postgresql reload`. |
+| Issue                                       | Cause                                               | Solution                                                                                                                                   |
+| ------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ECONNREFUSED 127.0.0.1:5432`               | PostgreSQL is not running or listening on localhost | Verify service status: `wsl -d Ubuntu service postgresql status`. Check port listening: `ss -tlpn`.                                        |
+| WSL2 IP unreachable                         | WSL2 uses dynamic NAT address by default            | Obtain current IP with `wsl hostname -I` and update `.env`, or configure Windows port forwarding / WSL mirrored networking (`.wslconfig`). |
+| Foreign key constraint violation on `cases` | `workspace_id` does not exist in `workspaces` table | Ensure the workspace row exists prior to case insertion (EvidenceKit handles this with automatic upsert in `IncidentService`).             |
+| Node process hanging after DB queries       | Open `pg.Pool` connection pool handles              | Ensure `await pool.end()` is invoked in scripts or `afterAll()` in test suites.                                                            |
+| Password authentication failed for user     | `pg_hba.conf` requires md5/scram or wrong password  | Update password or configure `trust` for local loopback in `pg_hba.conf`, then reload `service postgresql reload`.                         |

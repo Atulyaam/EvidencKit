@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-  Button,
-  Input
-} from "@evidencekit/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Input } from "@evidencekit/ui";
 import { ChainedEvent } from "@evidencekit/core";
 import {
   Search,
@@ -24,11 +16,7 @@ import {
   Clock
 } from "lucide-react";
 
-export default function SessionTimelinePage({
-  params
-}: {
-  params: { id: string };
-}) {
+export default function SessionTimelinePage({ params }: { params: { id: string } }) {
   const [events, setEvents] = useState<ChainedEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<ChainedEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -180,8 +168,8 @@ export default function SessionTimelinePage({
                           </span>
                         </div>
                         <p className="text-[11px] text-zinc-400 font-mono mt-0.5">
-                          {ev.occurred_at ? new Date(ev.occurred_at).toLocaleTimeString() : "N/A"} • Actor:{" "}
-                          {ev.actor?.id || "agent"}
+                          {ev.occurred_at ? new Date(ev.occurred_at).toLocaleTimeString() : "N/A"} •
+                          Actor: {ev.actor?.id || "agent"}
                         </p>
                       </div>
                     </div>
@@ -191,8 +179,8 @@ export default function SessionTimelinePage({
                         ev.severity === "critical"
                           ? "danger"
                           : ev.severity === "warning"
-                          ? "warning"
-                          : "outline"
+                            ? "warning"
+                            : "outline"
                       }
                       className="text-[9px] uppercase font-mono px-1.5 py-0"
                     >
@@ -202,12 +190,37 @@ export default function SessionTimelinePage({
 
                   {/* Attribute summary line */}
                   <div className="mt-2.5 pt-2 border-t border-zinc-800/60 text-xs text-zinc-300 font-mono truncate">
-                    {Boolean(attrs.tool_name) && <span>Tool: <strong className="text-purple-300">{String(attrs.tool_name)}</strong> </span>}
-                    {Boolean(attrs.path) && <span>Path: <strong className="text-emerald-300">{String(attrs.path)}</strong> </span>}
-                    {Boolean(attrs.decision) && <span>Decision: <strong className="text-cyan-300">{String(attrs.decision)}</strong> </span>}
-                    {Boolean(attrs.goal) && <span className="text-zinc-300">Goal: {String(attrs.goal).slice(0, 80)}...</span>}
-                    {Boolean(attrs.summary) && <span className="text-zinc-300">Summary: {String(attrs.summary).slice(0, 80)}...</span>}
-                    {Boolean(attrs.error) && <span className="text-red-400">Error: {String(attrs.error)}</span>}
+                    {Boolean(attrs.tool_name) && (
+                      <span>
+                        Tool:{" "}
+                        <strong className="text-purple-300">{String(attrs.tool_name)}</strong>{" "}
+                      </span>
+                    )}
+                    {Boolean(attrs.path) && (
+                      <span>
+                        Path:{" "}
+                        <strong className="text-emerald-300">{String(attrs.path)}</strong>{" "}
+                      </span>
+                    )}
+                    {Boolean(attrs.decision) && (
+                      <span>
+                        Decision:{" "}
+                        <strong className="text-cyan-300">{String(attrs.decision)}</strong>{" "}
+                      </span>
+                    )}
+                    {Boolean(attrs.goal) && (
+                      <span className="text-zinc-300">
+                        Goal: {String(attrs.goal).slice(0, 80)}...
+                      </span>
+                    )}
+                    {Boolean(attrs.summary) && (
+                      <span className="text-zinc-300">
+                        Summary: {String(attrs.summary).slice(0, 80)}...
+                      </span>
+                    )}
+                    {Boolean(attrs.error) && (
+                      <span className="text-red-400">Error: {String(attrs.error)}</span>
+                    )}
                   </div>
                 </div>
               );
@@ -223,7 +236,8 @@ export default function SessionTimelinePage({
                 <CardHeader className="pb-3 border-b border-zinc-800">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-purple-400" /> Provenance & Hash Inspector
+                      <ShieldCheck className="w-4 h-4 text-purple-400" /> Provenance & Hash
+                      Inspector
                     </CardTitle>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">
                       RFC8785 Sealed
@@ -240,7 +254,9 @@ export default function SessionTimelinePage({
                     </div>
                     <div className="flex justify-between py-1 border-b border-zinc-800/60">
                       <span className="text-zinc-500">Event Type:</span>
-                      <span className="text-purple-300 font-semibold">{selectedEvent.event.event_name}</span>
+                      <span className="text-purple-300 font-semibold">
+                        {selectedEvent.event.event_name}
+                      </span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-zinc-800/60">
                       <span className="text-zinc-500">Sequence Index:</span>
@@ -271,19 +287,25 @@ export default function SessionTimelinePage({
                   {/* Cryptographic Hashes */}
                   <div className="space-y-2">
                     <div className="p-2.5 rounded bg-zinc-950 border border-zinc-800 font-mono text-[11px] space-y-1">
-                      <span className="text-zinc-500 block text-[10px] uppercase">Event Hash (SHA-256)</span>
+                      <span className="text-zinc-500 block text-[10px] uppercase">
+                        Event Hash (SHA-256)
+                      </span>
                       <span className="text-purple-400 break-all">{selectedEvent.event_hash}</span>
                     </div>
 
                     <div className="p-2.5 rounded bg-zinc-950 border border-zinc-800 font-mono text-[11px] space-y-1">
-                      <span className="text-zinc-500 block text-[10px] uppercase">Previous Link Hash</span>
+                      <span className="text-zinc-500 block text-[10px] uppercase">
+                        Previous Link Hash
+                      </span>
                       <span className="text-zinc-400 break-all">{selectedEvent.previous_hash}</span>
                     </div>
                   </div>
 
                   {/* Attributes JSON */}
                   <div className="space-y-1.5">
-                    <span className="text-zinc-400 font-mono text-[11px] uppercase">Event Payload Attributes:</span>
+                    <span className="text-zinc-400 font-mono text-[11px] uppercase">
+                      Event Payload Attributes:
+                    </span>
                     <pre className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] font-mono text-zinc-300 overflow-x-auto max-h-64 whitespace-pre-wrap">
                       {JSON.stringify(selectedEvent.event.attributes, null, 2)}
                     </pre>
@@ -292,7 +314,8 @@ export default function SessionTimelinePage({
               </Card>
             ) : (
               <Card className="bg-zinc-900/40 border-zinc-800 text-center p-8 text-zinc-500 text-xs">
-                Select an event from the timeline to inspect its cryptographic provenance and payload.
+                Select an event from the timeline to inspect its cryptographic provenance and
+                payload.
               </Card>
             )}
           </div>

@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-  Button
-} from "@evidencekit/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, Button } from "@evidencekit/ui";
 import {
   Play,
   Pause,
@@ -74,11 +67,7 @@ interface ReplayStep {
   cumulativeDurationMs: number;
 }
 
-export default function SessionReplayPage({
-  params
-}: {
-  params: { id: string };
-}) {
+export default function SessionReplayPage({ params }: { params: { id: string } }) {
   const [steps, setSteps] = useState<ReplayStep[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -147,7 +136,9 @@ export default function SessionReplayPage({
   };
 
   if (loading) {
-    return <div className="text-zinc-500 text-sm py-12 text-center">Loading session replay state...</div>;
+    return (
+      <div className="text-zinc-500 text-sm py-12 text-center">Loading session replay state...</div>
+    );
   }
 
   if (steps.length === 0) {
@@ -174,8 +165,9 @@ export default function SessionReplayPage({
         <div className="flex items-center gap-2.5">
           <Info className="w-4 h-4 text-purple-400 shrink-0" />
           <span className="text-xs text-purple-200">
-            <strong>Deterministic Forensic Replay:</strong> Reconstructing historical states directly from the
-            immutable EvidenceKit RFC8785 hash chain. <em>No tools or file modifications are re-executed.</em>
+            <strong>Deterministic Forensic Replay:</strong> Reconstructing historical states
+            directly from the immutable EvidenceKit RFC8785 hash chain.{" "}
+            <em>No tools or file modifications are re-executed.</em>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -201,8 +193,8 @@ export default function SessionReplayPage({
                   currentStep.sessionStatus === "completed"
                     ? "success"
                     : currentStep.sessionStatus === "awaiting_approval"
-                    ? "warning"
-                    : "outline"
+                      ? "warning"
+                      : "outline"
                 }
                 className="text-[10px] uppercase font-mono px-2 py-0.5"
               >
@@ -323,12 +315,16 @@ export default function SessionReplayPage({
               </div>
               <div className="flex justify-between py-1 border-b border-zinc-800/60">
                 <span className="text-zinc-500">Occurred:</span>
-                <span className="text-zinc-300">{new Date(currentEvent.occurred_at).toLocaleTimeString()}</span>
+                <span className="text-zinc-300">
+                  {new Date(currentEvent.occurred_at).toLocaleTimeString()}
+                </span>
               </div>
 
               <div className="p-2 rounded bg-zinc-950 border border-zinc-800 text-[11px] space-y-1">
                 <span className="text-zinc-500 block text-[10px] uppercase">Event Hash</span>
-                <span className="text-purple-400 break-all">{currentStep.currentEvent.event_hash}</span>
+                <span className="text-purple-400 break-all">
+                  {currentStep.currentEvent.event_hash}
+                </span>
               </div>
 
               <div className="space-y-1">
@@ -348,7 +344,8 @@ export default function SessionReplayPage({
             <CardHeader className="pb-3 border-b border-zinc-800">
               <CardTitle className="text-sm font-semibold flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-blue-400" /> Active Tool Calls ({toolCallsList.length})
+                  <Terminal className="w-4 h-4 text-blue-400" /> Active Tool Calls (
+                  {toolCallsList.length})
                 </span>
                 <span className="text-xs font-mono text-zinc-500 font-normal">
                   Total Duration: {currentStep.cumulativeDurationMs}ms
@@ -371,10 +368,10 @@ export default function SessionReplayPage({
                           tc.status === "completed"
                             ? "success"
                             : tc.status === "failed" || tc.status === "rejected"
-                            ? "danger"
-                            : tc.status === "awaiting_approval"
-                            ? "warning"
-                            : "outline"
+                              ? "danger"
+                              : tc.status === "awaiting_approval"
+                                ? "warning"
+                                : "outline"
                         }
                         className="text-[9px] uppercase px-1.5 py-0"
                       >
@@ -397,9 +394,7 @@ export default function SessionReplayPage({
                       </div>
                     )}
                     {tc.error && (
-                      <div className="text-[11px] text-red-400 truncate">
-                        Error: {tc.error}
-                      </div>
+                      <div className="text-[11px] text-red-400 truncate">Error: {tc.error}</div>
                     )}
                   </div>
                 ))
@@ -411,7 +406,8 @@ export default function SessionReplayPage({
           <Card className="bg-zinc-900/50 border-zinc-800">
             <CardHeader className="pb-3 border-b border-zinc-800">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-amber-400" /> Human Approval Gates ({approvalsList.length})
+                <ShieldCheck className="w-4 h-4 text-amber-400" /> Human Approval Gates (
+                {approvalsList.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-2.5">
@@ -430,8 +426,8 @@ export default function SessionReplayPage({
                           appr.decision === "approved"
                             ? "success"
                             : appr.decision === "denied"
-                            ? "danger"
-                            : "warning"
+                              ? "danger"
+                              : "warning"
                         }
                         className="text-[9px] uppercase px-1.5 py-0"
                       >
@@ -439,9 +435,7 @@ export default function SessionReplayPage({
                       </Badge>
                     </div>
                     {appr.reason && (
-                      <div className="text-[11px] text-zinc-400">
-                        Reason: {appr.reason}
-                      </div>
+                      <div className="text-[11px] text-zinc-400">Reason: {appr.reason}</div>
                     )}
                   </div>
                 ))
@@ -453,12 +447,15 @@ export default function SessionReplayPage({
           <Card className="bg-zinc-900/50 border-zinc-800">
             <CardHeader className="pb-3 border-b border-zinc-800">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <FileCode className="w-4 h-4 text-emerald-400" /> Files Modified in Sandbox ({filesList.length})
+                <FileCode className="w-4 h-4 text-emerald-400" /> Files Modified in Sandbox (
+                {filesList.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-2.5">
               {filesList.length === 0 ? (
-                <p className="text-zinc-500 text-xs">No files modified at this point in the replay.</p>
+                <p className="text-zinc-500 text-xs">
+                  No files modified at this point in the replay.
+                </p>
               ) : (
                 filesList.map((f) => (
                   <div
@@ -473,7 +470,10 @@ export default function SessionReplayPage({
                     </div>
 
                     <div className="text-[10px] text-zinc-400 space-y-0.5">
-                      <div>Old Hash: {f.oldSha256 ? `${f.oldSha256.slice(0, 16)}...` : "None (new file)"}</div>
+                      <div>
+                        Old Hash:{" "}
+                        {f.oldSha256 ? `${f.oldSha256.slice(0, 16)}...` : "None (new file)"}
+                      </div>
                       <div>New Hash: {f.newSha256 ? `${f.newSha256.slice(0, 16)}...` : "None"}</div>
                     </div>
 

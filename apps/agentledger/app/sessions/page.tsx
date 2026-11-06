@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  Badge,
-  Button,
-  Input
-} from "@evidencekit/ui";
+import { Card, CardContent, Badge, Button, Input } from "@evidencekit/ui";
 import {
   PlusCircle,
   Search,
@@ -132,7 +126,9 @@ export default function SessionsListPage() {
             <div className="p-12 text-center text-zinc-500 text-sm">Loading sessions...</div>
           ) : sessions.length === 0 ? (
             <div className="p-12 text-center space-y-2">
-              <p className="text-zinc-400 text-sm">No agent sessions matched your filter criteria.</p>
+              <p className="text-zinc-400 text-sm">
+                No agent sessions matched your filter criteria.
+              </p>
               <Button
                 variant="outline"
                 size="sm"
@@ -155,7 +151,9 @@ export default function SessionsListPage() {
                   <div className="space-y-1.5 flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <Bot className="w-4 h-4 text-purple-400" />
-                      <span className="font-mono text-xs text-purple-400 font-semibold">{s.id}</span>
+                      <span className="font-mono text-xs text-purple-400 font-semibold">
+                        {s.id}
+                      </span>
                       <span className="text-zinc-600">•</span>
                       <span className="text-xs font-medium text-zinc-300">{s.agentName}</span>
                       <Badge
@@ -163,10 +161,10 @@ export default function SessionsListPage() {
                           s.status === "completed"
                             ? "success"
                             : s.status === "running"
-                            ? "default"
-                            : s.status === "awaiting_approval"
-                            ? "warning"
-                            : "outline"
+                              ? "default"
+                              : s.status === "awaiting_approval"
+                                ? "warning"
+                                : "outline"
                         }
                         className="text-[10px] uppercase font-mono px-2 py-0.5"
                       >

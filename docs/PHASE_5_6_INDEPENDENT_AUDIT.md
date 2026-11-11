@@ -6,7 +6,7 @@
 **Audit Date:** 2026-11-11  
 **Audit Team:** Combined Architecture, Security, Performance, UI/UX, QA, and Reliability Review Board  
 **Target Branch:** `feature/phase-4.5-governance-and-differentiation`  
-**Target Commit:** `2366644` (Verified HEAD)  
+**Target Commit:** `2366644` (Verified HEAD)
 
 ---
 
@@ -39,20 +39,20 @@ While the core conceptual architecture (monorepo design, RFC 8785 canonical JSON
 
 ## 2. Historical Claims vs. Empirical Reality Matrix
 
-| Area | Previously Reported Claim | Empirical Reality (Audited) | Variance Status |
-| :--- | :--- | :--- | :--- |
-| **Commit Baseline** | Branch `feature/phase-4.5-governance-and-differentiation`, commit `2366644` | Verified. `2366644` is HEAD of branch. Working tree clean. | **VERIFIED** |
-| **Prettier Formatting** | Passed | **FAILED** (exit code 1). 2 files failed: `fixtures/agentledger/exported-signed-bundle.json`, `fixtures/tracevault/exported-valid-bundle.json`. | **DISPROVED** |
-| **ESLint** | Passed | **PASSED** (exit code 0). Zero lint warnings or errors. | **VERIFIED** |
-| **TypeScript Typecheck** | Passed (`tsc --noEmit`) | **PASSED** (exit code 0). Zero compile errors across all 6 packages and 2 apps. | **VERIFIED** |
-| **Unit & Integration Tests** | 129 tests passing across 31 files (100%) | **FAILED** (exit code 1). 116 passed, 13 failed. (1 threshold flake, 12 DB timeout hangs). | **DISPROVED** |
-| **Playwright E2E Tests** | 12 tests passing across 4 specs (100%) | **FAILED** (exit code 1). 5 passed, 7 failed (database 500 errors and timeouts). | **DISPROVED** |
-| **Production Build** | Both apps build successfully | **PASSED** (exit code 0). `@evidencekit/*` packages and Next.js builds for both apps succeed. | **VERIFIED** |
-| **Database Persistence** | Real PostgreSQL persistence verified | **FAILED LOCALLY**. Configured `172.31.88.58:5432` is unreachable. Fallback logic crashes on timeouts. | **CONDITIONAL** |
-| **Offline Verifier** | Independent offline verification in browser | **FALSE**. Verifier pages execute `fetch()` to `/api/.../verify`. Offline mode fails. | **DISPROVED** |
-| **Public Key Management** | Server-side key management with Ed25519 | **EPHEMERAL**. Server creates a random key pair on every cold restart; ignores `.env` keys. | **DISPROVED** |
-| **Policy Engine** | Server-side deterministic policy enforcement | **PARTIAL**. Implemented in memory, but `tool-call/route.ts` ignores workspace ID parameter. | **PARTIAL** |
-| **Unified Evidence Graph** | Interactive multi-stream evidence graph explorer | **DECEPTIVE**. No graph visualization library used; rendered as standard CSS card grid. | **PARTIAL** |
+| Area                         | Previously Reported Claim                                                   | Empirical Reality (Audited)                                                                                                                     | Variance Status |
+| :--------------------------- | :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Commit Baseline**          | Branch `feature/phase-4.5-governance-and-differentiation`, commit `2366644` | Verified. `2366644` is HEAD of branch. Working tree clean.                                                                                      | **VERIFIED**    |
+| **Prettier Formatting**      | Passed                                                                      | **FAILED** (exit code 1). 2 files failed: `fixtures/agentledger/exported-signed-bundle.json`, `fixtures/tracevault/exported-valid-bundle.json`. | **DISPROVED**   |
+| **ESLint**                   | Passed                                                                      | **PASSED** (exit code 0). Zero lint warnings or errors.                                                                                         | **VERIFIED**    |
+| **TypeScript Typecheck**     | Passed (`tsc --noEmit`)                                                     | **PASSED** (exit code 0). Zero compile errors across all 6 packages and 2 apps.                                                                 | **VERIFIED**    |
+| **Unit & Integration Tests** | 129 tests passing across 31 files (100%)                                    | **FAILED** (exit code 1). 116 passed, 13 failed. (1 threshold flake, 12 DB timeout hangs).                                                      | **DISPROVED**   |
+| **Playwright E2E Tests**     | 12 tests passing across 4 specs (100%)                                      | **FAILED** (exit code 1). 5 passed, 7 failed (database 500 errors and timeouts).                                                                | **DISPROVED**   |
+| **Production Build**         | Both apps build successfully                                                | **PASSED** (exit code 0). `@evidencekit/*` packages and Next.js builds for both apps succeed.                                                   | **VERIFIED**    |
+| **Database Persistence**     | Real PostgreSQL persistence verified                                        | **FAILED LOCALLY**. Configured `172.31.88.58:5432` is unreachable. Fallback logic crashes on timeouts.                                          | **CONDITIONAL** |
+| **Offline Verifier**         | Independent offline verification in browser                                 | **FALSE**. Verifier pages execute `fetch()` to `/api/.../verify`. Offline mode fails.                                                           | **DISPROVED**   |
+| **Public Key Management**    | Server-side key management with Ed25519                                     | **EPHEMERAL**. Server creates a random key pair on every cold restart; ignores `.env` keys.                                                     | **DISPROVED**   |
+| **Policy Engine**            | Server-side deterministic policy enforcement                                | **PARTIAL**. Implemented in memory, but `tool-call/route.ts` ignores workspace ID parameter.                                                    | **PARTIAL**     |
+| **Unified Evidence Graph**   | Interactive multi-stream evidence graph explorer                            | **DECEPTIVE**. No graph visualization library used; rendered as standard CSS card grid.                                                         | **PARTIAL**     |
 
 ---
 
@@ -74,6 +74,7 @@ pnpm build         -> Exit Code 0 (TraceVault & AgentLedger successfully compile
 ## 4. Root Cause of Test Failures
 
 ### 4.1 Vitest Test Suite Failures (13 Tests)
+
 1. **Timing Threshold Flake (1 failure)**:
    - `tests/agent-scale.test.ts:93`: `expect(reconstructionTimeMs).toBeLessThan(100)`
    - Measured time: `140.22ms`. The test asserts an absolute wall-clock CPU execution time under 100ms for 250 replay events, which fails under normal operating system scheduling jitter.
@@ -84,6 +85,7 @@ pnpm build         -> Exit Code 0 (TraceVault & AgentLedger successfully compile
    - When the host is unreachable, the connection hangs for 5000ms until Vitest's default per-test timeout (5000ms) terminates the test before `pg` can emit a connection error.
 
 ### 4.2 Playwright Browser Test Failures (7 Tests)
+
 1. Tests creating sessions or running demos trigger Next.js API routes (`POST /api/agentledger/sessions`, `POST /api/agentledger/sessions/.../demo/run`).
 2. Inside API route handlers, `db.insert(...)` hangs on unreachable PostgreSQL, throws unhandled rejection after 5000ms, and returns HTTP 500.
 3. Playwright encounters HTTP 500 errors on API endpoints and times out waiting for redirect URLs.
@@ -110,4 +112,3 @@ The codebase has strong bones and genuine cryptographic innovation (RFC 8785 can
 - **UI/UX Modernization**: Replace card-grid pseudo-graph with an authentic visualization, eliminate emojis, and extract shared presentation components.
 
 See `docs/PHASE_5_6_REMEDIATION_PLAN.md` and `docs/MASTER_IMPLEMENTATION_ROADMAP.md` for prioritized execution steps.
-

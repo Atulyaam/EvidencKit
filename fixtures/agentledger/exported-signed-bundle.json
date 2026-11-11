@@ -2,15 +2,15 @@
   "manifest": {
     "format_name": "evidencekit-export",
     "format_version": "2.0",
-    "export_id": "exp_1793950063103",
-    "stream_id": "session_39654722c8c14150",
+    "export_id": "exp_1794406486487",
+    "stream_id": "session_1e87741470fc464c",
     "stream_type": "agentledger.session",
     "workspace_id": "default",
-    "created_at": "2026-11-06T07:27:43.103Z",
+    "created_at": "2026-11-11T14:14:46.487Z",
     "event_count": 26,
     "first_sequence": 0,
     "last_sequence": 25,
-    "chain_head_hash": "bf98cc2ad77920f10240ae1b09ebe29c1c741ce1ed428666aafc70c0aed98adf",
+    "chain_head_hash": "ca06125bdd033cd516d584fd04deef6bfce1be475c568c5f8fa067b6d22de4cb",
     "hash_algorithm": "sha-256",
     "canonicalization": "RFC8785-JCS",
     "artifact_manifest": []
@@ -18,10 +18,10 @@
   "signature": {
     "algorithm": "Ed25519",
     "key_id": "ek-signer-prod-2026",
-    "public_key": "MCowBQYDK2VwAyEACfxEHatZTNtNNsi+m38rGyyhKbeIHMtxrZAkshMUDbE=",
-    "public_key_fingerprint": "e3e7933c7ce3771d777a74260a937ecee4bcbd4c6f709f2b9f60bbf42defe6d9",
-    "signature_value": "NfpcxYcP2aNL+GF66wsH7o7WT4vmQMctk38wL1W9Z2iBaQ+GJ/V1Rdf6mdUHikOqjv/zyLx6U5NA9VU/AT71Cg==",
-    "signed_at": "2026-11-06T07:27:43.103Z"
+    "public_key": "MCowBQYDK2VwAyEAD7snTsh4hxZCQ5oauVVL4JipX3WenX4sKT0OxOnjBJs=",
+    "public_key_fingerprint": "2a5f63c26746ec657a1add6c6e6f812caf846c3f73312a0f71149edb777f6047",
+    "signature_value": "9cIOs/qNjwELDfS739v1oBjJF1uJis1He8fkV8p/x+xQvdkcVsRMAW6aysEaQKiIEKWNnUX7FMVLh/ONFUhuDw==",
+    "signed_at": "2026-11-11T14:14:46.488Z"
   },
   "events": [
     {
@@ -35,9 +35,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "6a5f3606-1e73-4e07-9c02-912beb471201",
+        "event_id": "a46b0b08-704b-4cf2-8a3f-2f80122473c9",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "goal": "Audit configurations, optimize timeout parameters, and enforce zero-trust security policy",
           "status": "created",
@@ -50,15 +50,15 @@
           "workspace_id": "ws_demo_default"
         },
         "event_name": "agent.session.created",
-        "observed_at": "2026-11-06T07:27:41.289Z",
-        "occurred_at": "2026-11-06T07:27:41.289Z",
+        "observed_at": "2026-11-11T14:14:44.684Z",
+        "occurred_at": "2026-11-11T14:14:44.684Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 0,
       "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "event_hash": "3787a375c6617025c2c996c80604a1328f5ac761de70152a78e8fe4e3bad2c5b"
+      "event_hash": "d8e46796f92779e360f57ce23fa5af26f50027b026a796939ea2435045c7ccef"
     },
     {
       "event": {
@@ -71,22 +71,22 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "c0da949a-7d89-4d74-8c2b-d0c77d692b67",
+        "event_id": "9beed9a0-f014-4f70-86f0-93a7562ac097",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
-          "started_at": "2026-11-06T07:27:41.302Z"
+          "started_at": "2026-11-11T14:14:44.699Z"
         },
         "event_name": "agent.run.started",
-        "observed_at": "2026-11-06T07:27:41.302Z",
-        "occurred_at": "2026-11-06T07:27:41.302Z",
+        "observed_at": "2026-11-11T14:14:44.699Z",
+        "occurred_at": "2026-11-11T14:14:44.699Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 1,
-      "previous_hash": "3787a375c6617025c2c996c80604a1328f5ac761de70152a78e8fe4e3bad2c5b",
-      "event_hash": "15dd3dbd13de843865ac395f21363c0f40cfbc16edeb545abfba3c2352f99024"
+      "previous_hash": "d8e46796f92779e360f57ce23fa5af26f50027b026a796939ea2435045c7ccef",
+      "event_hash": "cdb5a2764b3e7fe6194c513ed738a27b602f16d5fc7f03520be0c670f211d93e"
     },
     {
       "event": {
@@ -99,9 +99,9 @@
           "adapter": "policy-evaluator",
           "adapter_version": "1.0.0"
         },
-        "event_id": "c7d4b214-e1b6-40f9-842d-1a28530e9027",
+        "event_id": "6a6a6490-6106-4b9d-a41c-7f9ab66b0e52",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "READ_ONLY: File directory inspection within the sandbox is permitted.",
           "decision": "ALLOW",
@@ -119,8 +119,8 @@
           "matched_rule_name": "Allow Directory Listing"
         },
         "event_name": "agent.policy.evaluated",
-        "observed_at": "2026-11-06T07:27:41.313Z",
-        "occurred_at": "2026-11-06T07:27:41.313Z",
+        "observed_at": "2026-11-11T14:14:44.711Z",
+        "occurred_at": "2026-11-11T14:14:44.711Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
@@ -129,8 +129,8 @@
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 2,
-      "previous_hash": "15dd3dbd13de843865ac395f21363c0f40cfbc16edeb545abfba3c2352f99024",
-      "event_hash": "10f87d3c2c0c4c0939bf9960c790b1ff8c2d769cda369455a7b253d7b6bfb6c1"
+      "previous_hash": "cdb5a2764b3e7fe6194c513ed738a27b602f16d5fc7f03520be0c670f211d93e",
+      "event_hash": "5fbcd65f1073ef0ab8db18c0a7373c00b756a2a2e02a00bdb6d237c77c0ec977"
     },
     {
       "event": {
@@ -143,29 +143,29 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "b05dcfaa-d868-4426-b704-d7b9b66224a2",
+        "event_id": "273e1e89-f14a-4aa2-9d11-0597334623bf",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "directory": ""
           },
           "tool_name": "list_files",
-          "tool_call_id": "tc_9a6e4b2498f84b8a"
+          "tool_call_id": "tc_59f94635667e4c22"
         },
         "event_name": "agent.tool.started",
-        "observed_at": "2026-11-06T07:27:41.319Z",
-        "occurred_at": "2026-11-06T07:27:41.319Z",
+        "observed_at": "2026-11-11T14:14:44.718Z",
+        "occurred_at": "2026-11-11T14:14:44.718Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_9a6e4b2498f84b8a"
+          "tc_59f94635667e4c22"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 3,
-      "previous_hash": "10f87d3c2c0c4c0939bf9960c790b1ff8c2d769cda369455a7b253d7b6bfb6c1",
-      "event_hash": "e87b78a9750bbb907900fbb27dd8980d7c60e9cc59afb5d3db102eb816c9ceb4"
+      "previous_hash": "5fbcd65f1073ef0ab8db18c0a7373c00b756a2a2e02a00bdb6d237c77c0ec977",
+      "event_hash": "9ec20f0f47686285c5f921589bdd6d23d8b9f3b72575b783224c5834c495ac59"
     },
     {
       "event": {
@@ -178,9 +178,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "2bf86e2e-66eb-4306-9ee1-0d79b05b1cdf",
+        "event_id": "acc0c9ee-1240-4fcf-96b1-7b6c1d527e43",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "output": {
             "count": 2,
@@ -199,22 +199,22 @@
             "directory": "/"
           },
           "tool_name": "list_files",
-          "duration_ms": 20,
-          "tool_call_id": "tc_9a6e4b2498f84b8a"
+          "duration_ms": 22,
+          "tool_call_id": "tc_59f94635667e4c22"
         },
         "event_name": "agent.tool.completed",
-        "observed_at": "2026-11-06T07:27:41.329Z",
-        "occurred_at": "2026-11-06T07:27:41.329Z",
+        "observed_at": "2026-11-11T14:14:44.728Z",
+        "occurred_at": "2026-11-11T14:14:44.728Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_9a6e4b2498f84b8a"
+          "tc_59f94635667e4c22"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 4,
-      "previous_hash": "e87b78a9750bbb907900fbb27dd8980d7c60e9cc59afb5d3db102eb816c9ceb4",
-      "event_hash": "7d95203cc81d28e14f747ee6daf1f0cc324ef9cfb9f5e880d6c2ab46246f68cc"
+      "previous_hash": "9ec20f0f47686285c5f921589bdd6d23d8b9f3b72575b783224c5834c495ac59",
+      "event_hash": "02b04f8e7b610df0ca1e2324e73dc1c1ac2062f7b6febb10c0e3b42edde17f63"
     },
     {
       "event": {
@@ -227,9 +227,9 @@
           "adapter": "policy-evaluator",
           "adapter_version": "1.0.0"
         },
-        "event_id": "4d315bcc-d3b0-4c8a-ab25-71fcb50813d2",
+        "event_id": "958b25e5-73b6-4e12-a5dc-bee96d49de19",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "READ_ONLY: Read operations inside the verified sandbox are permitted.",
           "decision": "ALLOW",
@@ -247,8 +247,8 @@
           "matched_rule_name": "Allow Read-Only Operations"
         },
         "event_name": "agent.policy.evaluated",
-        "observed_at": "2026-11-06T07:27:41.336Z",
-        "occurred_at": "2026-11-06T07:27:41.336Z",
+        "observed_at": "2026-11-11T14:14:44.733Z",
+        "occurred_at": "2026-11-11T14:14:44.733Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
@@ -257,8 +257,8 @@
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 5,
-      "previous_hash": "7d95203cc81d28e14f747ee6daf1f0cc324ef9cfb9f5e880d6c2ab46246f68cc",
-      "event_hash": "59d68eef6b1dd16b9c7d38e732a3715232da3e8cec64a0858a984d83e7a30b00"
+      "previous_hash": "02b04f8e7b610df0ca1e2324e73dc1c1ac2062f7b6febb10c0e3b42edde17f63",
+      "event_hash": "8743c6b0bba3395ef183e5780a28e624d33d7872a0bc956d57325c0935151c4b"
     },
     {
       "event": {
@@ -271,29 +271,29 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "4d7f40a5-982c-4770-88cf-16841e9a7749",
+        "event_id": "5fb6d2bc-42e9-43d0-871c-52843c4c1f53",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/config.ts"
           },
           "tool_name": "read_file",
-          "tool_call_id": "tc_baed3b58c1014098"
+          "tool_call_id": "tc_16cbe3ea07d745f8"
         },
         "event_name": "agent.tool.started",
-        "observed_at": "2026-11-06T07:27:41.341Z",
-        "occurred_at": "2026-11-06T07:27:41.341Z",
+        "observed_at": "2026-11-11T14:14:44.737Z",
+        "occurred_at": "2026-11-11T14:14:44.737Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_baed3b58c1014098"
+          "tc_16cbe3ea07d745f8"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 6,
-      "previous_hash": "59d68eef6b1dd16b9c7d38e732a3715232da3e8cec64a0858a984d83e7a30b00",
-      "event_hash": "e640bbea8830dd4efeb203f8b1764af75b9362831e9accf6e5ae9f3ffbdbf5f8"
+      "previous_hash": "8743c6b0bba3395ef183e5780a28e624d33d7872a0bc956d57325c0935151c4b",
+      "event_hash": "0f25b37d82b3430a8dfcc49e3bea3592c2ffdac05bd017fe247b60c4d620b7ec"
     },
     {
       "event": {
@@ -306,9 +306,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "9a762844-d72c-405c-8a7c-f74562ea3dc8",
+        "event_id": "ec8842d8-5f6f-4054-9bd2-90a452cbb85f",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "output": {
             "path": "src/config.ts",
@@ -317,22 +317,22 @@
             "sizeBytes": 86
           },
           "tool_name": "read_file",
-          "duration_ms": 18,
-          "tool_call_id": "tc_baed3b58c1014098"
+          "duration_ms": 9,
+          "tool_call_id": "tc_16cbe3ea07d745f8"
         },
         "event_name": "agent.tool.completed",
-        "observed_at": "2026-11-06T07:27:41.353Z",
-        "occurred_at": "2026-11-06T07:27:41.353Z",
+        "observed_at": "2026-11-11T14:14:44.742Z",
+        "occurred_at": "2026-11-11T14:14:44.742Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_baed3b58c1014098"
+          "tc_16cbe3ea07d745f8"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 7,
-      "previous_hash": "e640bbea8830dd4efeb203f8b1764af75b9362831e9accf6e5ae9f3ffbdbf5f8",
-      "event_hash": "ca6704c35f82f2d78251222782d35acad0d6215cc6bce058a8ac1ae749c1a0bc"
+      "previous_hash": "0f25b37d82b3430a8dfcc49e3bea3592c2ffdac05bd017fe247b60c4d620b7ec",
+      "event_hash": "444647712c5f3c6b84abd5f6f5a83c503bdd58778b15a365735e092fadc9a4db"
     },
     {
       "event": {
@@ -345,9 +345,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "eb66c05f-bf61-443e-bd50-83c9f1737abc",
+        "event_id": "ddf1241b-fc30-46cc-a7bb-7991d05edb74",
         "severity": "warning",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/config.ts",
@@ -355,23 +355,23 @@
           },
           "operation": "Update serviceConfig.timeoutMs to 8000ms for latency resilience",
           "tool_name": "modify_file",
-          "approval_id": "appr_ffc362718fef4b8a",
-          "tool_call_id": "tc_opt_timeout_1793950061358"
+          "approval_id": "appr_49a637992c6242b7",
+          "tool_call_id": "tc_opt_timeout_1794406484746"
         },
         "event_name": "agent.approval.requested",
-        "observed_at": "2026-11-06T07:27:41.360Z",
-        "occurred_at": "2026-11-06T07:27:41.360Z",
+        "observed_at": "2026-11-11T14:14:44.748Z",
+        "occurred_at": "2026-11-11T14:14:44.748Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_opt_timeout_1793950061358",
-          "appr_ffc362718fef4b8a"
+          "tc_opt_timeout_1794406484746",
+          "appr_49a637992c6242b7"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 8,
-      "previous_hash": "ca6704c35f82f2d78251222782d35acad0d6215cc6bce058a8ac1ae749c1a0bc",
-      "event_hash": "685f180a945b290593d840b2d06cf7a6af9d59f2e6872c39aa21fe8ddad35bca"
+      "previous_hash": "444647712c5f3c6b84abd5f6f5a83c503bdd58778b15a365735e092fadc9a4db",
+      "event_hash": "a1924aada1d07906f5dcdeb3c228ff6333ddfced3f2e2d7f4e1b6d111ba53703"
     },
     {
       "event": {
@@ -384,31 +384,31 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "9bbf447d-9360-4db1-ab97-040891653d2d",
+        "event_id": "6737cd52-1b80-45e6-b557-a392a8443588",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "Verified safe: 8000ms timeout complies with standard SLA thresholds",
           "actor_id": "local-dev-owner",
           "decision": "approved",
           "tool_name": "modify_file",
-          "approval_id": "appr_ffc362718fef4b8a",
-          "tool_call_id": "tc_opt_timeout_1793950061358"
+          "approval_id": "appr_49a637992c6242b7",
+          "tool_call_id": "tc_opt_timeout_1794406484746"
         },
         "event_name": "agent.approval.decided",
-        "observed_at": "2026-11-06T07:27:41.372Z",
-        "occurred_at": "2026-11-06T07:27:41.372Z",
+        "observed_at": "2026-11-11T14:14:44.757Z",
+        "occurred_at": "2026-11-11T14:14:44.757Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_opt_timeout_1793950061358",
-          "appr_ffc362718fef4b8a"
+          "tc_opt_timeout_1794406484746",
+          "appr_49a637992c6242b7"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 9,
-      "previous_hash": "685f180a945b290593d840b2d06cf7a6af9d59f2e6872c39aa21fe8ddad35bca",
-      "event_hash": "dc5dda36973e50390498be8fbc9c2cb13ba3f718028324144bbe12a778abd417"
+      "previous_hash": "a1924aada1d07906f5dcdeb3c228ff6333ddfced3f2e2d7f4e1b6d111ba53703",
+      "event_hash": "a3c9972a884041458772af27dbb8474c17c75f935b1d705ac43a202af8e85308"
     },
     {
       "event": {
@@ -421,9 +421,9 @@
           "adapter": "policy-evaluator",
           "adapter_version": "1.0.0"
         },
-        "event_id": "447844a1-0c4f-4992-869d-ac57c080ba14",
+        "event_id": "f5595333-7bd9-415b-b577-3fc029061070",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "SANDBOX_WRITE: Edits to non-protected files within the sandbox boundary are permitted.",
           "decision": "ALLOW",
@@ -442,8 +442,8 @@
           "matched_rule_name": "Allow General Workspace Modifications"
         },
         "event_name": "agent.policy.evaluated",
-        "observed_at": "2026-11-06T07:27:41.383Z",
-        "occurred_at": "2026-11-06T07:27:41.383Z",
+        "observed_at": "2026-11-11T14:14:44.765Z",
+        "occurred_at": "2026-11-11T14:14:44.765Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
@@ -452,8 +452,8 @@
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 10,
-      "previous_hash": "dc5dda36973e50390498be8fbc9c2cb13ba3f718028324144bbe12a778abd417",
-      "event_hash": "33efe080beb706f459f645bc50037525ad3038002552592a8fe81c341a1aa0d6"
+      "previous_hash": "a3c9972a884041458772af27dbb8474c17c75f935b1d705ac43a202af8e85308",
+      "event_hash": "89f8f09cecfd2f71d548ea31c3fe60ca126a3496848cb9385e136326ad611814"
     },
     {
       "event": {
@@ -466,30 +466,30 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "53c521b8-fbda-447c-a81a-52a4867d447a",
+        "event_id": "f8de6201-6cdc-4aa4-983c-519b7fc0cb38",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/config.ts",
             "content": "export const serviceConfig = {\n  timeoutMs: 8000,\n  retries: 3,\n  logLevel: \"info\"\n};\n"
           },
           "tool_name": "modify_file",
-          "tool_call_id": "tc_opt_timeout_1793950061358"
+          "tool_call_id": "tc_opt_timeout_1794406484746"
         },
         "event_name": "agent.tool.started",
-        "observed_at": "2026-11-06T07:27:41.388Z",
-        "occurred_at": "2026-11-06T07:27:41.388Z",
+        "observed_at": "2026-11-11T14:14:44.770Z",
+        "occurred_at": "2026-11-11T14:14:44.770Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_opt_timeout_1793950061358"
+          "tc_opt_timeout_1794406484746"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 11,
-      "previous_hash": "33efe080beb706f459f645bc50037525ad3038002552592a8fe81c341a1aa0d6",
-      "event_hash": "f01095d52a80c24850c64540dd04fdc5feb238c8865b4082395f06af76d3e77e"
+      "previous_hash": "89f8f09cecfd2f71d548ea31c3fe60ca126a3496848cb9385e136326ad611814",
+      "event_hash": "84ae7cb54af26332d98cd47c450f79a01fb0db83bb7ab44c1abd4235c907f4e4"
     },
     {
       "event": {
@@ -502,9 +502,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "859a8cac-62fb-4560-8965-205933ddd0b1",
+        "event_id": "e0c8334f-05da-4b1a-bcac-f28f8d4224a2",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "path": "src/config.ts",
           "operation": "modify",
@@ -512,22 +512,22 @@
           "old_sha256": "7e7d33a18dfb74ab0b86fa3f99f809673d06f9865375da9a3c9f85b6cd41b8ec",
           "lines_added": 1,
           "diff_summary": "-   timeoutMs: 5000,\n+   timeoutMs: 8000,",
-          "tool_call_id": "tc_opt_timeout_1793950061358",
+          "tool_call_id": "tc_opt_timeout_1794406484746",
           "lines_removed": 1
         },
         "event_name": "agent.file.changed",
-        "observed_at": "2026-11-06T07:27:41.403Z",
-        "occurred_at": "2026-11-06T07:27:41.403Z",
+        "observed_at": "2026-11-11T14:14:44.783Z",
+        "occurred_at": "2026-11-11T14:14:44.783Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_opt_timeout_1793950061358"
+          "tc_opt_timeout_1794406484746"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 12,
-      "previous_hash": "f01095d52a80c24850c64540dd04fdc5feb238c8865b4082395f06af76d3e77e",
-      "event_hash": "0755c7957af119c103ba6ea40397d16ddb1a1c814c76082a1f337332ff0b6d70"
+      "previous_hash": "84ae7cb54af26332d98cd47c450f79a01fb0db83bb7ab44c1abd4235c907f4e4",
+      "event_hash": "46733300e1f09027f1149375097ebe42bb93e505b180da0e2570facfc1d4c0cb"
     },
     {
       "event": {
@@ -540,9 +540,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "05c9db75-b41e-418e-ad7d-63b6de631e35",
+        "event_id": "515e86f6-a51f-48cf-9851-cf851c06e531",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "output": {
             "path": "src/config.ts",
@@ -554,22 +554,22 @@
             "linesRemoved": 1
           },
           "tool_name": "modify_file",
-          "duration_ms": 28,
-          "tool_call_id": "tc_opt_timeout_1793950061358"
+          "duration_ms": 25,
+          "tool_call_id": "tc_opt_timeout_1794406484746"
         },
         "event_name": "agent.tool.completed",
-        "observed_at": "2026-11-06T07:27:41.410Z",
-        "occurred_at": "2026-11-06T07:27:41.410Z",
+        "observed_at": "2026-11-11T14:14:44.789Z",
+        "occurred_at": "2026-11-11T14:14:44.789Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_opt_timeout_1793950061358"
+          "tc_opt_timeout_1794406484746"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 13,
-      "previous_hash": "0755c7957af119c103ba6ea40397d16ddb1a1c814c76082a1f337332ff0b6d70",
-      "event_hash": "996843f1568144fcb4a8ca68895a3cb4e09e4ade38bc14bdaa73214e0d8ab3b9"
+      "previous_hash": "46733300e1f09027f1149375097ebe42bb93e505b180da0e2570facfc1d4c0cb",
+      "event_hash": "eb6bbe3698cdf0e8b6eef04dc91a9e4b2c555888367c0238a610e62477759f7b"
     },
     {
       "event": {
@@ -582,9 +582,9 @@
           "adapter": "policy-evaluator",
           "adapter_version": "1.0.0"
         },
-        "event_id": "b2f0d1f4-a88e-41d3-ad83-83acbfece060",
+        "event_id": "ed0270cc-2923-4578-8351-944da3a6ddb2",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "READ_ONLY: SHA-256 cryptographic hash computation is permitted.",
           "decision": "ALLOW",
@@ -602,8 +602,8 @@
           "matched_rule_name": "Allow Checksum Calculations"
         },
         "event_name": "agent.policy.evaluated",
-        "observed_at": "2026-11-06T07:27:41.416Z",
-        "occurred_at": "2026-11-06T07:27:41.416Z",
+        "observed_at": "2026-11-11T14:14:44.799Z",
+        "occurred_at": "2026-11-11T14:14:44.799Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
@@ -612,8 +612,8 @@
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 14,
-      "previous_hash": "996843f1568144fcb4a8ca68895a3cb4e09e4ade38bc14bdaa73214e0d8ab3b9",
-      "event_hash": "66bb0b7ab35cb8ac91d9182e9d264e006364fd4d937b0a204ad0211932b3d1b7"
+      "previous_hash": "eb6bbe3698cdf0e8b6eef04dc91a9e4b2c555888367c0238a610e62477759f7b",
+      "event_hash": "97efb01b2c20cacedad8821f015efa255fe10b32f2a3b7e076c80d05c842b5ef"
     },
     {
       "event": {
@@ -626,29 +626,29 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "c7351080-cb64-4d42-a1ed-dc817097f5fa",
+        "event_id": "48df4d00-63e8-4f4a-9a0d-ce828e29616a",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/config.ts"
           },
           "tool_name": "calculate_file_hash",
-          "tool_call_id": "tc_072a7663433a451a"
+          "tool_call_id": "tc_674d79f67f04456d"
         },
         "event_name": "agent.tool.started",
-        "observed_at": "2026-11-06T07:27:41.423Z",
-        "occurred_at": "2026-11-06T07:27:41.423Z",
+        "observed_at": "2026-11-11T14:14:44.805Z",
+        "occurred_at": "2026-11-11T14:14:44.805Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_072a7663433a451a"
+          "tc_674d79f67f04456d"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 15,
-      "previous_hash": "66bb0b7ab35cb8ac91d9182e9d264e006364fd4d937b0a204ad0211932b3d1b7",
-      "event_hash": "f74f2f3d5ff0cc5ecb63aec85589b33bbe01563a96ba641c10a105f506e2b05b"
+      "previous_hash": "97efb01b2c20cacedad8821f015efa255fe10b32f2a3b7e076c80d05c842b5ef",
+      "event_hash": "c46ef24d24eca8f5d08499934764b959378f956b14f43f0e76e5ea72b410f766"
     },
     {
       "event": {
@@ -661,31 +661,31 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "fac5e667-92ec-4d73-8a88-17b724a5063f",
+        "event_id": "0145c3af-2394-4da5-a3d3-0ec4a3ea2ebe",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "output": {
             "path": "src/config.ts",
             "sha256": "6436747a0cc5b752bffac0b779778dc31877762f80f9a800c7569f0b3566b7bb"
           },
           "tool_name": "calculate_file_hash",
-          "duration_ms": 18,
-          "tool_call_id": "tc_072a7663433a451a"
+          "duration_ms": 15,
+          "tool_call_id": "tc_674d79f67f04456d"
         },
         "event_name": "agent.tool.completed",
-        "observed_at": "2026-11-06T07:27:41.432Z",
-        "occurred_at": "2026-11-06T07:27:41.432Z",
+        "observed_at": "2026-11-11T14:14:44.812Z",
+        "occurred_at": "2026-11-11T14:14:44.812Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_072a7663433a451a"
+          "tc_674d79f67f04456d"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 16,
-      "previous_hash": "f74f2f3d5ff0cc5ecb63aec85589b33bbe01563a96ba641c10a105f506e2b05b",
-      "event_hash": "2ac5fa5e6df1b72950810f2d1a45da0630c026ffdecc1d84a2af106ffeb3249c"
+      "previous_hash": "c46ef24d24eca8f5d08499934764b959378f956b14f43f0e76e5ea72b410f766",
+      "event_hash": "07ea462ff3566bcfef31e4fbf2b2945f9f8a576b7a014ce827d8155beece0c8b"
     },
     {
       "event": {
@@ -698,9 +698,9 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "f2cd2e36-2d88-4d57-a1f9-10869c86863c",
+        "event_id": "63c80560-2513-45af-8c27-183583645324",
         "severity": "warning",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/protected-config.ts",
@@ -708,23 +708,23 @@
           },
           "operation": "Disable zeroTrust and MFA in protected-config.ts",
           "tool_name": "modify_file",
-          "approval_id": "appr_78beb967c68845eb",
-          "tool_call_id": "tc_disable_mfa_1793950061438"
+          "approval_id": "appr_e7c3c1f7cbbe4ed8",
+          "tool_call_id": "tc_disable_mfa_1794406484817"
         },
         "event_name": "agent.approval.requested",
-        "observed_at": "2026-11-06T07:27:41.439Z",
-        "occurred_at": "2026-11-06T07:27:41.439Z",
+        "observed_at": "2026-11-11T14:14:44.819Z",
+        "occurred_at": "2026-11-11T14:14:44.819Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_disable_mfa_1793950061438",
-          "appr_78beb967c68845eb"
+          "tc_disable_mfa_1794406484817",
+          "appr_e7c3c1f7cbbe4ed8"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 17,
-      "previous_hash": "2ac5fa5e6df1b72950810f2d1a45da0630c026ffdecc1d84a2af106ffeb3249c",
-      "event_hash": "60d06ba33b444fb5ee0465e42932f0f7ba0573eb5269d542eb9ab334d25cb696"
+      "previous_hash": "07ea462ff3566bcfef31e4fbf2b2945f9f8a576b7a014ce827d8155beece0c8b",
+      "event_hash": "e25b9eecbd95439d3848e9f05a045848c6ee1d2c7da0c49a4f4fd477b1c71180"
     },
     {
       "event": {
@@ -737,31 +737,31 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "e9d79728-12c4-435d-865a-7c75cb9cfbbb",
+        "event_id": "bced8ace-8a73-47af-a87e-341799cd7268",
         "severity": "warning",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "REJECTED: Unauthorized attempt to weaken production security policy (MFA disable forbidden)",
           "actor_id": "local-dev-owner",
           "decision": "rejected",
           "tool_name": "modify_file",
-          "approval_id": "appr_78beb967c68845eb",
-          "tool_call_id": "tc_disable_mfa_1793950061438"
+          "approval_id": "appr_e7c3c1f7cbbe4ed8",
+          "tool_call_id": "tc_disable_mfa_1794406484817"
         },
         "event_name": "agent.approval.decided",
-        "observed_at": "2026-11-06T07:27:41.451Z",
-        "occurred_at": "2026-11-06T07:27:41.451Z",
+        "observed_at": "2026-11-11T14:14:44.829Z",
+        "occurred_at": "2026-11-11T14:14:44.829Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_disable_mfa_1793950061438",
-          "appr_78beb967c68845eb"
+          "tc_disable_mfa_1794406484817",
+          "appr_e7c3c1f7cbbe4ed8"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 18,
-      "previous_hash": "60d06ba33b444fb5ee0465e42932f0f7ba0573eb5269d542eb9ab334d25cb696",
-      "event_hash": "a790e767110a5f922d0b889aa395b40c142eda05008ff689658056d2cbd2d715"
+      "previous_hash": "e25b9eecbd95439d3848e9f05a045848c6ee1d2c7da0c49a4f4fd477b1c71180",
+      "event_hash": "a4c7c3de826d1d22f86155ebc5bedec8e3e77545e1a17d0a5b655898f984a8af"
     },
     {
       "event": {
@@ -774,9 +774,9 @@
           "adapter": "policy-evaluator",
           "adapter_version": "1.0.0"
         },
-        "event_id": "9747512f-5de9-4412-ae24-8dc97a541f26",
+        "event_id": "5b64c2ca-ffa1-4d79-a21c-80bca370a124",
         "severity": "warning",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "PROTECTED_RESOURCE: Modifications to protected configuration files require explicit human authorization.",
           "decision": "REQUIRE_APPROVAL",
@@ -795,8 +795,8 @@
           "matched_rule_name": "Require Approval for Security Configurations"
         },
         "event_name": "agent.policy.evaluated",
-        "observed_at": "2026-11-06T07:27:41.463Z",
-        "occurred_at": "2026-11-06T07:27:41.463Z",
+        "observed_at": "2026-11-11T14:14:44.837Z",
+        "occurred_at": "2026-11-11T14:14:44.837Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
@@ -805,8 +805,8 @@
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 19,
-      "previous_hash": "a790e767110a5f922d0b889aa395b40c142eda05008ff689658056d2cbd2d715",
-      "event_hash": "0d003067af3ea6e7cf8e6c619fde35fa29339ec3c372ffab05983b15da19bf22"
+      "previous_hash": "a4c7c3de826d1d22f86155ebc5bedec8e3e77545e1a17d0a5b655898f984a8af",
+      "event_hash": "1662cd92ca4b8bf3a106e34abd1cdb804e71fd9eeed17da3148e0170115acf14"
     },
     {
       "event": {
@@ -819,30 +819,30 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "1ab81eae-48bf-418d-a9cb-cfa4664aa368",
+        "event_id": "42f66d09-6811-43c7-b185-21c467cfb340",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/protected-config.ts",
             "content": "export const securityPolicy = {\n  enforceMfa: false,\n  auditLevel: \"none\",\n  zeroTrust: false\n};\n"
           },
           "tool_name": "modify_file",
-          "tool_call_id": "tc_disable_mfa_1793950061438"
+          "tool_call_id": "tc_disable_mfa_1794406484817"
         },
         "event_name": "agent.tool.started",
-        "observed_at": "2026-11-06T07:27:41.469Z",
-        "occurred_at": "2026-11-06T07:27:41.469Z",
+        "observed_at": "2026-11-11T14:14:44.843Z",
+        "occurred_at": "2026-11-11T14:14:44.843Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_disable_mfa_1793950061438"
+          "tc_disable_mfa_1794406484817"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 20,
-      "previous_hash": "0d003067af3ea6e7cf8e6c619fde35fa29339ec3c372ffab05983b15da19bf22",
-      "event_hash": "33d8c33b3e927ccc8963f2a00b638905a0baf2d41db853b9b012d69c6530dbd3"
+      "previous_hash": "1662cd92ca4b8bf3a106e34abd1cdb804e71fd9eeed17da3148e0170115acf14",
+      "event_hash": "92236739462d0569d2ab214e7ae0c6e79d274bc05a21c279e27e3b050540b3af"
     },
     {
       "event": {
@@ -855,27 +855,27 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "3cd02224-8d15-491f-b4c6-151a887ad20d",
+        "event_id": "8c079a4a-85d1-45f5-9c5c-a570bf33e040",
         "severity": "warning",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
-          "error": "Authorization denied: Approval 'appr_78beb967c68845eb' is not in approved state for tool call 'tc_disable_mfa_1793950061438'.",
+          "error": "Authorization denied: Approval 'appr_e7c3c1f7cbbe4ed8' is not in approved state for tool call 'tc_disable_mfa_1794406484817'.",
           "tool_name": "modify_file",
-          "tool_call_id": "tc_disable_mfa_1793950061438"
+          "tool_call_id": "tc_disable_mfa_1794406484817"
         },
         "event_name": "agent.tool.failed",
-        "observed_at": "2026-11-06T07:27:41.480Z",
-        "occurred_at": "2026-11-06T07:27:41.480Z",
+        "observed_at": "2026-11-11T14:14:44.848Z",
+        "occurred_at": "2026-11-11T14:14:44.848Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_disable_mfa_1793950061438"
+          "tc_disable_mfa_1794406484817"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 21,
-      "previous_hash": "33d8c33b3e927ccc8963f2a00b638905a0baf2d41db853b9b012d69c6530dbd3",
-      "event_hash": "0e70c3510f535592c921215ef1b1708d01dc06040d508038ee8f2bc01721c7c9"
+      "previous_hash": "92236739462d0569d2ab214e7ae0c6e79d274bc05a21c279e27e3b050540b3af",
+      "event_hash": "d0e9e140c40a66ea5e8f72cf946d2cceb7c21f4e3525169557a95eaf42ad732c"
     },
     {
       "event": {
@@ -888,9 +888,9 @@
           "adapter": "policy-evaluator",
           "adapter_version": "1.0.0"
         },
-        "event_id": "1653c2bf-4358-46ae-a285-4ac063a6f571",
+        "event_id": "2ebcb2d2-b631-40a2-b159-49ee446c1ffd",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "reason": "READ_ONLY: SHA-256 cryptographic hash computation is permitted.",
           "decision": "ALLOW",
@@ -908,8 +908,8 @@
           "matched_rule_name": "Allow Checksum Calculations"
         },
         "event_name": "agent.policy.evaluated",
-        "observed_at": "2026-11-06T07:27:41.487Z",
-        "occurred_at": "2026-11-06T07:27:41.487Z",
+        "observed_at": "2026-11-11T14:14:44.854Z",
+        "occurred_at": "2026-11-11T14:14:44.854Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
@@ -918,8 +918,8 @@
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 22,
-      "previous_hash": "0e70c3510f535592c921215ef1b1708d01dc06040d508038ee8f2bc01721c7c9",
-      "event_hash": "a1f2f8be5981e7ef9ce972295bfa23206fb6542497e74c5e20beb93d4b562339"
+      "previous_hash": "d0e9e140c40a66ea5e8f72cf946d2cceb7c21f4e3525169557a95eaf42ad732c",
+      "event_hash": "0f717dbca9fc9095f6f464a4066943234d9f0c478e2c674b0cb7a619c4ce1600"
     },
     {
       "event": {
@@ -932,29 +932,29 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "04c4d89f-be53-44a4-8f94-bff59c64bb50",
+        "event_id": "318e0f64-6679-4c2c-a2d0-ecfe2c33e215",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "arguments": {
             "path": "src/protected-config.ts"
           },
           "tool_name": "calculate_file_hash",
-          "tool_call_id": "tc_fa2824ea5b4a4727"
+          "tool_call_id": "tc_4bc9b5a7e2254ae3"
         },
         "event_name": "agent.tool.started",
-        "observed_at": "2026-11-06T07:27:41.492Z",
-        "occurred_at": "2026-11-06T07:27:41.492Z",
+        "observed_at": "2026-11-11T14:14:44.858Z",
+        "occurred_at": "2026-11-11T14:14:44.858Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_fa2824ea5b4a4727"
+          "tc_4bc9b5a7e2254ae3"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 23,
-      "previous_hash": "a1f2f8be5981e7ef9ce972295bfa23206fb6542497e74c5e20beb93d4b562339",
-      "event_hash": "1647496556976c3f60878611e751cde790aa6432829112a857ff40b1146c7a89"
+      "previous_hash": "0f717dbca9fc9095f6f464a4066943234d9f0c478e2c674b0cb7a619c4ce1600",
+      "event_hash": "8ec8a8ae43b2ce1f4bca1e2841e9c4034860addd87b49af288394d41f8b6ec5d"
     },
     {
       "event": {
@@ -967,31 +967,31 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "a51b23ef-21de-4657-a1f4-e39eaf3936e0",
+        "event_id": "0eaae51b-92c0-4db0-8370-a834b8fa20bc",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "output": {
             "path": "src/protected-config.ts",
             "sha256": "e257ddae9a44c0bed6366841c6baa7fa3d99a75f1b9f58a9a0a895d24e3f32f2"
           },
           "tool_name": "calculate_file_hash",
-          "duration_ms": 17,
-          "tool_call_id": "tc_fa2824ea5b4a4727"
+          "duration_ms": 10,
+          "tool_call_id": "tc_4bc9b5a7e2254ae3"
         },
         "event_name": "agent.tool.completed",
-        "observed_at": "2026-11-06T07:27:41.503Z",
-        "occurred_at": "2026-11-06T07:27:41.503Z",
+        "observed_at": "2026-11-11T14:14:44.863Z",
+        "occurred_at": "2026-11-11T14:14:44.863Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "correlation_ids": [
-          "tc_fa2824ea5b4a4727"
+          "tc_4bc9b5a7e2254ae3"
         ],
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 24,
-      "previous_hash": "1647496556976c3f60878611e751cde790aa6432829112a857ff40b1146c7a89",
-      "event_hash": "ba5f7558309d1f34f91cf327f7a00285c15c1bc02b76e1c0c56b39804d2bf8ef"
+      "previous_hash": "8ec8a8ae43b2ce1f4bca1e2841e9c4034860addd87b49af288394d41f8b6ec5d",
+      "event_hash": "08645eff8f3cfb2cb1152a38703194dbbed8114675335f1c9f569dcef692a83f"
     },
     {
       "event": {
@@ -1004,32 +1004,32 @@
           "adapter": "agent-sdk",
           "adapter_version": "1.0.0"
         },
-        "event_id": "1005fea3-6f1d-49bf-8193-5786d550cf45",
+        "event_id": "857115b9-c096-4452-a966-9da6647a90a4",
         "severity": "info",
-        "stream_id": "session_39654722c8c14150",
+        "stream_id": "session_1e87741470fc464c",
         "attributes": {
           "summary": "Demonstration workflow completed successfully. Safe file modification verified with cryptographic digests; unauthorized security mutation was strictly denied and prevented.",
-          "completed_at": "2026-11-06T07:27:41.511Z"
+          "completed_at": "2026-11-11T14:14:44.869Z"
         },
         "event_name": "agent.run.completed",
-        "observed_at": "2026-11-06T07:27:41.511Z",
-        "occurred_at": "2026-11-06T07:27:41.511Z",
+        "observed_at": "2026-11-11T14:14:44.869Z",
+        "occurred_at": "2026-11-11T14:14:44.869Z",
         "stream_type": "agentledger.session",
         "schema_version": "1.0",
         "time_confidence": "source_timestamp"
       },
       "stream_sequence": 25,
-      "previous_hash": "ba5f7558309d1f34f91cf327f7a00285c15c1bc02b76e1c0c56b39804d2bf8ef",
-      "event_hash": "bf98cc2ad77920f10240ae1b09ebe29c1c741ce1ed428666aafc70c0aed98adf"
+      "previous_hash": "08645eff8f3cfb2cb1152a38703194dbbed8114675335f1c9f569dcef692a83f",
+      "event_hash": "ca06125bdd033cd516d584fd04deef6bfce1be475c568c5f8fa067b6d22de4cb"
     }
   ],
   "verification_report": {
     "status": "verified",
-    "stream_id": "session_39654722c8c14150",
+    "stream_id": "session_1e87741470fc464c",
     "total_events": 26,
     "first_sequence": 0,
     "last_sequence": 25,
-    "head_hash": "bf98cc2ad77920f10240ae1b09ebe29c1c741ce1ed428666aafc70c0aed98adf",
-    "verified_at": "2026-11-06T07:27:43.101Z"
+    "head_hash": "ca06125bdd033cd516d584fd04deef6bfce1be475c568c5f8fa067b6d22de4cb",
+    "verified_at": "2026-11-11T14:14:46.486Z"
   }
 }

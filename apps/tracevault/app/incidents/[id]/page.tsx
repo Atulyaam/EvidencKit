@@ -3,8 +3,27 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  Badge,
+  LoadingState
+} from "@evidencekit/ui";
 import { CandidateCorrelation } from "@evidencekit/core";
+import {
+  UploadCloud,
+  Clock,
+  FileSpreadsheet,
+  Link2,
+  Calendar,
+  Server,
+  Layers,
+  AlertTriangle,
+  ArrowRight
+} from "lucide-react";
 
 interface IncidentOverviewProps {
   params?: { id: string };
@@ -44,9 +63,10 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-sm text-zinc-500 border border-zinc-800 rounded-lg bg-zinc-900/30">
-        Loading incident reconstruction overview...
-      </div>
+      <LoadingState
+        message="Loading incident reconstruction overview..."
+        description="Fetching metadata, correlation candidates, and hash-chain metrics..."
+      />
     );
   }
 
@@ -55,9 +75,12 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
   return (
     <div className="space-y-6">
       {/* Description & Overview Card */}
-      <Card className="border-zinc-800 bg-zinc-900/50">
+      <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
         <CardHeader className="pb-3 border-b border-zinc-800/80">
           <CardTitle className="text-base text-zinc-100">Incident Summary</CardTitle>
+          <CardDescription className="text-xs text-zinc-400">
+            Reconstruction overview and stream configuration parameters.
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           <p className="text-sm text-zinc-300 leading-relaxed">
@@ -65,25 +88,39 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-zinc-800/80 text-xs">
-            <div>
-              <span className="text-zinc-500 block">Created At:</span>
-              <span className="text-zinc-200 font-mono">
+            <div className="space-y-1">
+              <span className="text-zinc-500 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5" />
+                Created At:
+              </span>
+              <span className="text-zinc-200 font-mono block">
                 {incident?.createdAt ? new Date(incident.createdAt).toLocaleString() : "N/A"}
               </span>
             </div>
-            <div>
-              <span className="text-zinc-500 block">Target Environment:</span>
-              <span className="text-zinc-200 font-mono">
+            <div className="space-y-1">
+              <span className="text-zinc-500 flex items-center gap-1.5">
+                <Server className="w-3.5 h-3.5" />
+                Target Environment:
+              </span>
+              <span className="text-zinc-200 font-mono block">
                 {incident?.environment || "production"}
               </span>
             </div>
-            <div>
-              <span className="text-zinc-500 block">Total Chained Events:</span>
-              <span className="text-blue-400 font-bold font-mono">{totalEvents}</span>
+            <div className="space-y-1">
+              <span className="text-zinc-500 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-blue-400" />
+                Total Chained Events:
+              </span>
+              <span className="text-blue-400 font-bold font-mono text-sm block">{totalEvents}</span>
             </div>
-            <div>
-              <span className="text-zinc-500 block">Candidate Correlations:</span>
-              <span className="text-amber-400 font-bold font-mono">{correlations.length}</span>
+            <div className="space-y-1">
+              <span className="text-zinc-500 flex items-center gap-1.5">
+                <Link2 className="w-3.5 h-3.5 text-amber-400" />
+                Candidate Correlations:
+              </span>
+              <span className="text-amber-400 font-bold font-mono text-sm block">
+                {correlations.length}
+              </span>
             </div>
           </div>
         </CardContent>
@@ -92,16 +129,19 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
       {/* Quick Action Navigation */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href={`/incidents/${incidentId}/evidence`} className="group">
-          <Card className="p-4 border-zinc-800 bg-zinc-900/40 group-hover:border-blue-500/50 transition-colors h-full">
-            <div className="flex items-center gap-3">
-              <span className="p-2 rounded-lg bg-blue-950/60 text-blue-400 border border-blue-800/40 text-lg">
-                📥
-              </span>
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-100 group-hover:text-blue-400 transition-colors">
-                  Ingest Evidence Sources
-                </h4>
-                <p className="text-xs text-zinc-400 mt-0.5">
+          <Card className="p-4 border-zinc-800 bg-zinc-900/40 group-hover:border-blue-500/50 group-hover:bg-zinc-900/70 transition-all h-full shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="p-2.5 rounded-lg bg-blue-950/60 text-blue-400 border border-blue-800/40 shrink-0">
+                <UploadCloud className="w-5 h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold text-zinc-100 group-hover:text-blue-400 transition-colors">
+                    Ingest Evidence Sources
+                  </h4>
+                  <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 transition-colors shrink-0" />
+                </div>
+                <p className="text-xs text-zinc-400 mt-0.5 truncate">
                   Upload JSONL, Git, CI, Deployment logs, or ZIP bundles
                 </p>
               </div>
@@ -110,16 +150,19 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
         </Link>
 
         <Link href={`/incidents/${incidentId}/timeline`} className="group">
-          <Card className="p-4 border-zinc-800 bg-zinc-900/40 group-hover:border-blue-500/50 transition-colors h-full">
-            <div className="flex items-center gap-3">
-              <span className="p-2 rounded-lg bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 text-lg">
-                ⏱️
-              </span>
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-100 group-hover:text-emerald-400 transition-colors">
-                  Forensic Timeline
-                </h4>
-                <p className="text-xs text-zinc-400 mt-0.5">
+          <Card className="p-4 border-zinc-800 bg-zinc-900/40 group-hover:border-blue-500/50 group-hover:bg-zinc-900/70 transition-all h-full shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="p-2.5 rounded-lg bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                    Forensic Timeline
+                  </h4>
+                  <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-emerald-400 transition-colors shrink-0" />
+                </div>
+                <p className="text-xs text-zinc-400 mt-0.5 truncate">
                   Explore chronological events and provenance locators
                 </p>
               </div>
@@ -128,16 +171,19 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
         </Link>
 
         <Link href={`/incidents/${incidentId}/report`} className="group">
-          <Card className="p-4 border-zinc-800 bg-zinc-900/40 group-hover:border-blue-500/50 transition-colors h-full">
-            <div className="flex items-center gap-3">
-              <span className="p-2 rounded-lg bg-purple-950/60 text-purple-400 border border-purple-800/40 text-lg">
-                📄
-              </span>
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-100 group-hover:text-purple-400 transition-colors">
-                  Investigation Report
-                </h4>
-                <p className="text-xs text-zinc-400 mt-0.5">
+          <Card className="p-4 border-zinc-800 bg-zinc-900/40 group-hover:border-blue-500/50 group-hover:bg-zinc-900/70 transition-all h-full shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="p-2.5 rounded-lg bg-purple-950/60 text-purple-400 border border-purple-800/40 shrink-0">
+                <FileSpreadsheet className="w-5 h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold text-zinc-100 group-hover:text-purple-400 transition-colors">
+                    Investigation Report
+                  </h4>
+                  <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-purple-400 transition-colors shrink-0" />
+                </div>
+                <p className="text-xs text-zinc-400 mt-0.5 truncate">
                   Generate 12-section reconstruction report & export Markdown
                 </p>
               </div>
@@ -147,21 +193,21 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
       </div>
 
       {/* Candidate Correlations Section */}
-      <Card className="border-zinc-800 bg-zinc-900/50">
+      <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
         <CardHeader className="pb-3 border-b border-zinc-800/80 flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-base text-zinc-100">
               Discovered Candidate Correlations
             </CardTitle>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <CardDescription className="text-xs text-zinc-400 mt-0.5">
               Deterministic cross-system pattern matching (Rules TV-COR-001 through TV-COR-005)
-            </p>
+            </CardDescription>
           </div>
           <Badge variant="warning">{correlations.length} Candidate(s)</Badge>
         </CardHeader>
         <CardContent className="pt-4 space-y-3">
           {correlations.length === 0 ? (
-            <div className="p-8 text-center text-xs text-zinc-500 border border-dashed border-zinc-800 rounded-lg">
+            <div className="p-8 text-center text-xs text-zinc-500 border border-dashed border-zinc-800 rounded-lg bg-zinc-900/20">
               No candidate correlations discovered yet. Ingest more multi-source evidence (e.g. CI
               failures, Git commits, application logs) to discover patterns.
             </div>
@@ -190,14 +236,16 @@ export default function IncidentOverviewPage({ params }: IncidentOverviewProps) 
                 </div>
               ))}
 
-              <div className="rounded-md border border-zinc-800 bg-zinc-950/60 p-3 text-[11px] text-zinc-400">
-                ⚠️{" "}
-                <span className="font-semibold text-zinc-300">
-                  Deterministic Evidence Disclaimer:
-                </span>{" "}
-                Correlations are candidate patterns derived from temporal proximity, deployment
-                transitions, or shared correlation identifiers. They do not constitute definitive
-                proof of root cause.
+              <div className="rounded-md border border-zinc-800 bg-zinc-950/60 p-3 text-[11px] text-zinc-400 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-semibold text-zinc-300">
+                    Deterministic Evidence Disclaimer:
+                  </span>{" "}
+                  Correlations are candidate patterns derived from temporal proximity, deployment
+                  transitions, or shared correlation identifiers. They do not constitute definitive
+                  proof of root cause.
+                </div>
               </div>
             </div>
           )}

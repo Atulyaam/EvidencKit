@@ -9,10 +9,15 @@ import {
   Card,
   CardHeader,
   CardTitle,
+  CardDescription,
   CardContent,
   Input,
-  Button
+  Button,
+  LoadingState,
+  EmptyState,
+  ErrorState
 } from "@evidencekit/ui";
+import { Clock, Search, Filter, RotateCcw, ShieldCheck } from "lucide-react";
 
 interface TimelinePageProps {
   params?: { id: string };
@@ -74,7 +79,7 @@ export default function ForensicTimelinePage({ params }: TimelinePageProps) {
   return (
     <div className="space-y-6">
       {/* Search and Filter Toolbar */}
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 space-y-3">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 space-y-4 shadow-sm">
         <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <Input
@@ -82,20 +87,22 @@ export default function ForensicTimelinePage({ params }: TimelinePageProps) {
               placeholder="Filter timeline by event name, attribute, or message..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              leftIcon={<Search className="w-4 h-4 text-zinc-500" />}
             />
           </div>
-          <Button type="submit" variant="outline">
-            Filter
+          <Button type="submit" variant="outline" className="gap-2">
+            <Filter className="w-4 h-4" />
+            <span>Filter</span>
           </Button>
         </form>
 
-        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-zinc-800/80 text-xs">
+        <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-zinc-800/80 text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Severity:</span>
+            <span className="text-zinc-400 font-medium">Severity:</span>
             <select
               value={severity}
               onChange={(e) => setSeverity(e.target.value)}
-              className="bg-zinc-800 border border-zinc-700 rounded px-2.5 py-1 text-zinc-200 outline-none focus:border-blue-500"
+              className="bg-zinc-900 border border-zinc-700/80 rounded-md px-2.5 py-1 text-zinc-200 text-xs outline-none focus:border-blue-500 transition-colors"
             >
               <option value="">All Severities</option>
               <option value="critical">Critical</option>
@@ -107,11 +114,11 @@ export default function ForensicTimelinePage({ params }: TimelinePageProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400">Source System:</span>
+            <span className="text-zinc-400 font-medium">Source System:</span>
             <select
               value={system}
               onChange={(e) => setSystem(e.target.value)}
-              className="bg-zinc-800 border border-zinc-700 rounded px-2.5 py-1 text-zinc-200 outline-none focus:border-blue-500"
+              className="bg-zinc-900 border border-zinc-700/80 rounded-md px-2.5 py-1 text-zinc-200 text-xs outline-none focus:border-blue-500 transition-colors"
             >
               <option value="">All Systems</option>
               <option value="application">Application</option>
@@ -124,14 +131,16 @@ export default function ForensicTimelinePage({ params }: TimelinePageProps) {
 
           {(search || severity || system) && (
             <button
+              type="button"
               onClick={() => {
                 setSearch("");
                 setSeverity("");
                 setSystem("");
               }}
-              className="text-xs text-rose-400 hover:text-rose-300 underline ml-auto"
+              className="inline-flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300 underline ml-auto transition-colors"
             >
-              Clear Filters
+              <RotateCcw className="w-3 h-3" />
+              <span>Clear Filters</span>
             </button>
           )}
         </div>
@@ -141,24 +150,34 @@ export default function ForensicTimelinePage({ params }: TimelinePageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Timeline Stream */}
         <div className="lg:col-span-7">
-          <Card className="border-zinc-800 bg-zinc-900/50">
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
             <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-zinc-800/80">
-              <CardTitle className="text-base text-zinc-100">Forensic Event Stream</CardTitle>
-              <span className="text-xs text-zinc-400 font-mono">
+              <div>
+                <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-blue-400" />
+                  Forensic Event Stream
+                </CardTitle>
+                <CardDescription className="text-xs text-zinc-400 mt-0.5">
+                  Ordered chronological ledger of tamper-evident chained records.
+                </CardDescription>
+              </div>
+              <span className="text-xs text-zinc-400 font-mono bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">
                 {events.length} event(s) shown
               </span>
             </CardHeader>
             <CardContent className="pt-4">
               {loading ? (
-                <div className="p-8 text-center text-sm text-zinc-500">
-                  Loading timeline events...
-                </div>
+                <LoadingState
+                  message="Loading timeline events..."
+                  description="Verifying chronological hash-chain sequence..."
+                />
               ) : error ? (
-                <div className="p-4 text-center text-xs text-rose-400">{error}</div>
+                <ErrorState title="Timeline Query Error" error={error} onRetry={loadTimeline} />
               ) : events.length === 0 ? (
-                <div className="p-12 text-center text-sm text-zinc-500">
-                  No events found in this incident stream yet. Ingest an evidence source to begin.
-                </div>
+                <EmptyState
+                  title="No Events Found"
+                  description="No events found in this incident stream yet. Ingest an evidence source to begin reconstruction."
+                />
               ) : (
                 <Timeline
                   events={events}
@@ -172,9 +191,15 @@ export default function ForensicTimelinePage({ params }: TimelinePageProps) {
 
         {/* Provenance & Event Inspector */}
         <div className="lg:col-span-5 sticky top-20">
-          <Card className="border-zinc-800 bg-zinc-900/50 min-h-[450px]">
+          <Card className="border-zinc-800 bg-zinc-900/50 min-h-[450px] shadow-md">
             <CardHeader className="pb-3 border-b border-zinc-800/80">
-              <CardTitle className="text-base text-zinc-100">Provenance & Hash Inspector</CardTitle>
+              <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                Provenance & Hash Inspector
+              </CardTitle>
+              <CardDescription className="text-xs text-zinc-400 mt-0.5">
+                Inspect raw RFC 8785 canonical hash and exact source locator.
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               <EventDetail item={selectedEvent} />

@@ -8,7 +8,15 @@ import {
   EvidenceEvent,
   sanitizeData
 } from "@evidencekit/core";
-import { DbClient } from "@evidencekit/db";
+import {
+  DbClient,
+  policies,
+  workspaces,
+  eq,
+  asc,
+  isDbConnectionError,
+  assertInMemoryFallbackAllowed
+} from "@evidencekit/db";
 import { defaultChainService } from "./chain-service";
 
 export class AgentPolicyService {
@@ -42,15 +50,55 @@ export class AgentPolicyService {
   }
 
   /**
+   * Loads policy versions from the database if available and updates cache.
+   */
+  public async loadPoliciesFromDb(workspaceId: string, db: DbClient): Promise<AgentPolicy[]> {
+    try {
+      const rows = await db
+        .select()
+        .from(policies)
+        .where(eq(policies.workspaceId, workspaceId))
+        .orderBy(asc(policies.createdAt));
+      if (rows.length > 0) {
+        const loaded: AgentPolicy[] = rows.map((r) => ({
+          id: r.id,
+          version: r.version,
+          workspaceId: r.workspaceId,
+          name: r.name,
+          description: r.description || "",
+          defaultDecision: r.defaultDecision as any,
+          rules: r.rules as any,
+          createdAt: r.createdAt.toISOString(),
+          updatedAt: r.updatedAt.toISOString()
+        }));
+        this.policies.set(workspaceId, loaded);
+        return loaded;
+      }
+    } catch (err) {
+      if (!isDbConnectionError(err)) throw err;
+      assertInMemoryFallbackAllowed("getPoliciesForWorkspace", err);
+    }
+    return this.getPolicyHistory(workspaceId);
+  }
+
+  /**
+   * Retrieves policies for a workspace from DB if available, falling back to cached history.
+   */
+  public async getPoliciesForWorkspace(workspaceId: string, db?: DbClient): Promise<AgentPolicy[]> {
+    if (db) {
+      return this.loadPoliciesFromDb(workspaceId, db);
+    }
+    return this.getPolicyHistory(workspaceId);
+  }
+
+  /**
    * Registers a new policy version for a workspace. Historical versions are preserved.
    */
   public savePolicyVersion(
     workspaceId: string,
-    policyData: Omit<AgentPolicy, "id" | "createdAt" | "updatedAt">
+    policyData: Omit<AgentPolicy, "id" | "createdAt" | "updatedAt">,
+    db?: DbClient
   ): AgentPolicy {
-    const existingList = this.policies.get(workspaceId) || [
-      { ...DEFAULT_AGENT_POLICY, workspaceId }
-    ];
     const now = new Date().toISOString();
 
     const newVersion: AgentPolicy = {
@@ -61,8 +109,56 @@ export class AgentPolicyService {
       updatedAt: now
     };
 
+    if (db) {
+      const p = (async () => {
+        try {
+          await db
+            .insert(workspaces)
+            .values({
+              id: workspaceId,
+              name: `Workspace ${workspaceId}`
+            })
+            .onConflictDoNothing();
+
+          await db.insert(policies).values({
+            id: newVersion.id,
+            version: newVersion.version,
+            workspaceId: newVersion.workspaceId,
+            name: newVersion.name,
+            description: newVersion.description,
+            defaultDecision: newVersion.defaultDecision,
+            rules: newVersion.rules,
+            createdAt: new Date(newVersion.createdAt),
+            updatedAt: new Date(newVersion.updatedAt)
+          });
+
+          const existingList = this.policies.get(workspaceId) || [
+            { ...DEFAULT_AGENT_POLICY, workspaceId }
+          ];
+          existingList.push(newVersion);
+          this.policies.set(workspaceId, existingList);
+          return newVersion;
+        } catch (err: any) {
+          if (!isDbConnectionError(err)) throw err;
+          assertInMemoryFallbackAllowed("savePolicyVersion", err);
+          const existingList = this.policies.get(workspaceId) || [
+            { ...DEFAULT_AGENT_POLICY, workspaceId }
+          ];
+          existingList.push(newVersion);
+          this.policies.set(workspaceId, existingList);
+          return newVersion;
+        }
+      })();
+
+      return Object.assign(p, newVersion) as unknown as AgentPolicy;
+    }
+
+    const existingList = this.policies.get(workspaceId) || [
+      { ...DEFAULT_AGENT_POLICY, workspaceId }
+    ];
     existingList.push(newVersion);
     this.policies.set(workspaceId, existingList);
+
     return newVersion;
   }
 

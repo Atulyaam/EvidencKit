@@ -1,7 +1,17 @@
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { SessionContext, requireOwnerAuthorization } from "../authorization/index";
-import { cases, workspaces, DbClient } from "@evidencekit/db";
+import {
+  SessionContext,
+  requireOwnerAuthorization,
+  requireWorkspaceAuthorization
+} from "../authorization/index";
+import {
+  cases,
+  workspaces,
+  DbClient,
+  isDbConnectionError,
+  assertInMemoryFallbackAllowed
+} from "@evidencekit/db";
 import { eq, and, desc, sql, like } from "drizzle-orm";
 
 export const IncidentSeveritySchema = z.enum(["critical", "high", "medium", "low", "info"]);
@@ -91,6 +101,7 @@ export class IncidentService {
   ): Promise<IncidentRecord> {
     requireOwnerAuthorization(context);
     const parsed = CreateIncidentInputSchema.parse(input);
+    requireWorkspaceAuthorization(context, parsed.workspaceId);
 
     const now = new Date().toISOString();
     const id = `case_${randomUUID().replace(/-/g, "").slice(0, 12)}`;
@@ -129,7 +140,8 @@ export class IncidentService {
           updatedAt: new Date(incident.updatedAt)
         });
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("createIncident", err);
       }
     }
 
@@ -140,8 +152,12 @@ export class IncidentService {
   public async getIncident(
     id: string,
     workspaceId: string = "ws_demo_default",
-    db?: DbClient
+    db?: DbClient,
+    context?: SessionContext
   ): Promise<IncidentRecord | null> {
+    if (context) {
+      requireWorkspaceAuthorization(context, workspaceId);
+    }
     if (db) {
       try {
         const rows = await db
@@ -163,7 +179,8 @@ export class IncidentService {
           };
         }
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("createIncident", err);
       }
     }
 
@@ -177,10 +194,14 @@ export class IncidentService {
   public async listIncidents(
     rawQuery: unknown,
     workspaceId: string = "ws_demo_default",
-    db?: DbClient
+    db?: DbClient,
+    context?: SessionContext
   ): Promise<IncidentListResult> {
     const query = IncidentQuerySchema.parse(rawQuery ?? {});
     const targetWorkspace = query.workspaceId || workspaceId;
+    if (context) {
+      requireWorkspaceAuthorization(context, targetWorkspace);
+    }
 
     if (db) {
       try {
@@ -226,7 +247,8 @@ export class IncidentService {
           hasMore: query.offset + query.limit < total
         };
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("createIncident", err);
       }
     }
 
@@ -274,9 +296,10 @@ export class IncidentService {
     db?: DbClient
   ): Promise<IncidentRecord> {
     requireOwnerAuthorization(context);
+    requireWorkspaceAuthorization(context, workspaceId);
     const parsed = UpdateIncidentInputSchema.parse(input);
 
-    const existing = await this.getIncident(id, workspaceId, db);
+    const existing = await this.getIncident(id, workspaceId, db, context);
     if (!existing) {
       throw new Error(`Incident '${id}' not found in workspace '${workspaceId}'`);
     }
@@ -306,7 +329,8 @@ export class IncidentService {
           })
           .where(and(eq(cases.id, id), eq(cases.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("createIncident", err);
       }
     }
 
@@ -321,7 +345,8 @@ export class IncidentService {
     db?: DbClient
   ): Promise<boolean> {
     requireOwnerAuthorization(context);
-    const existing = await this.getIncident(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getIncident(id, workspaceId, db, context);
     if (!existing) {
       return false;
     }
@@ -330,7 +355,8 @@ export class IncidentService {
       try {
         await db.delete(cases).where(and(eq(cases.id, id), eq(cases.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("createIncident", err);
       }
     }
 

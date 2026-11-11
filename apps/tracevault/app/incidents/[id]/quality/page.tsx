@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  Badge,
+  LoadingState,
+  EmptyState
+} from "@evidencekit/ui";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -38,17 +47,19 @@ export default function IncidentQualityPage({ params }: { params: { id: string }
 
   if (loading) {
     return (
-      <div className="py-16 text-center text-sm text-zinc-500">
-        Analyzing evidence quality and structural completeness...
-      </div>
+      <LoadingState
+        message="Analyzing evidence quality and structural completeness..."
+        description="Evaluating stream completeness, timestamp consistency, and source coverage..."
+      />
     );
   }
 
   if (!report) {
     return (
-      <div className="py-16 text-center text-sm text-zinc-500">
-        No quality report available for this incident stream.
-      </div>
+      <EmptyState
+        title="Quality Report Unavailable"
+        description="No quality report available for this incident stream. Ensure events have been ingested into the hash chain."
+      />
     );
   }
 
@@ -83,25 +94,25 @@ export default function IncidentQualityPage({ params }: { params: { id: string }
       </div>
 
       {/* Causality Disclaimer */}
-      <div className="p-3.5 rounded-lg bg-amber-950/20 border border-amber-800/40 text-xs text-amber-200/90 flex items-start gap-3">
-        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+      <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-800/40 text-xs text-amber-200/90 flex items-start gap-3 shadow-sm">
+        <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
         <div className="space-y-1">
           <strong className="text-amber-300 font-semibold uppercase tracking-wider text-[11px] block">
             Forensic Notice: Completeness Assessment vs. Truthfulness
           </strong>
-          <p className="text-[11px] leading-relaxed text-amber-200/80">{report.disclaimer}</p>
+          <p className="text-xs leading-relaxed text-amber-200/80">{report.disclaimer}</p>
         </div>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Completeness Score Card */}
-        <Card className="border-zinc-800 bg-zinc-900/50">
+        <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs text-zinc-400 font-mono">COMPLETENESS SCORE</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className={`text-3xl font-extrabold ${scoreColor}`}>
+            <div className={`text-3xl font-extrabold ${scoreColor} font-mono`}>
               {score}
               <span className="text-sm font-normal text-zinc-500">/100</span>
             </div>
@@ -115,23 +126,27 @@ export default function IncidentQualityPage({ params }: { params: { id: string }
         </Card>
 
         {/* Total Events */}
-        <Card className="border-zinc-800 bg-zinc-900/50">
+        <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs text-zinc-400 font-mono">TOTAL ANALYZED</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-zinc-100">{report.totalEvents}</div>
+            <div className="text-3xl font-extrabold text-zinc-100 font-mono">
+              {report.totalEvents}
+            </div>
             <p className="text-[11px] text-zinc-500 mt-2">Chained events in stream</p>
           </CardContent>
         </Card>
 
         {/* Detected Issues */}
-        <Card className="border-zinc-800 bg-zinc-900/50">
+        <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs text-zinc-400 font-mono">DETECTED ISSUES</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
-            <div className="text-3xl font-extrabold text-zinc-100">{report.issueCount.total}</div>
+            <div className="text-3xl font-extrabold text-zinc-100 font-mono">
+              {report.issueCount.total}
+            </div>
             <div className="flex items-center gap-2 pt-1 text-[11px] font-mono">
               {report.issueCount.critical > 0 && (
                 <span className="text-red-400">{report.issueCount.critical} Critical</span>
@@ -145,24 +160,29 @@ export default function IncidentQualityPage({ params }: { params: { id: string }
         </Card>
 
         {/* Redacted Tokens */}
-        <Card className="border-zinc-800 bg-zinc-900/50">
+        <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs text-zinc-400 font-mono">SECRETS REDACTED</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-purple-400">{report.redactionCount}</div>
+            <div className="text-3xl font-extrabold text-purple-400 font-mono">
+              {report.redactionCount}
+            </div>
             <p className="text-[11px] text-zinc-500 mt-2">Tokens sanitized prior to hashing</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Source Evidence Coverage */}
-      <Card className="border-zinc-800 bg-zinc-900/40">
+      <Card className="border-zinc-800 bg-zinc-900/40 shadow-md">
         <CardHeader className="pb-3 border-b border-zinc-800">
           <CardTitle className="text-sm font-bold text-zinc-200 flex items-center gap-2">
             <PieChart className="w-4 h-4 text-cyan-400" />
             Source Evidence Coverage
           </CardTitle>
+          <CardDescription className="text-xs text-zinc-400">
+            Distribution of evidence events across ingested system adapters.
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
           {report.sourceCoverage.length === 0 ? (
@@ -204,25 +224,25 @@ export default function IncidentQualityPage({ params }: { params: { id: string }
         </h3>
 
         {report.issues.length === 0 ? (
-          <div className="p-6 rounded-lg bg-zinc-900/40 border border-zinc-800 text-center space-y-1">
-            <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto" />
+          <div className="p-8 rounded-xl bg-zinc-900/40 border border-zinc-800 text-center space-y-2">
+            <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
             <p className="text-sm font-semibold text-zinc-200">
               Zero structural or provenance defects detected
             </p>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-zinc-500 max-w-md mx-auto">
               All events in stream contain valid source headers, timestamps, and continuous hash
               linkage.
             </p>
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {report.issues.map((iss) => {
               const isCrit = iss.severity === "critical";
               const isWarn = iss.severity === "warning";
               return (
                 <div
                   key={iss.id}
-                  className={`p-3.5 rounded-lg border text-xs space-y-2 ${
+                  className={`p-4 rounded-xl border text-xs space-y-2.5 shadow-sm ${
                     isCrit
                       ? "bg-red-950/20 border-red-800/50 text-red-200"
                       : isWarn
@@ -254,7 +274,7 @@ export default function IncidentQualityPage({ params }: { params: { id: string }
                     </div>
                   )}
 
-                  <div className="bg-zinc-950/70 p-2 rounded border border-zinc-800/60 text-[11px] text-zinc-300">
+                  <div className="bg-zinc-950/70 p-2.5 rounded-lg border border-zinc-800/60 text-[11px] text-zinc-300">
                     <strong className="text-emerald-400 font-mono">Suggested Remediation:</strong>{" "}
                     {iss.suggestedRemediation}
                   </div>

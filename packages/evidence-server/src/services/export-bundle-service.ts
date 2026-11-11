@@ -1,21 +1,93 @@
 import JSZip from "jszip";
+import crypto from "node:crypto";
 import {
   createExportBundle,
   validateImportBundle,
   EvidenceExportBundle,
   ImportValidationResult,
+  ValidateImportBundleOptions,
   ChainedEvent,
   generateEd25519KeyPair,
-  KeyPairResult
+  KeyPairResult,
+  computePublicKeyFingerprint,
+  globalTrustedKeyRegistry,
+  TrustedKeyRegistry
 } from "@evidencekit/core";
+import { getServerEnv } from "../env";
 import { defaultChainService, ChainService } from "./chain-service";
 
 export class ExportBundleService {
   private signingKeyPair: KeyPairResult;
+  private trustedRegistry: TrustedKeyRegistry;
 
-  constructor(private chainService: ChainService = defaultChainService) {
-    // Initialize default server-side Ed25519 signing key pair
-    this.signingKeyPair = generateEd25519KeyPair("ek-signer-prod-2026");
+  constructor(
+    private chainService: ChainService = defaultChainService,
+    customSigningKey?: KeyPairResult,
+    trustedRegistry: TrustedKeyRegistry = globalTrustedKeyRegistry
+  ) {
+    this.trustedRegistry = trustedRegistry;
+    this.signingKeyPair = customSigningKey || this.initializeSigningKey();
+
+    // Register active signing key in trusted registry
+    this.trustedRegistry.registerKey({
+      keyId: this.signingKeyPair.keyId,
+      publicKeyBase64: this.signingKeyPair.publicKeyBase64,
+      fingerprint: this.signingKeyPair.fingerprint,
+      description: "Active EvidenceKit Server Signing Authority"
+    });
+  }
+
+  private initializeSigningKey(): KeyPairResult {
+    const env = getServerEnv();
+    const keyId = env.EVIDENCE_SIGNING_KEY_ID || "ek-signer-prod-2026";
+
+    if (env.EVIDENCE_SIGNING_PRIVATE_KEY) {
+      try {
+        const privKey = crypto.createPrivateKey({
+          key: Buffer.from(env.EVIDENCE_SIGNING_PRIVATE_KEY, "base64"),
+          format: "der",
+          type: "pkcs8"
+        });
+        const pubKey = crypto.createPublicKey(privKey);
+        const publicKeyBase64 = pubKey.export({ type: "spki", format: "der" }).toString("base64");
+        const fingerprint = computePublicKeyFingerprint(publicKeyBase64);
+        return {
+          keyId,
+          publicKeyBase64,
+          privateKeyBase64: env.EVIDENCE_SIGNING_PRIVATE_KEY,
+          fingerprint
+        };
+      } catch (err: any) {
+        throw new Error(`Failed to load configured EVIDENCE_SIGNING_PRIVATE_KEY: ${err?.message}`);
+      }
+    }
+
+    const isBuildPhase =
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      process.env.npm_lifecycle_event === "build" ||
+      Boolean(process.env.NEXT_PHASE?.includes("build"));
+
+    if (env.NODE_ENV === "production" && !isBuildPhase) {
+      throw new Error(
+        "CRITICAL SECURITY CONFIGURATION ERROR: EVIDENCE_SIGNING_PRIVATE_KEY must be provided in production."
+      );
+    }
+
+    // In dev / test / build, generate signing key pair
+    return generateEd25519KeyPair(keyId);
+  }
+
+  /**
+   * Rotates the active server signing key while preserving previously trusted keys.
+   */
+  public rotateSigningKey(newKeyPair: KeyPairResult): void {
+    this.signingKeyPair = newKeyPair;
+    this.trustedRegistry.registerKey({
+      keyId: newKeyPair.keyId,
+      publicKeyBase64: newKeyPair.publicKeyBase64,
+      fingerprint: newKeyPair.fingerprint,
+      description: `Rotated key (${newKeyPair.keyId})`
+    });
   }
 
   /**
@@ -110,8 +182,14 @@ To independently verify this bundle:
   /**
    * Validates and verifies an imported JSON or raw object bundle.
    */
-  public verifyBundle(bundleJson: unknown): ImportValidationResult {
-    return validateImportBundle(bundleJson);
+  public verifyBundle(
+    bundleJson: unknown,
+    options?: ValidateImportBundleOptions
+  ): ImportValidationResult {
+    return validateImportBundle(bundleJson, {
+      trustedRegistry: this.trustedRegistry,
+      ...options
+    });
   }
 
   /**
@@ -138,6 +216,9 @@ To independently verify this bundle:
         signature_verification: {
           valid: false,
           status: "error",
+          evidenceIntegrity: false,
+          signatureValidity: false,
+          signerTrusted: false,
           error: "Missing manifest.json in ZIP archive",
           disclaimer: "Signature could not be evaluated."
         },
@@ -161,6 +242,9 @@ To independently verify this bundle:
         signature_verification: {
           valid: false,
           status: "error",
+          evidenceIntegrity: false,
+          signatureValidity: false,
+          signerTrusted: false,
           error: "Missing events.jsonl in ZIP archive",
           disclaimer: "Signature could not be evaluated."
         },
@@ -200,6 +284,9 @@ To independently verify this bundle:
         signature_verification: {
           valid: false,
           status: "error",
+          evidenceIntegrity: false,
+          signatureValidity: false,
+          signerTrusted: false,
           error: `Malformed manifest.json: ${e.message}`,
           disclaimer: "Signature could not be evaluated."
         },
@@ -228,6 +315,9 @@ To independently verify this bundle:
           signature_verification: {
             valid: false,
             status: "error",
+            evidenceIntegrity: false,
+            signatureValidity: false,
+            signerTrusted: false,
             error: `Malformed events.jsonl at line ${i + 1}: ${e.message}`,
             disclaimer: "Signature could not be evaluated."
           },
@@ -237,11 +327,17 @@ To independently verify this bundle:
       }
     }
 
-    return validateImportBundle({
-      manifest: manifestJson,
-      signature: signatureJson,
-      events: parsedEvents
-    });
+    return validateImportBundle(
+      {
+        manifest: manifestJson,
+        signature: signatureJson,
+        events: parsedEvents
+      },
+      {
+        trustedRegistry: this.trustedRegistry,
+        requireTrustedSigner: true
+      }
+    );
   }
 }
 

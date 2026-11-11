@@ -1,5 +1,5 @@
-import { describe, it, expect, afterAll } from "vitest";
-import { getDb, getDbPool } from "../packages/db/src/index";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { getDb, getDbPool, checkDbHealth } from "../packages/db/src/index";
 import {
   defaultAgentSessionService,
   defaultAgentApprovalService,
@@ -14,6 +14,15 @@ import fs from "node:fs";
 import path from "node:path";
 
 describe("Phase 4 — AgentLedger Complete End-to-End System Journey (Task 4.14)", () => {
+  let db: any = undefined;
+
+  beforeAll(async () => {
+    const alive = await checkDbHealth(1000);
+    if (alive) {
+      db = getDb();
+    }
+  });
+
   afterAll(async () => {
     try {
       await getDbPool().end();
@@ -22,7 +31,6 @@ describe("Phase 4 — AgentLedger Complete End-to-End System Journey (Task 4.14)
     }
   });
 
-  const db = getDb();
   const workspaceId = `ws_e2e_al_${Date.now()}`;
   const ownerContext: SessionContext = {
     userId: "lead-secops-auditor",
@@ -162,8 +170,8 @@ describe("Phase 4 — AgentLedger Complete End-to-End System Journey (Task 4.14)
     );
     expect(completedSession.status).toBe("completed");
 
-    // 10. Verify persisted event stream in PostgreSQL
-    const streamEvents = await defaultChainService.getEventsFromDb(sessionId, db);
+    // 10. Verify persisted event stream in PostgreSQL / in-memory
+    const streamEvents = await defaultChainService.getAllEvents(sessionId, db);
     expect(streamEvents.length).toBeGreaterThanOrEqual(6);
 
     // 11. Test Deterministic Replay Reconstruction

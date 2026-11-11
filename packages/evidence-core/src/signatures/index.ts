@@ -22,6 +22,87 @@ export interface KeyPairResult {
   fingerprint: string;
 }
 
+export interface TrustedKeyEntry {
+  keyId: string;
+  publicKeyBase64: string;
+  fingerprint: string;
+  description?: string;
+  addedAt: string;
+  revokedAt?: string | null;
+}
+
+/**
+ * Registry of pinned, trusted public keys for authenticating evidence signatures.
+ * Prevents public-key substitution / self-signed manifest forgery (SEC-002).
+ */
+export class TrustedKeyRegistry {
+  private keysByFingerprint: Map<string, TrustedKeyEntry> = new Map();
+  private keysById: Map<string, TrustedKeyEntry> = new Map();
+
+  constructor(initialKeys?: TrustedKeyEntry[]) {
+    if (initialKeys) {
+      for (const k of initialKeys) {
+        this.registerKey(k);
+      }
+    }
+  }
+
+  public registerKey(
+    entry: Omit<TrustedKeyEntry, "fingerprint" | "addedAt"> & {
+      fingerprint?: string;
+      addedAt?: string;
+    }
+  ): TrustedKeyEntry {
+    const fingerprint = entry.fingerprint || computePublicKeyFingerprint(entry.publicKeyBase64);
+    const fullEntry: TrustedKeyEntry = {
+      keyId: entry.keyId,
+      publicKeyBase64: entry.publicKeyBase64,
+      fingerprint: fingerprint.toLowerCase(),
+      description: entry.description,
+      addedAt: entry.addedAt || new Date().toISOString(),
+      revokedAt: entry.revokedAt || null
+    };
+
+    this.keysByFingerprint.set(fullEntry.fingerprint, fullEntry);
+    this.keysById.set(fullEntry.keyId, fullEntry);
+    return fullEntry;
+  }
+
+  public isTrusted(publicKeyBase64: string, keyId?: string): boolean {
+    const fingerprint = computePublicKeyFingerprint(publicKeyBase64).toLowerCase();
+    const entry = this.keysByFingerprint.get(fingerprint);
+    if (!entry) return false;
+    if (entry.revokedAt !== null) return false;
+    if (keyId && entry.keyId !== keyId) return false;
+    return true;
+  }
+
+  public getKey(keyIdOrFingerprint: string): TrustedKeyEntry | undefined {
+    return (
+      this.keysById.get(keyIdOrFingerprint) ||
+      this.keysByFingerprint.get(keyIdOrFingerprint.toLowerCase())
+    );
+  }
+
+  public revokeKey(keyIdOrFingerprint: string): boolean {
+    const entry = this.getKey(keyIdOrFingerprint);
+    if (!entry) return false;
+    entry.revokedAt = new Date().toISOString();
+    return true;
+  }
+
+  public getAllKeys(): TrustedKeyEntry[] {
+    return Array.from(this.keysByFingerprint.values());
+  }
+
+  public clear(): void {
+    this.keysByFingerprint.clear();
+    this.keysById.clear();
+  }
+}
+
+export const globalTrustedKeyRegistry = new TrustedKeyRegistry();
+
 /**
  * Generates a new Ed25519 key pair for server-side evidence signing and rotation.
  */
@@ -31,10 +112,7 @@ export function generateEd25519KeyPair(keyId: string = "ek-signer-2026"): KeyPai
   const publicKeyBase64 = publicKey.export({ type: "spki", format: "der" }).toString("base64");
   const privateKeyBase64 = privateKey.export({ type: "pkcs8", format: "der" }).toString("base64");
 
-  const fingerprint = crypto
-    .createHash("sha256")
-    .update(Buffer.from(publicKeyBase64, "base64"))
-    .digest("hex");
+  const fingerprint = computePublicKeyFingerprint(publicKeyBase64);
 
   return {
     keyId,
@@ -82,9 +160,26 @@ export function signExportManifest(
   };
 }
 
+export type VerificationStatus =
+  | "VERIFIED"
+  | "INVALID_SIGNATURE"
+  | "TAMPERED"
+  | "UNSIGNED"
+  | "UNTRUSTED_KEY"
+  | "UNSUPPORTED_VERSION"
+  | "UNSUPPORTED_ALGORITHM"
+  // Backwards compatibility legacy lowercase statuses
+  | "verified"
+  | "invalid"
+  | "unsigned"
+  | "error";
+
 export interface SignatureVerificationResult {
   valid: boolean;
-  status: "verified" | "invalid" | "unsigned" | "error";
+  status: VerificationStatus;
+  evidenceIntegrity: boolean;
+  signatureValidity: boolean;
+  signerTrusted: boolean;
   algorithm?: string;
   keyId?: string;
   fingerprint?: string;
@@ -92,28 +187,75 @@ export interface SignatureVerificationResult {
   disclaimer: string;
 }
 
+export interface VerifySignatureOptions {
+  trustedRegistry?: TrustedKeyRegistry;
+  trustedPublicKeys?: string[];
+  allowUnsigned?: boolean;
+  requireTrustedSigner?: boolean;
+}
+
 /**
  * Independently verifies an Ed25519 digital signature against a canonical export manifest.
+ * Separates evidence integrity, signature mathematical validity, and signer trust.
  */
 export function verifyManifestSignature(
   manifest: Record<string, unknown>,
-  signatureReceipt?: SignatureReceipt | null
+  signatureReceipt?: SignatureReceipt | null,
+  options?: VerifySignatureOptions
 ): SignatureVerificationResult {
+  const allowUnsigned = options?.allowUnsigned ?? false;
+  const requireTrusted = options?.requireTrustedSigner ?? true;
+
   if (!signatureReceipt) {
+    if (allowUnsigned) {
+      return {
+        valid: true,
+        status: "UNSIGNED",
+        evidenceIntegrity: true,
+        signatureValidity: false,
+        signerTrusted: false,
+        disclaimer: SIGNATURE_DISCLAIMER,
+        error: "Legacy Unsigned Bundle (unsigned format permitted by configuration)"
+      };
+    }
     return {
-      valid: true, // Legacy unsigned bundles remain structurally valid
-      status: "unsigned",
+      valid: false,
+      status: "UNSIGNED",
+      evidenceIntegrity: true,
+      signatureValidity: false,
+      signerTrusted: false,
       disclaimer: SIGNATURE_DISCLAIMER,
-      error: "No digital signature provided (Legacy Unsigned Bundle v1.0)"
+      error:
+        "Digital signature is required but missing (signature was stripped or bundle is unsigned)"
     };
   }
 
   try {
+    // 0. Validate format version
+    if (
+      manifest?.format_version &&
+      manifest.format_version !== "1.0" &&
+      manifest.format_version !== "2.0"
+    ) {
+      return {
+        valid: false,
+        status: "UNSUPPORTED_VERSION",
+        evidenceIntegrity: false,
+        signatureValidity: false,
+        signerTrusted: false,
+        error: `Unsupported format_version: '${manifest.format_version}'. Supported versions are 1.0 and 2.0.`,
+        disclaimer: SIGNATURE_DISCLAIMER
+      };
+    }
+
     // 1. Validate signature algorithm
     if (signatureReceipt.algorithm !== "Ed25519") {
       return {
         valid: false,
-        status: "invalid",
+        status: "UNSUPPORTED_ALGORITHM",
+        evidenceIntegrity: false,
+        signatureValidity: false,
+        signerTrusted: false,
         error: `Unsupported signature algorithm: ${signatureReceipt.algorithm}`,
         disclaimer: SIGNATURE_DISCLAIMER
       };
@@ -126,8 +268,11 @@ export function verifyManifestSignature(
     ) {
       return {
         valid: false,
-        status: "invalid",
-        error: "Public key fingerprint mismatch",
+        status: "INVALID_SIGNATURE",
+        evidenceIntegrity: false,
+        signatureValidity: false,
+        signerTrusted: false,
+        error: "Public key fingerprint mismatch: public_key does not match claimed fingerprint",
         disclaimer: SIGNATURE_DISCLAIMER
       };
     }
@@ -149,7 +294,10 @@ export function verifyManifestSignature(
     if (!isVerified) {
       return {
         valid: false,
-        status: "invalid",
+        status: "INVALID_SIGNATURE",
+        evidenceIntegrity: false,
+        signatureValidity: false,
+        signerTrusted: false,
         keyId: signatureReceipt.key_id,
         fingerprint: signatureReceipt.public_key_fingerprint,
         error:
@@ -158,9 +306,42 @@ export function verifyManifestSignature(
       };
     }
 
+    // 4. Verify Signer Trust against Trusted Key Registry (SEC-002)
+    const registry = options?.trustedRegistry || globalTrustedKeyRegistry;
+    let isTrusted = false;
+
+    if (options?.trustedPublicKeys && options.trustedPublicKeys.length > 0) {
+      const targetFingerprint = computedFingerprint.toLowerCase();
+      isTrusted = options.trustedPublicKeys.some(
+        (pk) =>
+          pk === signatureReceipt.public_key ||
+          computePublicKeyFingerprint(pk).toLowerCase() === targetFingerprint
+      );
+    } else {
+      isTrusted = registry.isTrusted(signatureReceipt.public_key, signatureReceipt.key_id);
+    }
+
+    if (requireTrusted && !isTrusted) {
+      return {
+        valid: false,
+        status: "UNTRUSTED_KEY",
+        evidenceIntegrity: true,
+        signatureValidity: true,
+        signerTrusted: false,
+        keyId: signatureReceipt.key_id,
+        fingerprint: signatureReceipt.public_key_fingerprint,
+        algorithm: "Ed25519",
+        error: `Signature is mathematically valid, but public key (${signatureReceipt.public_key_fingerprint.slice(0, 16)}...) is not in the trusted key registry.`,
+        disclaimer: SIGNATURE_DISCLAIMER
+      };
+    }
+
     return {
       valid: true,
-      status: "verified",
+      status: "VERIFIED",
+      evidenceIntegrity: true,
+      signatureValidity: true,
+      signerTrusted: isTrusted,
       algorithm: "Ed25519",
       keyId: signatureReceipt.key_id,
       fingerprint: signatureReceipt.public_key_fingerprint,
@@ -169,7 +350,10 @@ export function verifyManifestSignature(
   } catch (err: any) {
     return {
       valid: false,
-      status: "error",
+      status: "INVALID_SIGNATURE",
+      evidenceIntegrity: false,
+      signatureValidity: false,
+      signerTrusted: false,
       error: `Signature verification error: ${err?.message || "Malformed key or signature"}`,
       disclaimer: SIGNATURE_DISCLAIMER
     };

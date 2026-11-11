@@ -1,29 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
-import { defaultAgentApprovalService, evaluateSessionContext } from "@evidencekit/evidence-server";
+import {
+  defaultAgentApprovalService,
+  evaluateSessionContext,
+  validateCsrfProtection,
+  requireWorkspaceAuthorization
+} from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const db = getDb();
+    const context = evaluateSessionContext(req.headers);
+    const authorized = context.authorizedWorkspaces || [];
+    const workspaceId: string =
+      req.nextUrl.searchParams.get("workspaceId") ||
+      (authorized.length > 0 && authorized[0] !== "*" ? authorized[0]! : "ws_demo_default");
+
+    requireWorkspaceAuthorization(context, workspaceId);
+
+    let db;
+    try {
+      db = getDb();
+    } catch {
+      // In-memory fallback
+    }
+
     const approvals = await defaultAgentApprovalService.listApprovals(params.id, db);
     return NextResponse.json({ approvals, total: approvals.length });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Failed to list approvals" },
-      { status: 500 }
-    );
+    const status =
+      error.message?.includes("Forbidden") || error.message?.includes("Unauthorized") ? 403 : 500;
+    return NextResponse.json({ error: error.message || "Failed to list approvals" }, { status });
   }
 }
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const context = evaluateSessionContext(req.headers);
-    const workspaceId =
+    validateCsrfProtection(req.headers, context);
+    const authorized = context.authorizedWorkspaces || [];
+    const workspaceId: string =
       req.nextUrl.searchParams.get("workspaceId") ||
-      req.headers.get("x-workspace-id") ||
-      "ws_demo_default";
+      (authorized.length > 0 && authorized[0] !== "*" ? authorized[0]! : "ws_demo_default");
+
+    requireWorkspaceAuthorization(context, workspaceId);
+
     const body = await req.json();
-    const db = getDb();
+
+    let db;
+    try {
+      db = getDb();
+    } catch {
+      // In-memory fallback
+    }
 
     // Check if it's a decision or a request
     if (body.approvalId && body.decision) {

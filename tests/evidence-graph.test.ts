@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { defaultEvidenceGraphService, defaultChainService } from "@evidencekit/evidence-server";
-import { getDb, cases, workspaces, eq } from "@evidencekit/db";
+import { getDb, checkDbHealth, cases, workspaces, eq } from "@evidencekit/db";
 import { EvidenceEvent } from "@evidencekit/core";
 import { randomUUID } from "node:crypto";
 
@@ -144,14 +144,12 @@ describe("Phase 4.5 — Unified Evidence Graph Test Suite", () => {
   });
 
   it("enforces workspace isolation on database queries", async (ctx) => {
-    let db;
-    try {
-      db = getDb();
-      await db.select().from(cases).limit(1);
-    } catch {
+    const isDbAlive = await checkDbHealth(1000);
+    if (!isDbAlive) {
       ctx.skip();
       return;
     }
+    const db = getDb();
 
     // Create workspace records
     await db.insert(workspaces).values([

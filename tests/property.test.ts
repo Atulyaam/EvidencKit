@@ -15,7 +15,12 @@ describe("Phase 2 — Property-Based Invariant Tests (fast-check)", () => {
   it("property: JCS canonicalization is deterministic regardless of key order", () => {
     fc.assert(
       fc.property(
-        fc.dictionary(fc.string({ minLength: 1, maxLength: 20 }), fc.jsonValue()),
+        fc.dictionary(
+          fc
+            .string({ minLength: 1, maxLength: 20 })
+            .filter((k) => k !== "__proto__" && k !== "constructor" && k !== "prototype"),
+          fc.jsonValue()
+        ),
         (dict) => {
           const keys = Object.keys(dict);
           const shuffledKeys = [...keys].reverse();

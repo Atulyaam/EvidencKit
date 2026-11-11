@@ -12,7 +12,7 @@ export default defineConfig({
     trace: "on-first-retry",
     headless: true,
     extraHTTPHeaders: {
-      "x-evidencekit-user": "owner"
+      Authorization: `Bearer ${process.env.AUTH_SECRET || "development-auth-secret-32-chars-long-minimum!"}`
     }
   },
   projects: [
@@ -26,13 +26,19 @@ export default defineConfig({
       command: "pnpm --filter tracevault start -p 3001",
       url: "http://localhost:3001/api/health",
       reuseExistingServer: !process.env.CI,
-      timeout: 60000
+      timeout: 60000,
+      env: {
+        NODE_ENV: "test"
+      }
     },
     {
       command: "pnpm --filter agentledger start -p 3002",
       url: "http://localhost:3002/api/health",
       reuseExistingServer: !process.env.CI,
-      timeout: 60000
+      timeout: 60000,
+      env: {
+        NODE_ENV: "test"
+      }
     }
   ]
 });

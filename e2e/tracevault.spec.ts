@@ -118,7 +118,7 @@ test.describe("TraceVault Forensic Reconstruction — Complete User Journey", ()
     await page.goto("/verify");
     await expect(page.locator("text=Verify Evidence Bundle")).toBeVisible();
     await page.setInputFiles('input[type="file"]', validBundlePath);
-    await page.click('button:has-text("Run Independent Verification")');
+    await page.click('button:has-text("Run Server-Side Verification")');
     await expect(page.locator("text=Cryptographic Verification Passed")).toBeVisible({
       timeout: 10000
     });
@@ -130,7 +130,7 @@ test.describe("TraceVault Forensic Reconstruction — Complete User Journey", ()
       "../fixtures/tracevault/tampered-bundle/bundle.json"
     );
     await page.setInputFiles('input[type="file"]', tamperedFixturePath);
-    await page.click('button:has-text("Run Independent Verification")');
+    await page.click('button:has-text("Run Server-Side Verification")');
 
     // Assert tamper detection alert
     await expect(

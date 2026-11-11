@@ -11,7 +11,15 @@ import {
   createExportBundle,
   EvidenceExportBundle
 } from "@evidencekit/core";
-import { getDb, events, chainHeads, eventEvidenceRefs, DbClient } from "@evidencekit/db";
+import {
+  getDb,
+  events,
+  chainHeads,
+  eventEvidenceRefs,
+  DbClient,
+  isDbConnectionError,
+  assertInMemoryFallbackAllowed
+} from "@evidencekit/db";
 import { eq } from "drizzle-orm";
 
 export class ChainService {
@@ -77,79 +85,87 @@ export class ChainService {
     const database = db || getDb();
     const streamId = event.stream_id;
 
-    return await database.transaction(async (tx) => {
-      // 1. Lock the stream head row for update
-      const headRows = await tx
-        .select()
-        .from(chainHeads)
-        .where(eq(chainHeads.streamId, streamId))
-        .for("update");
+    try {
+      return await database.transaction(async (tx) => {
+        // 1. Lock the stream head row for update
+        const headRows = await tx
+          .select()
+          .from(chainHeads)
+          .where(eq(chainHeads.streamId, streamId))
+          .for("update");
 
-      let nextSequence = 0;
-      let previousHash = INITIAL_PREVIOUS_HASH;
+        let nextSequence = 0;
+        let previousHash = INITIAL_PREVIOUS_HASH;
 
-      if (headRows.length > 0 && headRows[0]) {
-        nextSequence = headRows[0].lastSequence + 1;
-        previousHash = headRows[0].headHash;
-      }
+        if (headRows.length > 0 && headRows[0]) {
+          nextSequence = headRows[0].lastSequence + 1;
+          previousHash = headRows[0].headHash;
+        }
 
-      // 2. Compute deterministic SHA-256 event hash
-      const eventHash = computeEventHash(event, previousHash);
+        // 2. Compute deterministic SHA-256 event hash
+        const eventHash = computeEventHash(event, previousHash);
 
-      // 3. Insert into events table
-      await tx.insert(events).values({
-        id: event.event_id,
-        streamId: event.stream_id,
-        streamType: event.stream_type,
-        eventName: event.event_name,
-        occurredAt: event.occurred_at ? new Date(event.occurred_at) : null,
-        observedAt: new Date(event.observed_at),
-        ingestSequence: nextSequence,
-        severity: event.severity,
-        envelopeJson: event,
-        previousHash: previousHash,
-        eventHash: eventHash
-      });
+        // 3. Insert into events table
+        await tx.insert(events).values({
+          id: event.event_id,
+          streamId: event.stream_id,
+          streamType: event.stream_type,
+          eventName: event.event_name,
+          occurredAt: event.occurred_at ? new Date(event.occurred_at) : null,
+          observedAt: new Date(event.observed_at),
+          ingestSequence: nextSequence,
+          severity: event.severity,
+          envelopeJson: event,
+          previousHash: previousHash,
+          eventHash: eventHash
+        });
 
-      // 4. Update or insert chain head
-      if (headRows.length > 0) {
-        await tx
-          .update(chainHeads)
-          .set({
+        // 4. Update or insert chain head
+        if (headRows.length > 0) {
+          await tx
+            .update(chainHeads)
+            .set({
+              lastSequence: nextSequence,
+              headHash: eventHash,
+              updatedAt: new Date()
+            })
+            .where(eq(chainHeads.streamId, streamId));
+        } else {
+          await tx.insert(chainHeads).values({
+            streamId: streamId,
             lastSequence: nextSequence,
             headHash: eventHash,
             updatedAt: new Date()
-          })
-          .where(eq(chainHeads.streamId, streamId));
-      } else {
-        await tx.insert(chainHeads).values({
-          streamId: streamId,
-          lastSequence: nextSequence,
-          headHash: eventHash,
-          updatedAt: new Date()
-        });
-      }
-
-      // 5. Insert evidence refs if present
-      if (event.evidence_refs && event.evidence_refs.length > 0) {
-        for (const ref of event.evidence_refs) {
-          await tx.insert(eventEvidenceRefs).values({
-            id: `${event.event_id}-${ref.artifact_id}-${ref.locator}`,
-            eventId: event.event_id,
-            artifactId: ref.artifact_id,
-            locatorType: ref.locator_type,
-            locator: ref.locator
           });
         }
-      }
 
-      return {
-        event,
-        stream_sequence: nextSequence,
-        previous_hash: previousHash,
-        event_hash: eventHash
-      };
-    });
+        // 5. Insert evidence refs if present
+        if (event.evidence_refs && event.evidence_refs.length > 0) {
+          for (const ref of event.evidence_refs) {
+            await tx.insert(eventEvidenceRefs).values({
+              id: `${event.event_id}-${ref.artifact_id}-${ref.locator}`,
+              eventId: event.event_id,
+              artifactId: ref.artifact_id,
+              locatorType: ref.locator_type,
+              locator: ref.locator
+            });
+          }
+        }
+
+        return {
+          event,
+          stream_sequence: nextSequence,
+          previous_hash: previousHash,
+          event_hash: eventHash
+        };
+      });
+    } catch (err: any) {
+      if (isDbConnectionError(err)) {
+        assertInMemoryFallbackAllowed("appendTransactional", err);
+        return this.appendInMemory(event);
+      }
+      throw err;
+    }
   }
 
   public async getEventsFromDb(streamId: string, db?: DbClient): Promise<ChainedEvent[]> {
@@ -188,29 +204,37 @@ export class ChainService {
    * Reads all chained events from PostgreSQL and verifies chain integrity.
    */
   public async verifyStreamFromDb(streamId: string, db?: DbClient): Promise<VerificationResult> {
-    const database = db || getDb();
+    try {
+      const database = db || getDb();
 
-    const headRows = await database
-      .select()
-      .from(chainHeads)
-      .where(eq(chainHeads.streamId, streamId));
+      const headRows = await database
+        .select()
+        .from(chainHeads)
+        .where(eq(chainHeads.streamId, streamId));
 
-    const expectedHead = headRows.length > 0 ? headRows[0]?.headHash : undefined;
+      const expectedHead = headRows.length > 0 ? headRows[0]?.headHash : undefined;
 
-    const rows = await database
-      .select()
-      .from(events)
-      .where(eq(events.streamId, streamId))
-      .orderBy(events.ingestSequence);
+      const rows = await database
+        .select()
+        .from(events)
+        .where(eq(events.streamId, streamId))
+        .orderBy(events.ingestSequence);
 
-    const chainedEvents: ChainedEvent[] = rows.map((r) => ({
-      event: r.envelopeJson as EvidenceEvent,
-      stream_sequence: r.ingestSequence,
-      previous_hash: r.previousHash,
-      event_hash: r.eventHash
-    }));
+      const chainedEvents: ChainedEvent[] = rows.map((r) => ({
+        event: r.envelopeJson as EvidenceEvent,
+        stream_sequence: r.ingestSequence,
+        previous_hash: r.previousHash,
+        event_hash: r.eventHash
+      }));
 
-    return verifyEventChain(chainedEvents, expectedHead);
+      return verifyEventChain(chainedEvents, expectedHead);
+    } catch (err: any) {
+      if (isDbConnectionError(err)) {
+        assertInMemoryFallbackAllowed("verifyStreamFromDb", err);
+        return this.verifyInMemory(streamId);
+      }
+      throw err;
+    }
   }
 }
 

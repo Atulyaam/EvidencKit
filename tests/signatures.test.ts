@@ -1,9 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   generateEd25519KeyPair,
   SIGNATURE_DISCLAIMER,
   createExportBundle,
   validateImportBundle,
+  globalTrustedKeyRegistry,
   ChainedEvent,
   EvidenceEvent
 } from "@evidencekit/core";
@@ -29,6 +30,10 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
 
   const sampleEvents: ChainedEvent[] = [defaultChainService.appendInMemory(rawEvent)];
 
+  beforeEach(() => {
+    globalTrustedKeyRegistry.clear();
+  });
+
   it("generates an Ed25519 key pair with valid SHA-256 fingerprint", () => {
     const keyPair = generateEd25519KeyPair("ek-signer-test");
     expect(keyPair.keyId).toBe("ek-signer-test");
@@ -39,6 +44,10 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
 
   it("creates, signs, and independently verifies a signed export bundle", () => {
     const keyPair = generateEd25519KeyPair("ek-test-key-1");
+    globalTrustedKeyRegistry.registerKey({
+      keyId: keyPair.keyId,
+      publicKeyBase64: keyPair.publicKeyBase64
+    });
 
     const bundle = createExportBundle(streamId, "tracevault.case", sampleEvents, {
       workspaceId: "ws_sig_test",
@@ -55,18 +64,25 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
     expect(bundle.signature?.key_id).toBe("ek-test-key-1");
     expect(bundle.signature?.public_key_fingerprint).toBe(keyPair.fingerprint);
 
-    // Independent verification
-    const importValidation = validateImportBundle(bundle);
+    // Independent verification against trusted registry
+    const importValidation = validateImportBundle(bundle, {
+      trustedRegistry: globalTrustedKeyRegistry
+    });
     expect(importValidation.valid).toBe(true);
-    expect(importValidation.signature_verification.status).toBe("verified");
+    expect(importValidation.signature_verification.status).toBe("VERIFIED");
     expect(importValidation.signature_verification.algorithm).toBe("Ed25519");
     expect(importValidation.signature_verification.keyId).toBe("ek-test-key-1");
     expect(importValidation.signature_verification.fingerprint).toBe(keyPair.fingerprint);
+    expect(importValidation.signature_verification.signerTrusted).toBe(true);
     expect(importValidation.signature_verification.disclaimer).toBe(SIGNATURE_DISCLAIMER);
   });
 
   it("detects manifest tampering and rejects altered signed bundles", () => {
     const keyPair = generateEd25519KeyPair("ek-test-key-tamper");
+    globalTrustedKeyRegistry.registerKey({
+      keyId: keyPair.keyId,
+      publicKeyBase64: keyPair.publicKeyBase64
+    });
 
     const bundle = createExportBundle(streamId, "tracevault.case", sampleEvents, {
       signingKey: {
@@ -80,15 +96,73 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
     const tamperedBundle = JSON.parse(JSON.stringify(bundle));
     tamperedBundle.manifest.event_count = 999;
 
-    const validation = validateImportBundle(tamperedBundle);
+    const validation = validateImportBundle(tamperedBundle, {
+      trustedRegistry: globalTrustedKeyRegistry
+    });
     expect(validation.valid).toBe(false);
-    expect(validation.signature_verification.status).toBe("invalid");
+    expect(validation.signature_verification.status).toBe("INVALID_SIGNATURE");
     expect(validation.errors.some((e) => e.includes("signature verification failed"))).toBe(true);
+  });
+
+  it("rejects signatures from untrusted public keys (SEC-002)", () => {
+    const untrustedKey = generateEd25519KeyPair("attacker-key");
+    // Deliberately DO NOT register untrustedKey in trusted registry
+
+    const bundle = createExportBundle(streamId, "tracevault.case", sampleEvents, {
+      signingKey: {
+        privateKeyBase64: untrustedKey.privateKeyBase64,
+        publicKeyBase64: untrustedKey.publicKeyBase64,
+        keyId: untrustedKey.keyId
+      }
+    });
+
+    const validation = validateImportBundle(bundle, {
+      trustedRegistry: globalTrustedKeyRegistry
+    });
+    expect(validation.valid).toBe(false);
+    expect(validation.signature_verification.status).toBe("UNTRUSTED_KEY");
+    expect(validation.signature_verification.signerTrusted).toBe(false);
+    expect(validation.errors.some((e) => e.includes("not in the trusted key registry"))).toBe(true);
+  });
+
+  it("rejects signature stripping on format 2.0 signed bundles (SEC-002)", () => {
+    const keyPair = generateEd25519KeyPair("ek-strip-test");
+    globalTrustedKeyRegistry.registerKey({
+      keyId: keyPair.keyId,
+      publicKeyBase64: keyPair.publicKeyBase64
+    });
+
+    const bundle = createExportBundle(streamId, "tracevault.case", sampleEvents, {
+      signingKey: {
+        privateKeyBase64: keyPair.privateKeyBase64,
+        publicKeyBase64: keyPair.publicKeyBase64,
+        keyId: keyPair.keyId
+      }
+    });
+
+    // Attacker removes signature from signed bundle
+    const strippedBundle = JSON.parse(JSON.stringify(bundle));
+    delete strippedBundle.signature;
+
+    const validation = validateImportBundle(strippedBundle, {
+      trustedRegistry: globalTrustedKeyRegistry
+    });
+    expect(validation.valid).toBe(false);
+    expect(validation.signature_verification.status).toBe("UNSIGNED");
+    expect(validation.errors.some((e) => e.includes("Signature stripping detected"))).toBe(true);
   });
 
   it("rejects signatures verified against the wrong public key or public key substitution", () => {
     const keyPairA = generateEd25519KeyPair("key-A");
     const keyPairB = generateEd25519KeyPair("key-B");
+    globalTrustedKeyRegistry.registerKey({
+      keyId: keyPairA.keyId,
+      publicKeyBase64: keyPairA.publicKeyBase64
+    });
+    globalTrustedKeyRegistry.registerKey({
+      keyId: keyPairB.keyId,
+      publicKeyBase64: keyPairB.publicKeyBase64
+    });
 
     const bundle = createExportBundle(streamId, "tracevault.case", sampleEvents, {
       signingKey: {
@@ -102,7 +176,9 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
     const substitutedBundle = JSON.parse(JSON.stringify(bundle));
     substitutedBundle.signature.public_key = keyPairB.publicKeyBase64;
     // Keep fingerprint of key A to test fingerprint mismatch first
-    const validationFingerprintMismatch = validateImportBundle(substitutedBundle);
+    const validationFingerprintMismatch = validateImportBundle(substitutedBundle, {
+      trustedRegistry: globalTrustedKeyRegistry
+    });
     expect(validationFingerprintMismatch.valid).toBe(false);
     expect(validationFingerprintMismatch.signature_verification.error).toContain(
       "fingerprint mismatch"
@@ -110,9 +186,11 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
 
     // Update fingerprint to Key B's fingerprint so fingerprint matches, but signature verification fails!
     substitutedBundle.signature.public_key_fingerprint = keyPairB.fingerprint;
-    const validationSignatureFailed = validateImportBundle(substitutedBundle);
+    const validationSignatureFailed = validateImportBundle(substitutedBundle, {
+      trustedRegistry: globalTrustedKeyRegistry
+    });
     expect(validationSignatureFailed.valid).toBe(false);
-    expect(validationSignatureFailed.signature_verification.status).toBe("invalid");
+    expect(validationSignatureFailed.signature_verification.status).toBe("INVALID_SIGNATURE");
   });
 
   it("maintains backward compatibility with legacy unsigned v1.0 bundles", () => {
@@ -122,15 +200,26 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
     expect(legacyBundle.manifest.format_version).toBe("1.0");
     expect(legacyBundle.signature).toBeUndefined();
 
-    const validation = validateImportBundle(legacyBundle);
+    const validation = validateImportBundle(legacyBundle, {
+      allowUnsigned: true,
+      trustedRegistry: globalTrustedKeyRegistry
+    });
     expect(validation.valid).toBe(true); // Still structurally & cryptographically valid!
-    expect(validation.signature_verification.status).toBe("unsigned");
+    expect(validation.signature_verification.status).toBe("UNSIGNED");
     expect(validation.signature_verification.error).toContain("Legacy Unsigned Bundle");
   });
 
   it("supports key rotation across multiple key versions", () => {
     const oldKey = generateEd25519KeyPair("ek-signer-2025");
     const newKey = generateEd25519KeyPair("ek-signer-2026");
+    globalTrustedKeyRegistry.registerKey({
+      keyId: oldKey.keyId,
+      publicKeyBase64: oldKey.publicKeyBase64
+    });
+    globalTrustedKeyRegistry.registerKey({
+      keyId: newKey.keyId,
+      publicKeyBase64: newKey.publicKeyBase64
+    });
 
     const bundleOld = createExportBundle(streamId, "tracevault.case", sampleEvents, {
       signingKey: {
@@ -148,9 +237,19 @@ describe("Phase 4.5 — Ed25519 Signed Evidence Receipts Test Suite", () => {
       }
     });
 
-    expect(validateImportBundle(bundleOld).signature_verification.keyId).toBe("ek-signer-2025");
-    expect(validateImportBundle(bundleNew).signature_verification.keyId).toBe("ek-signer-2026");
-    expect(validateImportBundle(bundleOld).valid).toBe(true);
-    expect(validateImportBundle(bundleNew).valid).toBe(true);
+    expect(
+      validateImportBundle(bundleOld, { trustedRegistry: globalTrustedKeyRegistry })
+        .signature_verification.keyId
+    ).toBe("ek-signer-2025");
+    expect(
+      validateImportBundle(bundleNew, { trustedRegistry: globalTrustedKeyRegistry })
+        .signature_verification.keyId
+    ).toBe("ek-signer-2026");
+    expect(
+      validateImportBundle(bundleOld, { trustedRegistry: globalTrustedKeyRegistry }).valid
+    ).toBe(true);
+    expect(
+      validateImportBundle(bundleNew, { trustedRegistry: globalTrustedKeyRegistry }).valid
+    ).toBe(true);
   });
 });

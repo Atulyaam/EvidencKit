@@ -1,10 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { defaultChainService } from "@evidencekit/evidence-server";
+import {
+  defaultChainService,
+  defaultAgentSessionService,
+  evaluateSessionContext,
+  requireWorkspaceAuthorization
+} from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const context = evaluateSessionContext(_req.headers);
     const db = getDb();
+    const session = await defaultAgentSessionService.getSession(
+      params.id,
+      "ws_demo_default",
+      db,
+      context
+    );
+    if (!session) {
+      return NextResponse.json({ error: `Session '${params.id}' not found` }, { status: 404 });
+    }
+    requireWorkspaceAuthorization(context, session.workspaceId);
+
     const allEvents = await defaultChainService.getAllEvents(params.id, db);
 
     // Filter events where event_name === 'agent.file.changed'
@@ -29,9 +46,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ files, total: files.length });
   } catch (error: any) {
+    const status =
+      error.message?.includes("Forbidden") || error.message?.includes("READ-ONLY") ? 403 : 500;
     return NextResponse.json(
       { error: error.message || "Failed to retrieve file changes" },
-      { status: 500 }
+      { status }
     );
   }
 }

@@ -87,8 +87,8 @@ test.describe("AgentLedger — AI Agent Auditing Application User Journey", () =
 
     // 8. Independent Bundle Verifier
     await page.goto("/verify");
-    await expect(page.locator("h1")).toContainText("Independent Evidence Verifier");
+    await expect(page.locator("h1")).toContainText("EvidenceKit Cryptographic Verifier");
     await expect(page.locator("text=Upload Export Bundle (.json)")).toBeVisible();
-    await expect(page.locator("text=Verify Bundle Integrity")).toBeVisible();
+    await expect(page.locator("text=Run Server Verification")).toBeVisible();
   });
 });

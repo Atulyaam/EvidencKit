@@ -20,7 +20,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "db:generate": "pnpm --filter @evidencekit/db generate",
     "db:migrate": "pnpm --filter @evidencekit/db migrate",
-    "db:seed": "pnpm --filter @evidencekit/db seed"
+    "db:seed": "pnpm --filter @evidencekit/db seed",
+    "verify-bundle": "tsx scripts/verify-bundle.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

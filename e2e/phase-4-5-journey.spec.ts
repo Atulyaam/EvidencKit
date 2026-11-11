@@ -148,9 +148,9 @@ test.describe("Phase 4.5 & 5.5 — Complete Cross-Application Governance Journey
     // Step 14: Verify signed bundle independently on /verify
     // -------------------------------------------------------------
     await page.goto("http://localhost:3002/verify");
-    await expect(page.locator("text=Independent Evidence Verifier")).toBeVisible();
+    await expect(page.locator("text=EvidenceKit Cryptographic Verifier")).toBeVisible();
     await page.setInputFiles('input[type="file"]', exportedBundlePath);
-    await page.click('button:has-text("Verify Bundle Integrity")');
+    await page.click('button:has-text("Run Server Verification")');
 
     await expect(page.locator("text=CRYPTOGRAPHIC INTEGRITY VERIFIED")).toBeVisible({
       timeout: 10000
@@ -166,7 +166,7 @@ test.describe("Phase 4.5 & 5.5 — Complete Cross-Application Governance Journey
       "../fixtures/tracevault/tampered-bundle/bundle.json"
     );
     await page.setInputFiles('input[type="file"]', tamperedPath);
-    await page.click('button:has-text("Verify Bundle Integrity")');
+    await page.click('button:has-text("Run Server Verification")');
 
     await expect(page.locator("text=VERIFICATION FAILED: TAMPERING DETECTED")).toBeVisible({
       timeout: 10000

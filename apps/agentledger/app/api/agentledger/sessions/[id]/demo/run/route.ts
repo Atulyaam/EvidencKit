@@ -2,20 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   defaultAgentDemoService,
   defaultAgentSessionService,
-  evaluateSessionContext
+  evaluateSessionContext,
+  validateCsrfProtection,
+  requireWorkspaceAuthorization
 } from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const context = evaluateSessionContext(req.headers);
+    validateCsrfProtection(req.headers, context);
     const workspaceId =
       req.nextUrl.searchParams.get("workspaceId") ||
       req.headers.get("x-workspace-id") ||
       "ws_demo_default";
+    requireWorkspaceAuthorization(context, workspaceId);
+
     const db = getDb();
 
-    let session = await defaultAgentSessionService.getSession(params.id, workspaceId, db);
+    let session = await defaultAgentSessionService.getSession(params.id, workspaceId, db, context);
     const body = await req.json().catch(() => ({}));
 
     // If session doesn't exist, create it with specified goal/name or use default demo

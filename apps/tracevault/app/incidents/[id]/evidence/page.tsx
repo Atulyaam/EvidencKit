@@ -2,7 +2,27 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  Badge,
+  Alert,
+  Spinner
+} from "@evidencekit/ui";
+import {
+  UploadCloud,
+  FileCheck,
+  AlertTriangle,
+  FileCode,
+  ShieldCheck,
+  FileUp,
+  Lock,
+  Layers
+} from "lucide-react";
 
 interface EvidencePageProps {
   params?: { id: string };
@@ -124,30 +144,33 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
       {/* Upload Dropzone */}
       <Card className="border-zinc-800 bg-zinc-900/60 shadow-lg">
         <CardHeader className="border-b border-zinc-800/80 pb-4">
-          <CardTitle className="text-base text-zinc-100">
+          <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+            <UploadCloud className="w-5 h-5 text-blue-400" />
             Upload & Ingest Evidence Sources
           </CardTitle>
-          <p className="text-xs text-zinc-400 mt-1">
+          <CardDescription className="text-xs text-zinc-400 mt-1">
             Supported formats: JSONL application logs, Git commit logs (JSON), GitHub Actions/CI
             runs (JSON), Deployments (JSON), EvidenceKit normalized JSON, or full ZIP bundles.
-          </p>
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 space-y-6">
           {error && (
-            <div className="rounded-lg border border-rose-900/60 bg-rose-950/30 p-3 text-xs text-rose-300">
+            <Alert variant="danger" title="Evidence Ingestion Error">
               {error}
-            </div>
+            </Alert>
           )}
 
           {successMsg && (
-            <div className="rounded-lg border border-emerald-900/60 bg-emerald-950/30 p-3 text-xs text-emerald-300 font-mono">
-              ✓ {successMsg}
-            </div>
+            <Alert variant="success" title="Ingestion Completed">
+              {successMsg}
+            </Alert>
           )}
 
           <div className="border-2 border-dashed border-zinc-700/80 hover:border-blue-500/80 rounded-xl p-8 text-center bg-zinc-900/30 transition-colors">
             <div className="max-w-md mx-auto space-y-3">
-              <span className="text-3xl block">📁</span>
+              <div className="mx-auto w-12 h-12 rounded-full bg-blue-950/60 border border-blue-800/40 flex items-center justify-center text-blue-400">
+                <FileUp className="w-6 h-6" />
+              </div>
               <div className="text-sm font-semibold text-zinc-200">
                 {selectedFile ? selectedFile.name : "Select or drag incident evidence file"}
               </div>
@@ -168,22 +191,25 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
               </label>
 
               {analyzing && (
-                <div className="text-xs text-blue-400 animate-pulse font-mono">
-                  Analyzing format and validating schemas...
+                <div className="flex items-center justify-center gap-2 text-xs text-blue-400 font-mono pt-2">
+                  <Spinner size="sm" />
+                  <span>Analyzing format and validating schemas...</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Validation & Normalization Preview Modal/Section */}
+          {/* Validation & Normalization Preview Section */}
           {preview && (
-            <div className="rounded-xl border border-zinc-700 bg-zinc-950 p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-                <div className="flex items-center gap-2">
+            <div className="rounded-xl border border-zinc-700 bg-zinc-950 p-5 space-y-4 shadow-xl animate-in fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-3">
+                <div className="flex items-center gap-2.5">
                   <span className="text-sm font-bold text-white">
                     Pre-Ingestion Validation Preview
                   </span>
-                  <Badge variant="default">{preview.detected_adapter}</Badge>
+                  <Badge variant="default" className="font-mono text-[10px]">
+                    {preview.detected_adapter}
+                  </Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-zinc-400">Total: {preview.total_records}</span>
@@ -196,7 +222,10 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
 
               {Boolean(preview.validation_errors && preview.validation_errors.length > 0) && (
                 <div className="rounded-md border border-amber-900/50 bg-amber-950/20 p-3 text-xs text-amber-300 space-y-1">
-                  <div className="font-semibold">Validation Warnings / Rejections:</div>
+                  <div className="font-semibold flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Validation Warnings / Rejections:</span>
+                  </div>
                   <ul className="list-disc pl-5 font-mono text-[11px] space-y-0.5">
                     {preview.validation_errors.slice(0, 5).map((err, i) => (
                       <li key={i}>{err}</li>
@@ -211,10 +240,11 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
               {/* Sample Event Preview */}
               {preview.sample_events && preview.sample_events.length > 0 && (
                 <div className="space-y-1">
-                  <span className="text-xs text-zinc-400 font-semibold">
+                  <span className="text-xs text-zinc-400 font-semibold flex items-center gap-1.5">
+                    <FileCode className="w-3.5 h-3.5 text-blue-400" />
                     Normalized Event Sample:
                   </span>
-                  <pre className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/80 p-3 font-mono text-xs text-zinc-300 max-h-48">
+                  <pre className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/80 p-3 font-mono text-xs text-zinc-300 max-h-48 leading-relaxed">
                     {JSON.stringify(preview.sample_events[0], null, 2)}
                   </pre>
                 </div>
@@ -234,6 +264,7 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
                   variant="primary"
                   onClick={handleConfirmIngest}
                   disabled={ingesting || preview.valid_events === 0}
+                  isLoading={ingesting}
                 >
                   {ingesting
                     ? "Persisting to Hash Chain..."
@@ -246,30 +277,40 @@ export default function EvidenceUploadPage({ params }: EvidencePageProps) {
       </Card>
 
       {/* Ingestion Pipeline Specifications */}
-      <Card className="border-zinc-800 bg-zinc-900/40">
+      <Card className="border-zinc-800 bg-zinc-900/40 shadow-sm">
         <CardHeader className="pb-3 border-b border-zinc-800/80">
-          <CardTitle className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          <CardTitle className="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
             Ingestion Pipeline Guarantees
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-zinc-400">
-          <div className="space-y-1">
-            <span className="font-semibold text-zinc-200 block">1. Pre-Persistence Redaction</span>
-            <p>
+          <div className="space-y-1.5 p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80">
+            <span className="font-semibold text-zinc-200 flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-rose-400" />
+              1. Pre-Persistence Redaction
+            </span>
+            <p className="leading-relaxed">
               All authorization headers, API keys, JWTs, and database passwords are sanitized before
               being written to storage.
             </p>
           </div>
-          <div className="space-y-1">
-            <span className="font-semibold text-zinc-200 block">2. Exact Provenance Locators</span>
-            <p>
+          <div className="space-y-1.5 p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80">
+            <span className="font-semibold text-zinc-200 flex items-center gap-1.5">
+              <FileCheck className="w-3.5 h-3.5 text-amber-400" />
+              2. Exact Provenance Locators
+            </span>
+            <p className="leading-relaxed">
               Every event preserves source references including record number, line number, or JSON
               pointer back to the raw uploaded file.
             </p>
           </div>
-          <div className="space-y-1">
-            <span className="font-semibold text-zinc-200 block">3. Cryptographic Linking</span>
-            <p>
+          <div className="space-y-1.5 p-3 rounded-lg bg-zinc-950/60 border border-zinc-800/80">
+            <span className="font-semibold text-zinc-200 flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-blue-400" />
+              3. Cryptographic Linking
+            </span>
+            <p className="leading-relaxed">
               Payloads are canonicalized with RFC 8785 (JCS) and SHA-256 chained. Any tampering
               breaks subsequent hash continuity.
             </p>

@@ -1,7 +1,17 @@
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { SessionContext, requireOwnerAuthorization } from "../authorization/index";
-import { agentSessions, workspaces, DbClient } from "@evidencekit/db";
+import {
+  SessionContext,
+  requireOwnerAuthorization,
+  requireWorkspaceAuthorization
+} from "../authorization/index";
+import {
+  agentSessions,
+  workspaces,
+  DbClient,
+  isDbConnectionError,
+  assertInMemoryFallbackAllowed
+} from "@evidencekit/db";
 import { eq, and, desc, sql, like } from "drizzle-orm";
 import { defaultChainService } from "./chain-service";
 import { EvidenceEvent } from "@evidencekit/core";
@@ -106,6 +116,7 @@ export class AgentSessionService {
   ): Promise<AgentSessionRecord> {
     requireOwnerAuthorization(context);
     const parsed = CreateAgentSessionInputSchema.parse(input);
+    requireWorkspaceAuthorization(context, parsed.workspaceId);
     const now = new Date().toISOString();
 
     const session: AgentSessionRecord = {
@@ -144,7 +155,8 @@ export class AgentSessionService {
           updatedAt: new Date(session.updatedAt)
         });
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -199,7 +211,8 @@ export class AgentSessionService {
     db?: DbClient
   ): Promise<AgentSessionRecord> {
     requireOwnerAuthorization(context);
-    const existing = await this.getSession(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getSession(id, workspaceId, db, context);
     if (!existing) {
       throw new Error(`Session '${id}' not found in workspace '${workspaceId}'`);
     }
@@ -229,7 +242,8 @@ export class AgentSessionService {
           })
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -280,7 +294,8 @@ export class AgentSessionService {
     db?: DbClient
   ): Promise<AgentSessionRecord> {
     requireOwnerAuthorization(context);
-    const existing = await this.getSession(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getSession(id, workspaceId, db, context);
     if (!existing) {
       throw new Error(`Session '${id}' not found in workspace '${workspaceId}'`);
     }
@@ -308,7 +323,8 @@ export class AgentSessionService {
           })
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -324,7 +340,8 @@ export class AgentSessionService {
     db?: DbClient
   ): Promise<AgentSessionRecord> {
     requireOwnerAuthorization(context);
-    const existing = await this.getSession(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getSession(id, workspaceId, db, context);
     if (!existing) {
       throw new Error(`Session '${id}' not found in workspace '${workspaceId}'`);
     }
@@ -357,7 +374,8 @@ export class AgentSessionService {
           })
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -410,7 +428,8 @@ export class AgentSessionService {
     db?: DbClient
   ): Promise<AgentSessionRecord> {
     requireOwnerAuthorization(context);
-    const existing = await this.getSession(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getSession(id, workspaceId, db, context);
     if (!existing) {
       throw new Error(`Session '${id}' not found in workspace '${workspaceId}'`);
     }
@@ -443,7 +462,8 @@ export class AgentSessionService {
           })
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -496,7 +516,8 @@ export class AgentSessionService {
     db?: DbClient
   ): Promise<AgentSessionRecord> {
     requireOwnerAuthorization(context);
-    const existing = await this.getSession(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getSession(id, workspaceId, db, context);
     if (!existing) {
       throw new Error(`Session '${id}' not found in workspace '${workspaceId}'`);
     }
@@ -529,7 +550,8 @@ export class AgentSessionService {
           })
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -569,7 +591,8 @@ export class AgentSessionService {
           })
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -580,8 +603,12 @@ export class AgentSessionService {
   public async getSession(
     id: string,
     workspaceId: string = "ws_demo_default",
-    db?: DbClient
+    db?: DbClient,
+    context?: SessionContext
   ): Promise<AgentSessionRecord | null> {
+    if (context) {
+      requireWorkspaceAuthorization(context, workspaceId);
+    }
     if (db) {
       try {
         const rows = await db
@@ -604,7 +631,8 @@ export class AgentSessionService {
           };
         }
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -618,10 +646,14 @@ export class AgentSessionService {
   public async listSessions(
     rawQuery: unknown,
     workspaceId: string = "ws_demo_default",
-    db?: DbClient
+    db?: DbClient,
+    context?: SessionContext
   ): Promise<AgentSessionListResult> {
     const query = AgentSessionQuerySchema.parse(rawQuery ?? {});
     const targetWorkspace = query.workspaceId || workspaceId;
+    if (context) {
+      requireWorkspaceAuthorization(context, targetWorkspace);
+    }
 
     if (db) {
       try {
@@ -667,7 +699,8 @@ export class AgentSessionService {
           hasMore: query.offset + query.limit < total
         };
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 
@@ -708,7 +741,8 @@ export class AgentSessionService {
     db?: DbClient
   ): Promise<boolean> {
     requireOwnerAuthorization(context);
-    const existing = await this.getSession(id, workspaceId, db);
+    requireWorkspaceAuthorization(context, workspaceId);
+    const existing = await this.getSession(id, workspaceId, db, context);
     if (!existing) return false;
 
     if (db) {
@@ -717,7 +751,8 @@ export class AgentSessionService {
           .delete(agentSessions)
           .where(and(eq(agentSessions.id, id), eq(agentSessions.workspaceId, workspaceId)));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentSessionOperation", err);
       }
     }
 

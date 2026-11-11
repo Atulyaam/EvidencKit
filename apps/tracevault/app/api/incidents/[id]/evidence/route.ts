@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { defaultEvidenceUploadService, evaluateSessionContext } from "@evidencekit/evidence-server";
+import {
+  defaultEvidenceUploadService,
+  defaultIncidentService,
+  evaluateSessionContext,
+  validateCsrfProtection,
+  requireWorkspaceAuthorization
+} from "@evidencekit/evidence-server";
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const context = evaluateSessionContext(request.headers);
+    validateCsrfProtection(request.headers, context);
+
+    const incident = await defaultIncidentService.getIncident(params.id);
+    if (!incident) {
+      return NextResponse.json({ error: `Incident '${params.id}' not found` }, { status: 404 });
+    }
+    requireWorkspaceAuthorization(context, incident.workspaceId);
+
     const { searchParams } = new URL(request.url);
     const isPreview = searchParams.get("preview") === "true";
 
@@ -20,7 +35,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json(preview);
     }
 
-    const context = evaluateSessionContext(request.headers);
     const result = await defaultEvidenceUploadService.importUpload(
       params.id,
       file.name,
@@ -31,7 +45,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     return NextResponse.json(result, { status: 201 });
   } catch (err: any) {
     const status =
-      err.message.includes("Forbidden") || err.message.includes("READ-ONLY") ? 403 : 400;
+      err.message.includes("Forbidden") || err.message.includes("READ-ONLY")
+        ? 403
+        : err.message.includes("CSRF")
+          ? 403
+          : 400;
     return NextResponse.json({ error: err.message }, { status });
   }
 }

@@ -2,19 +2,32 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   defaultAgentSessionService,
   defaultChainService,
-  evaluateSessionContext
+  evaluateSessionContext,
+  validateCsrfProtection
 } from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const workspaceId =
+    const context = evaluateSessionContext(req.headers);
+    const authorized = context.authorizedWorkspaces || [];
+    const workspaceId: string =
       req.nextUrl.searchParams.get("workspaceId") ||
-      req.headers.get("x-workspace-id") ||
-      "ws_demo_default";
-    const db = getDb();
+      (authorized.length > 0 && authorized[0] !== "*" ? authorized[0]! : "ws_demo_default");
 
-    const session = await defaultAgentSessionService.getSession(params.id, workspaceId, db);
+    let db;
+    try {
+      db = getDb();
+    } catch {
+      // In-memory fallback
+    }
+
+    const session = await defaultAgentSessionService.getSession(
+      params.id,
+      workspaceId,
+      db,
+      context
+    );
     if (!session) {
       return NextResponse.json({ error: `Session '${params.id}' not found` }, { status: 404 });
     }
@@ -34,23 +47,30 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       verification
     });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Failed to retrieve session" },
-      { status: 500 }
-    );
+    const status =
+      error.message?.includes("Forbidden") || error.message?.includes("Unauthorized") ? 403 : 500;
+    return NextResponse.json({ error: error.message || "Failed to retrieve session" }, { status });
   }
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const context = evaluateSessionContext(req.headers);
-    const workspaceId =
+    validateCsrfProtection(req.headers, context);
+    const authorized = context.authorizedWorkspaces || [];
+    const workspaceId: string =
       req.nextUrl.searchParams.get("workspaceId") ||
-      req.headers.get("x-workspace-id") ||
-      "ws_demo_default";
+      (authorized.length > 0 && authorized[0] !== "*" ? authorized[0]! : "ws_demo_default");
+
     const body = await req.json();
     const action = body.action as string; // 'start' | 'pause' | 'complete' | 'fail' | 'cancel'
-    const db = getDb();
+
+    let db;
+    try {
+      db = getDb();
+    } catch {
+      // In-memory fallback
+    }
 
     let updated;
     switch (action) {
@@ -112,11 +132,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const context = evaluateSessionContext(req.headers);
-    const workspaceId =
+    validateCsrfProtection(req.headers, context);
+    const authorized = context.authorizedWorkspaces || [];
+    const workspaceId: string =
       req.nextUrl.searchParams.get("workspaceId") ||
-      req.headers.get("x-workspace-id") ||
-      "ws_demo_default";
-    const db = getDb();
+      (authorized.length > 0 && authorized[0] !== "*" ? authorized[0]! : "ws_demo_default");
+
+    let db;
+    try {
+      db = getDb();
+    } catch {
+      // In-memory fallback
+    }
 
     const deleted = await defaultAgentSessionService.deleteSession(
       params.id,

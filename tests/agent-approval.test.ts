@@ -1,5 +1,5 @@
-import { describe, it, expect, afterAll } from "vitest";
-import { getDb, getDbPool } from "../packages/db/src/index";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { getDb, getDbPool, checkDbHealth } from "../packages/db/src/index";
 import {
   defaultAgentSessionService,
   defaultAgentApprovalService,
@@ -11,6 +11,15 @@ import fs from "node:fs";
 import path from "node:path";
 
 describe("Phase 4 — Agent Human Approval & Security Governance Suite", () => {
+  let db: any = undefined;
+
+  beforeAll(async () => {
+    const alive = await checkDbHealth(1000);
+    if (alive) {
+      db = getDb();
+    }
+  });
+
   afterAll(async () => {
     try {
       await getDbPool().end();
@@ -19,7 +28,6 @@ describe("Phase 4 — Agent Human Approval & Security Governance Suite", () => {
     }
   });
 
-  const db = getDb();
   const workspaceId = `ws_appr_test_${Date.now()}`;
   const context: SessionContext = {
     userId: "usr_auditor_lead",
@@ -102,7 +110,7 @@ describe("Phase 4 — Agent Human Approval & Security Governance Suite", () => {
     expect(decided.decidedAt).toBeDefined();
 
     // Verify session events reflect the decision
-    const events = await defaultChainService.getEventsFromDb(session.id, db);
+    const events = await defaultChainService.getAllEvents(session.id, db);
     const decideEvent = events.find((e) => e.event.event_name === "agent.approval.decided");
     expect(decideEvent).toBeDefined();
     expect(decideEvent?.event.attributes.decision).toBe("approved");

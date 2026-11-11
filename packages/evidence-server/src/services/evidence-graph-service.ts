@@ -1,5 +1,16 @@
 import { GraphNode, GraphEdge, GraphQueryParams, EvidenceGraphResult } from "@evidencekit/core";
-import { DbClient, cases, agentSessions, events, agentApprovals, eq, desc } from "@evidencekit/db";
+import {
+  DbClient,
+  cases,
+  agentSessions,
+  events,
+  agentApprovals,
+  eq,
+  desc,
+  isDbConnectionError
+} from "@evidencekit/db";
+import { inArray } from "drizzle-orm";
+import { SessionContext, requireWorkspaceAuthorization } from "../authorization/index";
 import { defaultChainService } from "./chain-service";
 
 export class EvidenceGraphService {
@@ -8,15 +19,24 @@ export class EvidenceGraphService {
    */
   public async getEvidenceGraph(
     params: GraphQueryParams,
-    db?: DbClient
+    db?: DbClient,
+    context?: SessionContext
   ): Promise<EvidenceGraphResult> {
     const { workspaceId, streamId, nodeTypes, relationshipType, limit = 100 } = params;
+    if (context) {
+      requireWorkspaceAuthorization(context, workspaceId);
+    }
 
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
 
     if (db) {
-      await this.buildFromDatabase(workspaceId, streamId, nodes, edges, db);
+      try {
+        await this.buildFromDatabase(workspaceId, streamId, nodes, edges, db);
+      } catch (err: any) {
+        if (!isDbConnectionError(err)) throw err;
+        this.buildFromInMemory(workspaceId, streamId, nodes, edges);
+      }
     } else {
       this.buildFromInMemory(workspaceId, streamId, nodes, edges);
     }
@@ -111,6 +131,24 @@ export class EvidenceGraphService {
       .orderBy(desc(agentSessions.createdAt))
       .limit(50);
 
+    const sessionIds = dbSessions.filter((s) => !streamId || s.id === streamId).map((s) => s.id);
+
+    // Batch query approvals for all sessions in this workspace (PERF-001)
+    const approvals =
+      sessionIds.length > 0
+        ? await db
+            .select()
+            .from(agentApprovals)
+            .where(inArray(agentApprovals.sessionId, sessionIds))
+        : [];
+
+    const approvalsBySession = new Map<string, typeof approvals>();
+    for (const a of approvals) {
+      const list = approvalsBySession.get(a.sessionId) || [];
+      list.push(a);
+      approvalsBySession.set(a.sessionId, list);
+    }
+
     for (const s of dbSessions) {
       if (streamId && s.id !== streamId) continue;
       nodes.push({
@@ -128,13 +166,8 @@ export class EvidenceGraphService {
         }
       });
 
-      // Query approvals for this session
-      const approvals = await db
-        .select()
-        .from(agentApprovals)
-        .where(eq(agentApprovals.sessionId, s.id));
-
-      for (const a of approvals) {
+      const sessionApprovals = approvalsBySession.get(s.id) || [];
+      for (const a of sessionApprovals) {
         nodes.push({
           id: a.id,
           type: "approval",
@@ -164,19 +197,29 @@ export class EvidenceGraphService {
       }
     }
 
-    // 3. Events for streams
+    // 3. Events for streams (PERF-001: batch query across active streams)
     const activeStreamIds = nodes
       .filter((n) => n.type === "incident" || n.type === "session")
       .map((n) => n.id);
 
-    for (const sid of activeStreamIds) {
-      const dbEvents = await db
-        .select()
-        .from(events)
-        .where(eq(events.streamId, sid))
-        .orderBy(events.ingestSequence)
-        .limit(100);
+    const allDbEvents =
+      activeStreamIds.length > 0
+        ? await db
+            .select()
+            .from(events)
+            .where(inArray(events.streamId, activeStreamIds))
+            .orderBy(events.ingestSequence)
+        : [];
 
+    const eventsByStream = new Map<string, typeof allDbEvents>();
+    for (const ev of allDbEvents) {
+      const list = eventsByStream.get(ev.streamId) || [];
+      list.push(ev);
+      eventsByStream.set(ev.streamId, list);
+    }
+
+    for (const sid of activeStreamIds) {
+      const dbEvents = eventsByStream.get(sid) || [];
       let prevEventNodeId: string | null = null;
       for (const ev of dbEvents) {
         const evNodeId = ev.id;

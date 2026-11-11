@@ -33,10 +33,21 @@ describe("Phase 1 — Infrastructure & Configuration", () => {
     );
   });
 
-  it("grants owner authorization when matching OWNER_GITHUB_ID header is provided", () => {
+  it("strictly rejects spoofed x-evidencekit-user header bypass (SEC-001)", () => {
     const env = getServerEnv();
     const headers = new Headers();
     headers.set("x-evidencekit-user", env.OWNER_GITHUB_ID);
+
+    const context = evaluateSessionContext(headers);
+    expect(context.isOwner).toBe(false);
+    expect(context.role).toBe("judge");
+    expect(() => requireOwnerAuthorization(context)).toThrow();
+  });
+
+  it("grants owner authorization when valid Bearer AUTH_SECRET is provided", () => {
+    const env = getServerEnv();
+    const headers = new Headers();
+    headers.set("Authorization", `Bearer ${env.AUTH_SECRET}`);
 
     const context = evaluateSessionContext(headers);
     expect(context.isOwner).toBe(true);

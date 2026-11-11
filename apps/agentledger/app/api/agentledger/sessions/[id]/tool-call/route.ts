@@ -3,25 +3,43 @@ import {
   defaultAgentSandboxService,
   defaultAgentSessionService,
   evaluateSessionContext,
-  requireOwnerAuthorization
+  validateCsrfProtection,
+  requireOwnerAuthorization,
+  requireWorkspaceAuthorization
 } from "@evidencekit/evidence-server";
 import { getDb } from "@evidencekit/db";
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const context = evaluateSessionContext(req.headers);
+    validateCsrfProtection(req.headers, context);
     requireOwnerAuthorization(context);
-    const workspaceId =
-      req.nextUrl.searchParams.get("workspaceId") ||
-      req.headers.get("x-workspace-id") ||
-      "ws_demo_default";
-    const body = await req.json();
-    const db = getDb();
 
-    const session = await defaultAgentSessionService.getSession(params.id, workspaceId, db);
+    const authorized = context.authorizedWorkspaces || [];
+    const workspaceId: string =
+      req.nextUrl.searchParams.get("workspaceId") ||
+      (authorized.length > 0 && authorized[0] !== "*" ? authorized[0]! : "ws_demo_default");
+
+    let db;
+    try {
+      db = getDb();
+    } catch {
+      // In-memory fallback
+    }
+
+    const session = await defaultAgentSessionService.getSession(
+      params.id,
+      workspaceId,
+      db,
+      context
+    );
     if (!session) {
       return NextResponse.json({ error: `Session '${params.id}' not found` }, { status: 404 });
     }
+
+    requireWorkspaceAuthorization(context, session.workspaceId);
+
+    const body = await req.json();
 
     const result = await defaultAgentSandboxService.executeTool({
       sessionId: params.id,
@@ -30,6 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       toolName: body.toolName,
       args: body.args || {},
       approvalId: body.approvalId,
+      workspaceId: session.workspaceId,
       db
     });
 

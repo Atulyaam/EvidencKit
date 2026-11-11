@@ -2,6 +2,7 @@ import { describe, it, expect, afterAll } from "vitest";
 import {
   getDb,
   getDbPool,
+  checkDbHealth,
   cases,
   events,
   chainHeads,
@@ -31,18 +32,14 @@ describe("Phase 3 — PostgreSQL Persistence Final Verification (Tasks 1-12)", (
   });
 
   it("verifies real PostgreSQL connection, migration state, CRUD, isolation, rollback, concurrency, and persistence survival", async (ctx) => {
-    let db;
-    try {
-      db = getDb();
-      // 1. Connectivity check
-      await db.select().from(cases).limit(1);
-    } catch (_err: any) {
+    const isDbAlive = await checkDbHealth(1000);
+    if (!isDbAlive) {
       console.warn("\n[POSTGRESQL STATUS]: Real PostgreSQL instance is unreachable on host.");
-      console.warn("[ERROR DETAILS]:", _err?.message || "Connection refused");
-      console.warn("[POSTGRESQL CRITERION]: BLOCKED — No running PostgreSQL instance is present.");
+      console.warn("[POSTGRESQL CRITERION]: SKIPPED — No running PostgreSQL instance is present.");
       ctx.skip();
       return;
     }
+    const db = getDb();
 
     const testWorkspace = `ws_pg_test_${Date.now()}`;
     const otherWorkspace = `ws_pg_isolated_${Date.now()}`;

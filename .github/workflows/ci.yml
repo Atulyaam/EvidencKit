@@ -9,6 +9,27 @@ on:
 jobs:
   quality-gate:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: evidencekit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/evidencekit
+      AUTH_SECRET: ci-test-secret-32-chars-long-minimum-key!
+      EVIDENCE_SIGNING_PRIVATE_KEY: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -34,6 +55,9 @@ jobs:
 
       - name: TypeScript typecheck
         run: pnpm typecheck
+
+      - name: Run database migrations
+        run: pnpm db:migrate
 
       - name: Execute automated unit and property-based tests
         run: pnpm test

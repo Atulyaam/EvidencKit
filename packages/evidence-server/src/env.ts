@@ -54,3 +54,7 @@ export function getServerEnv(): ServerEnv {
   cachedEnv = parsed.data;
   return cachedEnv;
 }
+
+export function resetServerEnv(): void {
+  cachedEnv = null;
+}

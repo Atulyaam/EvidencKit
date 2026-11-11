@@ -3,7 +3,7 @@
 **Project:** EvidenceKit (TraceVault & AgentLedger)  
 **Lead Architect:** Principal Software Architect  
 **Blueprint Scope:** Post-Part 0 Phased Execution (Parts 1 through 7)  
-**Date:** 2026-11-11  
+**Date:** 2026-11-11
 
 ---
 
@@ -37,6 +37,7 @@ graph TD
 ## 2. Detailed Part-by-Part Execution Blueprint
 
 ### Part 1 — Security & Architecture Hardening
+
 - **Objective**: Eliminate all confirmed Critical/High security vulnerabilities, stabilize the Vitest test suite to 100% pass rate, fix Prettier formatting, and add database pre-flight checks.
 - **Exact Modules & Files**:
   - `packages/evidence-server/src/authorization/index.ts`
@@ -70,6 +71,7 @@ graph TD
 ---
 
 ### Part 2 — Shared Forensic Design System & Component Library
+
 - **Objective**: Build a cohesive, enterprise-grade forensic design system in `packages/ui` using Lucide icons, unified typography, and bespoke visualization primitives.
 - **Exact Modules & Files**:
   - `packages/ui/src/primitives/*`
@@ -96,6 +98,7 @@ graph TD
 ---
 
 ### Part 3 — TraceVault Investigation Experience Redesign
+
 - **Objective**: Redesign the entire software incident investigation lifecycle in TraceVault to feel like a high-density forensic workstation.
 - **Exact Modules & Files**:
   - `apps/tracevault/app/layout.tsx`
@@ -127,6 +130,7 @@ graph TD
 ---
 
 ### Part 4 — AgentLedger AI Governance & Replay Redesign
+
 - **Objective**: Redesign AgentLedger to deliver an unmatched AI agent monitoring, policy simulation, and time-travel replay experience.
 - **Exact Modules & Files**:
   - `apps/agentledger/app/layout.tsx`
@@ -157,6 +161,7 @@ graph TD
 ---
 
 ### Part 5 — Performance Engineering & Query Optimization
+
 - **Objective**: Optimize frontend rendering with React Server Components, batch backend database queries to eliminate N+1 cascades, and ensure instantaneous response times under scale.
 - **Exact Modules & Files**:
   - `packages/evidence-server/src/services/evidence-graph-service.ts`
@@ -180,6 +185,7 @@ graph TD
 ---
 
 ### Part 6 — Cloud Integration & Persistent PostgreSQL
+
 - **Objective**: Deploy live serverless PostgreSQL (e.g. Neon), create missing schema migrations for policies, configure persistent Ed25519 keys, and verify production cloud hosting.
 - **Exact Modules & Files**:
   - `packages/db/src/schema/index.ts`
@@ -203,6 +209,7 @@ graph TD
 ---
 
 ### Part 7 — Kiroween 2026 Hackathon Demo & Submission
+
 - **Objective**: Package the completed project for maximum judging impact in the **Skeleton Crew** category.
 - **Exact Modules & Files**:
   - `fixtures/scenarios/*`
@@ -226,4 +233,3 @@ graph TD
 - **Complexity**: Low.
 - **Estimated Effort**: 1 presentation & documentation sprint.
 - **Definition of Done**: Project submitted on Devpost prior to December 4, 2026 deadline.
-

@@ -1,10 +1,19 @@
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { SessionContext, requireOwnerAuthorization } from "../authorization/index";
-import { agentApprovals, DbClient } from "@evidencekit/db";
+import {
+  SessionContext,
+  requireOwnerAuthorization,
+  requireWorkspaceAuthorization
+} from "../authorization/index";
+import {
+  agentApprovals,
+  DbClient,
+  isDbConnectionError,
+  assertInMemoryFallbackAllowed
+} from "@evidencekit/db";
 import { eq, and, desc } from "drizzle-orm";
 import { defaultChainService } from "./chain-service";
-import { defaultAgentSessionService } from "./agent-session-service";
+import { AgentSessionService, defaultAgentSessionService } from "./agent-session-service";
 import { EvidenceEvent } from "@evidencekit/core";
 
 export const ApprovalDecisionSchema = z.enum(["approved", "rejected", "denied"]);
@@ -43,17 +52,54 @@ export interface AgentApprovalRecord {
 
 export class AgentApprovalService {
   private inMemoryApprovals: Map<string, AgentApprovalRecord> = new Map();
+  private rateLimitBuckets: Map<string, number[]> = new Map();
+
+  constructor(private sessionService: AgentSessionService = defaultAgentSessionService) {}
+
+  /**
+   * Sliding window rate limiter to prevent automated approval storming and resource exhaustion.
+   */
+  private checkRateLimit(key: string, maxRequests = 60, windowMs = 60000): void {
+    const now = Date.now();
+    const timestamps = (this.rateLimitBuckets.get(key) || []).filter((t) => now - t < windowMs);
+    if (timestamps.length >= maxRequests) {
+      throw new Error(
+        `Rate limit exceeded: maximum ${maxRequests} approval operations per minute. Please throttle requests.`
+      );
+    }
+    timestamps.push(now);
+    this.rateLimitBuckets.set(key, timestamps);
+  }
 
   public async requestApproval(
     input: unknown,
-    _context: SessionContext,
+    context: SessionContext,
     workspaceId: string = "ws_demo_default",
     db?: DbClient
   ): Promise<AgentApprovalRecord> {
+    requireWorkspaceAuthorization(context, workspaceId);
     const parsed = RequestApprovalInputSchema.parse(input);
-    const session = await defaultAgentSessionService.getSession(parsed.sessionId, workspaceId, db);
+
+    // Rate limit per session
+    this.checkRateLimit(`req_${parsed.sessionId}`);
+
+    const session = await this.sessionService.getSession(
+      parsed.sessionId,
+      workspaceId,
+      db,
+      context
+    );
     if (!session) {
-      throw new Error(`Session '${parsed.sessionId}' not found`);
+      throw new Error(`Session '${parsed.sessionId}' not found in workspace '${workspaceId}'`);
+    }
+
+    // Cap pending approvals per session to prevent approval flooding DoS (SEC-008)
+    const existingPending = await this.listApprovals(parsed.sessionId, db);
+    const pendingCount = existingPending.filter((a) => a.decision === "pending").length;
+    if (pendingCount >= 50) {
+      throw new Error(
+        `Approval queue limit exceeded: session '${parsed.sessionId}' already has 50 pending approvals.`
+      );
     }
 
     const now = new Date().toISOString();
@@ -87,7 +133,8 @@ export class AgentApprovalService {
           decidedAt: null
         });
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentApprovalOperation", err);
       }
     }
 
@@ -95,7 +142,7 @@ export class AgentApprovalService {
 
     // Transition session to awaiting_approval
     try {
-      await defaultAgentSessionService.updateSessionStatus(
+      await this.sessionService.updateSessionStatus(
         parsed.sessionId,
         "awaiting_approval",
         workspaceId,
@@ -155,7 +202,11 @@ export class AgentApprovalService {
     db?: DbClient
   ): Promise<AgentApprovalRecord> {
     requireOwnerAuthorization(context);
+    requireWorkspaceAuthorization(context, workspaceId);
     const parsed = DecideApprovalInputSchema.parse(input);
+
+    // Rate limit decision operations per workspace
+    this.checkRateLimit(`dec_${workspaceId}`);
 
     const existing = await this.getApproval(parsed.approvalId, db);
     if (!existing) {
@@ -170,10 +221,11 @@ export class AgentApprovalService {
     }
 
     // Verify session belongs to workspace
-    const session = await defaultAgentSessionService.getSession(
+    const session = await this.sessionService.getSession(
       existing.sessionId,
       workspaceId,
-      db
+      db,
+      context
     );
     if (!session) {
       throw new Error(
@@ -203,7 +255,8 @@ export class AgentApprovalService {
           })
           .where(and(eq(agentApprovals.id, existing.id), eq(agentApprovals.decision, "pending")));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentApprovalOperation", err);
       }
     }
 
@@ -211,12 +264,7 @@ export class AgentApprovalService {
 
     // Transition session back to running
     try {
-      await defaultAgentSessionService.updateSessionStatus(
-        existing.sessionId,
-        "running",
-        workspaceId,
-        db
-      );
+      await this.sessionService.updateSessionStatus(existing.sessionId, "running", workspaceId, db);
     } catch {
       // ignore
     }
@@ -286,7 +334,8 @@ export class AgentApprovalService {
           };
         }
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentApprovalOperation", err);
       }
     }
 
@@ -316,7 +365,8 @@ export class AgentApprovalService {
           decidedAt: r.decidedAt?.toISOString() ?? null
         }));
       } catch (err: any) {
-        if (err.code !== "ECONNREFUSED") throw err;
+        if (!isDbConnectionError(err)) throw err;
+        assertInMemoryFallbackAllowed("agentApprovalOperation", err);
       }
     }
 

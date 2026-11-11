@@ -2,8 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@evidencekit/ui";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Badge,
+  LoadingState,
+  ErrorState
+} from "@evidencekit/ui";
 import { IncidentInvestigationReport } from "@evidencekit/evidence-server";
+import {
+  FileSpreadsheet,
+  Download,
+  Printer,
+  ShieldCheck,
+  AlertTriangle,
+  Layers
+} from "lucide-react";
 
 interface ReportPageProps {
   params?: { id: string };
@@ -71,26 +88,32 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-sm text-zinc-500 border border-zinc-800 rounded-lg bg-zinc-900/30">
-        Generating deterministic 12-section reconstruction report...
-      </div>
+      <LoadingState
+        message="Generating deterministic 12-section reconstruction report..."
+        description="Compiling chronological event stream, cryptographic audit proofs, and candidate correlations..."
+      />
     );
   }
 
   if (error || !report) {
     return (
-      <div className="p-6 text-center text-sm text-rose-400 border border-rose-900/50 rounded-lg bg-rose-950/20">
-        {error || "Report unavailable"}
-      </div>
+      <ErrorState
+        title="Report Generation Failed"
+        error={error || "Report unavailable"}
+        onRetry={() => window.location.reload()}
+      />
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-        <div>
-          <h3 className="text-base font-bold text-white">Deterministic Investigation Report</h3>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 shadow-sm">
+        <div className="space-y-0.5">
+          <h3 className="text-base font-bold text-white flex items-center gap-2">
+            <FileSpreadsheet className="w-5 h-5 text-blue-400" />
+            Deterministic Investigation Report
+          </h3>
           <p className="text-xs text-zinc-400">
             Updated at {new Date(report.metadata.updatedAt).toLocaleString()} • 12 Structured
             Forensic Sections
@@ -98,22 +121,24 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex rounded-md bg-zinc-800 p-0.5 border border-zinc-700 text-xs">
+          <div className="flex rounded-lg bg-zinc-950 p-1 border border-zinc-800 text-xs">
             <button
+              type="button"
               onClick={() => setViewMode("rendered")}
-              className={`px-3 py-1 rounded font-medium transition-colors ${
+              className={`px-3 py-1 rounded-md font-medium transition-colors ${
                 viewMode === "rendered"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
               Formatted View
             </button>
             <button
+              type="button"
               onClick={() => setViewMode("markdown")}
-              className={`px-3 py-1 rounded font-medium transition-colors ${
+              className={`px-3 py-1 rounded-md font-medium transition-colors ${
                 viewMode === "markdown"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -121,22 +146,25 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
             </button>
           </div>
 
-          <Button variant="outline" size="sm" onClick={handleDownloadMarkdown}>
-            Download .md
+          <Button variant="outline" size="sm" onClick={handleDownloadMarkdown} className="gap-1.5">
+            <Download className="w-3.5 h-3.5" />
+            <span>Download .md</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDownloadJson}>
-            Download .json
+          <Button variant="outline" size="sm" onClick={handleDownloadJson} className="gap-1.5">
+            <Download className="w-3.5 h-3.5" />
+            <span>Download .json</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={() => window.print()}>
-            Print
+          <Button variant="outline" size="sm" onClick={() => window.print()} className="gap-1.5">
+            <Printer className="w-3.5 h-3.5" />
+            <span>Print</span>
           </Button>
         </div>
       </div>
 
       {viewMode === "markdown" ? (
-        <Card className="border-zinc-800 bg-zinc-900/80">
+        <Card className="border-zinc-800 bg-zinc-900/80 shadow-md">
           <CardContent className="p-4">
-            <pre className="overflow-x-auto font-mono text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">
+            <pre className="overflow-x-auto font-mono text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap select-all">
               {markdown}
             </pre>
           </CardContent>
@@ -144,7 +172,7 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
       ) : (
         <div className="space-y-6">
           {/* Section 1 & 2: Metadata & Executive Summary */}
-          <Card className="border-zinc-800 bg-zinc-900/50">
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
             <CardHeader className="pb-3 border-b border-zinc-800/80">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg text-zinc-100">{report.metadata.title}</CardTitle>
@@ -189,22 +217,25 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
           </Card>
 
           {/* Section 3: Evidence Integrity Audit */}
-          <Card className="border-zinc-800 bg-zinc-900/50">
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
             <CardHeader className="pb-3 border-b border-zinc-800/80">
-              <CardTitle className="text-base text-zinc-100">Evidence Integrity Audit</CardTitle>
+              <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                Evidence Integrity Audit
+              </CardTitle>
             </CardHeader>
             <CardContent className="pt-4 space-y-3 text-xs">
-              <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-md bg-zinc-950 border border-zinc-800">
+              <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                 <span className="text-zinc-400">Canonicalization Standard:</span>
                 <span className="text-emerald-400 font-mono font-semibold">RFC 8785 (JCS)</span>
               </div>
-              <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-md bg-zinc-950 border border-zinc-800">
+              <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                 <span className="text-zinc-400">Chain Head Hash:</span>
                 <span className="text-blue-400 font-mono break-all">
                   {report.integrity.head_hash || "N/A"}
                 </span>
               </div>
-              <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-md bg-zinc-950 border border-zinc-800">
+              <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-lg bg-zinc-950 border border-zinc-800">
                 <span className="text-zinc-400">Verification Verdict:</span>
                 <span className="text-emerald-400 font-semibold">
                   {report.integrity.status === "verified"
@@ -216,9 +247,10 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
           </Card>
 
           {/* Section 6: Candidate Correlations */}
-          <Card className="border-zinc-800 bg-zinc-900/50">
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
             <CardHeader className="pb-3 border-b border-zinc-800/80">
-              <CardTitle className="text-base text-zinc-100">
+              <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-amber-400" />
                 Candidate Event Correlations ({report.correlations.length})
               </CardTitle>
             </CardHeader>
@@ -231,7 +263,7 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
                 report.correlations.map((cor, i) => (
                   <div
                     key={i}
-                    className="p-3 rounded-lg border border-amber-900/40 bg-amber-950/20 text-xs space-y-1.5"
+                    className="p-3.5 rounded-lg border border-amber-900/40 bg-amber-950/20 text-xs space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-mono font-bold text-amber-400">{cor.rule_id}</span>
@@ -240,7 +272,7 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
                       </span>
                     </div>
                     <div className="text-zinc-200 font-medium">{cor.rule_name}</div>
-                    <p className="text-zinc-300 text-[11px]">{cor.explanation}</p>
+                    <p className="text-zinc-300 text-[11px] leading-relaxed">{cor.explanation}</p>
                   </div>
                 ))
               )}
@@ -249,9 +281,10 @@ export default function IncidentReportPage({ params }: ReportPageProps) {
 
           {/* Section 11: Limitations */}
           {report.limitations.length > 0 && (
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
               <CardHeader className="pb-3 border-b border-zinc-800/80">
-                <CardTitle className="text-base text-zinc-100">
+                <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-zinc-400" />
                   Investigation Limitations & Caveats
                 </CardTitle>
               </CardHeader>

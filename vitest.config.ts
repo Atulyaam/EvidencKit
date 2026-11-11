@@ -21,7 +21,9 @@ export default defineConfig({
       "@evidencekit/adapters": path.resolve(__dirname, "./packages/adapters/src/index.ts"),
       "@evidencekit/agent-sdk": path.resolve(__dirname, "./packages/agent-sdk/src/index.ts"),
       "@evidencekit/db": path.resolve(__dirname, "./packages/db/src/index.ts"),
-      "@evidencekit/ui": path.resolve(__dirname, "./packages/ui/src/index.ts")
+      "@evidencekit/ui": path.resolve(__dirname, "./packages/ui/src/index.ts"),
+      react: path.resolve(__dirname, "./packages/ui/node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./packages/ui/node_modules/react-dom")
     }
   }
 });

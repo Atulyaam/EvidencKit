@@ -2,7 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Button, Input, Card, CardHeader, CardTitle, CardContent } from "@evidencekit/ui";
+import {
+  Button,
+  Input,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  Alert,
+  ConfirmDialog,
+  LoadingState
+} from "@evidencekit/ui";
+import { Settings, Download, Trash2, ShieldAlert, FileArchive } from "lucide-react";
 
 interface SettingsPageProps {
   params?: { id: string };
@@ -21,6 +33,7 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
@@ -75,15 +88,7 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
     }
   };
 
-  const handleDelete = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this incident? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
-
+  const handleConfirmedDelete = async () => {
     try {
       setDeleting(true);
       const res = await fetch(`/api/incidents/${incidentId}`, {
@@ -99,38 +104,41 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
     } catch (err: any) {
       setMsg({ type: "error", text: err.message });
       setDeleting(false);
+      setConfirmOpen(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-sm text-zinc-500 border border-zinc-800 rounded-lg bg-zinc-900/30">
-        Loading settings...
-      </div>
+      <LoadingState
+        message="Loading settings..."
+        description="Fetching incident parameters and workspace configuration..."
+      />
     );
   }
 
   return (
     <div className="max-w-4xl space-y-6">
       {msg && (
-        <div
-          className={`p-3 rounded-lg text-xs font-medium border ${
-            msg.type === "success"
-              ? "bg-emerald-950/40 border-emerald-800/60 text-emerald-300"
-              : "bg-rose-950/40 border-rose-800/60 text-rose-300"
-          }`}
+        <Alert
+          variant={msg.type === "success" ? "success" : "danger"}
+          title={msg.type === "success" ? "Success" : "Error"}
+          onClose={() => setMsg(null)}
         >
           {msg.text}
-        </div>
+        </Alert>
       )}
 
       {/* Metadata Editor */}
-      <Card className="border-zinc-800 bg-zinc-900/50">
+      <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
         <CardHeader className="pb-3 border-b border-zinc-800/80">
-          <CardTitle className="text-base text-zinc-100">Incident Metadata</CardTitle>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+            <Settings className="w-5 h-5 text-blue-400" />
+            Incident Metadata
+          </CardTitle>
+          <CardDescription className="text-xs text-zinc-400 mt-0.5">
             Update operational parameters and lifecycle state.
-          </p>
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
           <form onSubmit={handleSave} className="space-y-4">
@@ -197,8 +205,8 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
             </div>
 
             <div className="pt-2 flex justify-end">
-              <Button variant="primary" type="submit" disabled={saving}>
-                {saving ? "Saving..." : "Save Changes"}
+              <Button variant="primary" type="submit" isLoading={saving}>
+                Save Changes
               </Button>
             </div>
           </form>
@@ -206,13 +214,16 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
       </Card>
 
       {/* Export Evidence Bundle */}
-      <Card className="border-zinc-800 bg-zinc-900/50">
+      <Card className="border-zinc-800 bg-zinc-900/50 shadow-md">
         <CardHeader className="pb-3 border-b border-zinc-800/80">
-          <CardTitle className="text-base text-zinc-100">Export Portable Evidence Bundle</CardTitle>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <CardTitle className="text-base text-zinc-100 flex items-center gap-2">
+            <Download className="w-5 h-5 text-emerald-400" />
+            Export Portable Evidence Bundle
+          </CardTitle>
+          <CardDescription className="text-xs text-zinc-400 mt-0.5">
             Download the complete tamper-evident record including manifest, RFC 8785 chained events,
             and cryptographic signatures.
-          </p>
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           <p className="text-xs text-zinc-300 leading-relaxed">
@@ -222,13 +233,15 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
 
           <div className="flex flex-wrap gap-3">
             <a href={`/api/incidents/${incidentId}/export?format=json`} download>
-              <Button variant="outline" size="sm">
-                Export JSON Bundle (.json)
+              <Button variant="outline" size="sm" className="gap-2">
+                <FileArchive className="w-3.5 h-3.5 text-blue-400" />
+                <span>Export JSON Bundle (.json)</span>
               </Button>
             </a>
             <a href={`/api/incidents/${incidentId}/export?format=zip`} download>
-              <Button variant="outline" size="sm">
-                Export ZIP Archive (.zip)
+              <Button variant="outline" size="sm" className="gap-2">
+                <FileArchive className="w-3.5 h-3.5 text-amber-400" />
+                <span>Export ZIP Archive (.zip)</span>
               </Button>
             </a>
           </div>
@@ -236,9 +249,12 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="border-rose-900/40 bg-rose-950/10">
+      <Card className="border-rose-900/40 bg-rose-950/10 shadow-sm">
         <CardHeader className="pb-3 border-b border-rose-900/30">
-          <CardTitle className="text-base text-rose-400">Danger Zone</CardTitle>
+          <CardTitle className="text-base text-rose-400 flex items-center gap-2">
+            <ShieldAlert className="w-5 h-5" />
+            Danger Zone
+          </CardTitle>
         </CardHeader>
         <CardContent className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -247,11 +263,30 @@ export default function IncidentSettingsPage({ params }: SettingsPageProps) {
               Permanently remove this incident metadata and unbind its evidence stream.
             </p>
           </div>
-          <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting}>
-            {deleting ? "Deleting..." : "Delete Incident"}
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setConfirmOpen(true)}
+            isLoading={deleting}
+            className="gap-1.5 shrink-0"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Delete Incident</span>
           </Button>
         </CardContent>
       </Card>
+
+      {/* Accessible Confirmation Dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        onConfirm={handleConfirmedDelete}
+        title="Delete Incident Record"
+        description="Are you sure you want to delete this incident? This action cannot be undone."
+        variant="danger"
+        confirmLabel="Delete Incident"
+        cancelLabel="Cancel"
+      />
     </div>
   );
 }

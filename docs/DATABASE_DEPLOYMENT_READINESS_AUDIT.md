@@ -2,7 +2,7 @@
 
 **Project:** EvidenceKit (TraceVault & AgentLedger)  
 **Lead DevOps & Reliability Engineer:** Senior Production Reliability Specialist  
-**Audit Date:** 2026-11-11  
+**Audit Date:** 2026-11-11
 
 ---
 
@@ -20,30 +20,33 @@ While the production Next.js builds (`pnpm build`) succeed cleanly and package o
 
 ## 2. Current State vs. Production Readiness Matrix
 
-| Infrastructure Dimension | Current Status | Local Readiness | Production Readiness | Blocker / Remediation Required |
-| :--- | :--- | :--- | :--- | :--- |
-| **Frontend Hosting** | Next.js 14 Standalone | **READY** (Builds clean) | **BLOCKED** | Needs deployment to Vercel / Railway / Fly.io |
-| **Backend API Routing** | Next.js Route Handlers | **READY** | **READY** | Same process as frontend |
-| **Database Provider** | PostgreSQL (Drizzle ORM) | **BLOCKED** (Host down) | **BLOCKED** | Requires hosted Postgres (Neon / Supabase / Railway) |
-| **Database Migrations** | 3 Drizzle SQL migrations | **READY** (`0000`–`0002`) | **BLOCKED** | Missing migration for `policies` table |
-| **Persistence Survival** | In-memory fallback Map | **PARTIAL** | **UNSUITABLE** | Restarts wipe in-memory incident/session state |
-| **Storage / Blobs** | Local filesystem | **READY** (`fixtures/sandbox`)| **BLOCKED** | Artifact uploads require S3 / Cloudflare R2 |
-| **Health Checks** | `/api/health` implemented | **READY** (Returns 200) | **READY** | Verified on both ports 3001 and 3002 |
-| **Logging & Telemetry** | `console.log` / `console.warn`| **READY** | **NEEDS WORK** | Structured JSON logging needed for cloud |
-| **Secrets Management** | Plaintext `.env` file | **DEVELOPMENT ONLY** | **BLOCKED** | Must move secrets to Cloud Environment Variables |
-| **CORS Configuration** | Implicit Next.js same-origin | **READY** | **NEEDS WORK** | Cross-app links (`3001` -> `3002`) need CORS headers |
+| Infrastructure Dimension | Current Status                 | Local Readiness                | Production Readiness | Blocker / Remediation Required                       |
+| :----------------------- | :----------------------------- | :----------------------------- | :------------------- | :--------------------------------------------------- |
+| **Frontend Hosting**     | Next.js 14 Standalone          | **READY** (Builds clean)       | **BLOCKED**          | Needs deployment to Vercel / Railway / Fly.io        |
+| **Backend API Routing**  | Next.js Route Handlers         | **READY**                      | **READY**            | Same process as frontend                             |
+| **Database Provider**    | PostgreSQL (Drizzle ORM)       | **BLOCKED** (Host down)        | **BLOCKED**          | Requires hosted Postgres (Neon / Supabase / Railway) |
+| **Database Migrations**  | 3 Drizzle SQL migrations       | **READY** (`0000`–`0002`)      | **BLOCKED**          | Missing migration for `policies` table               |
+| **Persistence Survival** | In-memory fallback Map         | **PARTIAL**                    | **UNSUITABLE**       | Restarts wipe in-memory incident/session state       |
+| **Storage / Blobs**      | Local filesystem               | **READY** (`fixtures/sandbox`) | **BLOCKED**          | Artifact uploads require S3 / Cloudflare R2          |
+| **Health Checks**        | `/api/health` implemented      | **READY** (Returns 200)        | **READY**            | Verified on both ports 3001 and 3002                 |
+| **Logging & Telemetry**  | `console.log` / `console.warn` | **READY**                      | **NEEDS WORK**       | Structured JSON logging needed for cloud             |
+| **Secrets Management**   | Plaintext `.env` file          | **DEVELOPMENT ONLY**           | **BLOCKED**          | Must move secrets to Cloud Environment Variables     |
+| **CORS Configuration**   | Implicit Next.js same-origin   | **READY**                      | **NEEDS WORK**       | Cross-app links (`3001` -> `3002`) need CORS headers |
 
 ---
 
 ## 3. Database Schema & Migration Inspection
 
 ### 3.1 Existing Migrations
+
 Located in `packages/db/migrations/`:
+
 - `0000_old_barracuda.sql`: Creates `workspaces`, `users`, `cases`, `events`, `chain_heads`, `event_evidence_refs`, `exports`.
 - `0001_bored_shape.sql`: Creates `agent_sessions`, `agent_approvals`.
 - `0002_rainy_valeria_richards.sql`: Adds metadata column and indexes on severity/status.
 
 ### 3.2 Schema Deficiencies
+
 - **Missing `policies` table**:
   Currently, policies exist only as TypeScript interfaces in `packages/evidence-core/src/policy/index.ts` and in-memory arrays in `packages/evidence-server/src/services/agent-policy-service.ts`.
   **Required Drizzle Schema**:
@@ -56,7 +59,9 @@ Located in `packages/db/migrations/`:
       .notNull(),
     name: varchar("name", { length: 256 }).notNull(),
     description: text("description"),
-    defaultDecision: varchar("default_decision", { length: 64 }).notNull().default("REQUIRE_APPROVAL"),
+    defaultDecision: varchar("default_decision", { length: 64 })
+      .notNull()
+      .default("REQUIRE_APPROVAL"),
     rulesJson: jsonb("rules_json").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
@@ -67,23 +72,23 @@ Located in `packages/db/migrations/`:
 
 ## 4. Environment Variables Audit
 
-| Variable Name | Present in `.env` | Expected Format | Sensitive? | Purpose & Audit Observation |
-| :--- | :--- | :--- | :--- | :--- |
-| `AUTH_SECRET` | Yes | 32+ char string | **YES** | Currently default dummy secret. Must be generated securely for production. |
-| `AUTH_GITHUB_ID` | Empty | String | No | Defined in schema but unused in authentication logic. |
-| `AUTH_GITHUB_SECRET`| Empty | Secret string | **YES** | Defined in schema but unused in authentication logic. |
-| `OWNER_GITHUB_ID` | `local-dev-owner` | String | No | Target identifier for owner role. Used in auth bypass! |
-| `NEXT_PUBLIC_TRACEVAULT_URL` | `http://localhost:3001` | URL | No | Hardcoded local origin. Needs production URL. |
-| `NEXT_PUBLIC_AGENTLEDGER_URL`| `http://localhost:3002` | URL | No | Hardcoded local origin. Needs production URL. |
-| `DATABASE_URL` | `postgresql://...172.31.88.58...` | Postgres URI | **YES** | Unreachable WSL2 IP. Causes 5000ms timeout locks! |
-| `MAX_UPLOAD_COMPRESSED_BYTES` | `20971520` (20 MB) | Number | No | Reasonable upload constraint. |
-| `MAX_UPLOAD_EXPANDED_BYTES` | `104857600` (100 MB)| Number | No | Protects against zip bombs. |
-| `MAX_ARCHIVE_ENTRIES` | `200` | Number | No | Reasonable archive entry cap. |
-| `MAX_EVENT_PAYLOAD_BYTES` | `65536` (64 KB) | Number | No | Enforces reasonable event sizes. |
-| `DEMO_MODE` | `true` | Boolean string | No | Sets read-only judge role for unauthenticated requests. |
-| `EVIDENCE_SIGNING_PRIVATE_KEY`| **MISSING** | Base64 PKCS8 | **CRITICAL**| Not present! Causes ephemeral key generation on every restart. |
-| `EVIDENCE_SIGNING_KEY_ID` | **MISSING** | String | No | Not present. |
-| `EVIDENCE_VERIFY_PUBLIC_KEY` | **MISSING** | Base64 SPKI | No | Not present. |
+| Variable Name                  | Present in `.env`                 | Expected Format | Sensitive?   | Purpose & Audit Observation                                                |
+| :----------------------------- | :-------------------------------- | :-------------- | :----------- | :------------------------------------------------------------------------- |
+| `AUTH_SECRET`                  | Yes                               | 32+ char string | **YES**      | Currently default dummy secret. Must be generated securely for production. |
+| `AUTH_GITHUB_ID`               | Empty                             | String          | No           | Defined in schema but unused in authentication logic.                      |
+| `AUTH_GITHUB_SECRET`           | Empty                             | Secret string   | **YES**      | Defined in schema but unused in authentication logic.                      |
+| `OWNER_GITHUB_ID`              | `local-dev-owner`                 | String          | No           | Target identifier for owner role. Used in auth bypass!                     |
+| `NEXT_PUBLIC_TRACEVAULT_URL`   | `http://localhost:3001`           | URL             | No           | Hardcoded local origin. Needs production URL.                              |
+| `NEXT_PUBLIC_AGENTLEDGER_URL`  | `http://localhost:3002`           | URL             | No           | Hardcoded local origin. Needs production URL.                              |
+| `DATABASE_URL`                 | `postgresql://...172.31.88.58...` | Postgres URI    | **YES**      | Unreachable WSL2 IP. Causes 5000ms timeout locks!                          |
+| `MAX_UPLOAD_COMPRESSED_BYTES`  | `20971520` (20 MB)                | Number          | No           | Reasonable upload constraint.                                              |
+| `MAX_UPLOAD_EXPANDED_BYTES`    | `104857600` (100 MB)              | Number          | No           | Protects against zip bombs.                                                |
+| `MAX_ARCHIVE_ENTRIES`          | `200`                             | Number          | No           | Reasonable archive entry cap.                                              |
+| `MAX_EVENT_PAYLOAD_BYTES`      | `65536` (64 KB)                   | Number          | No           | Enforces reasonable event sizes.                                           |
+| `DEMO_MODE`                    | `true`                            | Boolean string  | No           | Sets read-only judge role for unauthenticated requests.                    |
+| `EVIDENCE_SIGNING_PRIVATE_KEY` | **MISSING**                       | Base64 PKCS8    | **CRITICAL** | Not present! Causes ephemeral key generation on every restart.             |
+| `EVIDENCE_SIGNING_KEY_ID`      | **MISSING**                       | String          | No           | Not present.                                                               |
+| `EVIDENCE_VERIFY_PUBLIC_KEY`   | **MISSING**                       | Base64 SPKI     | No           | Not present.                                                               |
 
 ---
 
@@ -116,7 +121,7 @@ graph TD
 ```
 
 ### Key Advantages of This Stack:
+
 1. **Zero Maintenance**: Neon Serverless Postgres scales to zero when idle, costs $0 during development, and provides instantaneous connection pooling.
 2. **Zero Egress Fees**: Cloudflare R2 handles evidence artifacts without bandwidth costs.
 3. **High Uptime**: Eliminates dependencies on local Docker or WSL2 containers that shut down when the developer closes their laptop.
-

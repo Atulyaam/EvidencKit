@@ -2,7 +2,31 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Badge, Button, Card } from "@evidencekit/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  LoadingState,
+  EmptyState,
+  ErrorState
+} from "@evidencekit/ui";
+import {
+  ShieldAlert,
+  ShieldCheck,
+  PlusCircle,
+  FileSearch,
+  Share2,
+  Clock,
+  Layers,
+  ArrowRight,
+  Database
+} from "lucide-react";
 
 interface IncidentSummary {
   id: string;
@@ -74,58 +98,89 @@ export default function TraceVaultHome() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
       {/* Hero Banner */}
-      <div className="rounded-xl border border-zinc-800 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
-        <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-950/70 border border-blue-800/60 text-blue-400 text-xs font-medium">
-            <span>🛡️ Software Incident Evidence Reconstruction</span>
+      <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900/95 to-zinc-950 p-6 sm:p-8 shadow-2xl">
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/70 border border-blue-800/60 text-blue-400 text-xs font-medium">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+              <span>🛡️ Software Incident Evidence Reconstruction</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white text-balance">
+              Forensic Reconstruction Powered by EvidenceKit
+            </h1>
+            <p className="text-sm text-zinc-400 leading-relaxed max-w-2xl text-balance">
+              TraceVault ingests heterogeneous incident sources, strips sensitive credentials before
+              persistence, chains canonical normalized events via RFC 8785 + SHA-256, and produces
+              tamper-evident audit trails.
+            </p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-            Forensic Reconstruction Powered by EvidenceKit
-          </h1>
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            TraceVault ingests heterogeneous incident sources, strips sensitive credentials before
-            persistence, chains canonical normalized events via RFC 8785 + SHA-256, and produces
-            tamper-evident audit trails.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/incidents/new">
-            <Button variant="primary">Create Incident</Button>
-          </Link>
-          <Link href="/verify">
-            <Button variant="outline">Verify Evidence Bundle</Button>
-          </Link>
+
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <Link href="/incidents/new" className="w-full sm:w-auto">
+              <Button variant="primary" className="w-full sm:w-auto gap-2">
+                <PlusCircle className="w-4 h-4" />
+                <span>Create Incident</span>
+              </Button>
+            </Link>
+            <Link href="/verify" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto gap-2">
+                <FileSearch className="w-4 h-4" />
+                <span>Verify Evidence Bundle</span>
+              </Button>
+            </Link>
+            <Link href="/graph" className="w-full sm:w-auto">
+              <Button variant="ghost" className="w-full sm:w-auto gap-2 text-zinc-300">
+                <Share2 className="w-4 h-4" />
+                <span>Evidence Graph</span>
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 bg-zinc-900/50 border-zinc-800">
-          <div className="text-xs font-medium text-zinc-400">Total Incidents</div>
-          <div className="text-2xl font-bold text-zinc-100 mt-1">
+        <Card className="p-4 bg-zinc-900/60 border-zinc-800 shadow-md">
+          <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
+            <span>Total Incidents</span>
+            <Layers className="w-4 h-4 text-blue-400" />
+          </div>
+          <div className="text-2xl font-bold text-zinc-100 mt-2 font-mono">
             {loading ? "..." : totalIncidents}
           </div>
           <div className="text-[11px] text-zinc-500 mt-1">Recorded in workspace</div>
         </Card>
-        <Card className="p-4 bg-zinc-900/50 border-zinc-800">
-          <div className="text-xs font-medium text-zinc-400">Active Investigations</div>
-          <div className="text-2xl font-bold text-amber-400 mt-1">
+
+        <Card className="p-4 bg-zinc-900/60 border-zinc-800 shadow-md">
+          <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
+            <span>Active Investigations</span>
+            <Clock className="w-4 h-4 text-amber-400" />
+          </div>
+          <div className="text-2xl font-bold text-amber-400 mt-2 font-mono">
             {loading ? "..." : activeIncidents}
           </div>
           <div className="text-[11px] text-zinc-500 mt-1">Requiring resolution</div>
         </Card>
-        <Card className="p-4 bg-zinc-900/50 border-zinc-800">
-          <div className="text-xs font-medium text-zinc-400">Critical Incidents</div>
-          <div className="text-2xl font-bold text-rose-400 mt-1">
+
+        <Card className="p-4 bg-zinc-900/60 border-zinc-800 shadow-md">
+          <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
+            <span>Critical Incidents</span>
+            <ShieldAlert className="w-4 h-4 text-rose-400" />
+          </div>
+          <div className="text-2xl font-bold text-rose-400 mt-2 font-mono">
             {loading ? "..." : criticalIncidents}
           </div>
           <div className="text-[11px] text-zinc-500 mt-1">High-impact events</div>
         </Card>
-        <Card className="p-4 bg-zinc-900/50 border-zinc-800">
-          <div className="text-xs font-medium text-zinc-400">Cryptographic Integrity</div>
-          <div className="text-2xl font-bold text-emerald-400 mt-1">SHA-256</div>
+
+        <Card className="p-4 bg-zinc-900/60 border-zinc-800 shadow-md">
+          <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
+            <span>Cryptographic Integrity</span>
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div className="text-2xl font-bold text-emerald-400 mt-2 font-mono">SHA-256</div>
           <div className="text-[11px] text-zinc-500 mt-1">RFC 8785 Canonical JCS</div>
         </Card>
       </div>
@@ -133,76 +188,90 @@ export default function TraceVaultHome() {
       {/* Recent Incidents Table */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold tracking-tight text-zinc-100">Recent Incidents</h2>
-          <Link href="/incidents" className="text-xs text-blue-400 hover:text-blue-300 font-medium">
-            View all incidents →
+          <div className="space-y-0.5">
+            <h2 className="text-lg font-bold tracking-tight text-zinc-100 flex items-center gap-2">
+              <Database className="w-4 h-4 text-blue-400" />
+              Recent Incidents
+            </h2>
+            <p className="text-xs text-zinc-400">
+              Isolated incident reconstruction streams backed by immutable event hash chains.
+            </p>
+          </div>
+          <Link
+            href="/incidents"
+            className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors"
+          >
+            <span>View all incidents</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-sm text-zinc-500 border border-zinc-800 rounded-lg bg-zinc-900/30">
-            Loading incidents...
-          </div>
+          <LoadingState
+            message="Loading incidents..."
+            description="Retrieving incident records from workspace..."
+          />
         ) : error ? (
-          <div className="p-6 text-center text-sm text-rose-400 border border-rose-900/50 rounded-lg bg-rose-950/20">
-            {error}
-          </div>
+          <ErrorState
+            title="Failed to Load Incidents"
+            error={error}
+            onRetry={() => window.location.reload()}
+          />
         ) : incidents.length === 0 ? (
-          <div className="p-12 text-center space-y-4 border border-zinc-800 rounded-lg bg-zinc-900/30">
-            <p className="text-zinc-400 text-sm">No incidents registered in this workspace yet.</p>
-            <Link href="/incidents/new">
-              <Button variant="primary">Create First Incident</Button>
-            </Link>
-          </div>
+          <EmptyState
+            title="No Incidents Registered"
+            description="No incident streams exist in this workspace. Create your first incident to begin forensic evidence ingestion."
+            action={
+              <Link href="/incidents/new">
+                <Button variant="primary">Create First Incident</Button>
+              </Link>
+            }
+          />
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900/40">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="border-b border-zinc-800 bg-zinc-900/70 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                <tr>
-                  <th className="px-4 py-3">Incident</th>
-                  <th className="px-4 py-3">Severity</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Environment</th>
-                  <th className="px-4 py-3">Created</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-800/60 font-sans">
-                {incidents.map((incident) => (
-                  <tr key={incident.id} className="hover:bg-zinc-800/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/incidents/${incident.id}`}
-                        className="font-medium text-zinc-100 hover:text-blue-400 transition-colors block"
-                      >
-                        {incident.title}
-                      </Link>
-                      <span className="text-[11px] font-mono text-zinc-500">
-                        {incident.streamId}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">{getSeverityBadge(incident.severity)}</td>
-                    <td className="px-4 py-3">{getStatusBadge(incident.status)}</td>
-                    <td className="px-4 py-3">
-                      <span className="font-mono text-xs text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded">
-                        {incident.environment}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-xs text-zinc-400">
-                      {new Date(incident.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link href={`/incidents/${incident.id}`}>
-                        <Button variant="outline" size="sm">
-                          Inspect
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Incident</TableHead>
+                <TableHead>Severity</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Environment</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {incidents.map((incident) => (
+                <TableRow key={incident.id} isClickable>
+                  <TableCell>
+                    <Link
+                      href={`/incidents/${incident.id}`}
+                      className="font-medium text-zinc-100 hover:text-blue-400 transition-colors block"
+                    >
+                      {incident.title}
+                    </Link>
+                    <span className="text-[11px] font-mono text-zinc-500">{incident.streamId}</span>
+                  </TableCell>
+                  <TableCell>{getSeverityBadge(incident.severity)}</TableCell>
+                  <TableCell>{getStatusBadge(incident.status)}</TableCell>
+                  <TableCell>
+                    <span className="font-mono text-xs text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+                      {incident.environment}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-xs text-zinc-400 font-mono">
+                    {new Date(incident.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Link href={`/incidents/${incident.id}`}>
+                      <Button variant="outline" size="sm">
+                        Inspect
+                      </Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>

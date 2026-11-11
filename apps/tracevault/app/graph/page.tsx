@@ -1,8 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardContent, Badge, Button, Input } from "@evidencekit/ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Badge,
+  Button,
+  Input,
+  Breadcrumbs,
+  BreadcrumbItem,
+  LoadingState,
+  EmptyState
+} from "@evidencekit/ui";
 import {
   Share2,
   Filter,
@@ -10,10 +21,10 @@ import {
   AlertCircle,
   Clock,
   Layers,
-  ExternalLink,
   Search,
   CheckCircle2,
-  Workflow
+  Workflow,
+  AlertTriangle
 } from "lucide-react";
 import { GraphNode, EvidenceGraphResult } from "@evidencekit/core";
 
@@ -97,7 +108,12 @@ export default function EvidenceGraphPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <Breadcrumbs>
+        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem isCurrentPage>Evidence Graph</BreadcrumbItem>
+      </Breadcrumbs>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800 pb-6">
         <div className="space-y-1">
@@ -118,14 +134,14 @@ export default function EvidenceGraphPage() {
 
         {/* Global metrics pills */}
         <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-          <div className="px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300">
+          <div className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 shadow-sm">
             Nodes: <span className="text-cyan-400 font-bold">{graphData?.totalNodes || 0}</span>
           </div>
-          <div className="px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300">
+          <div className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 shadow-sm">
             Explicit Edges:{" "}
             <span className="text-purple-400 font-bold">{graphData?.explicitCount || 0}</span>
           </div>
-          <div className="px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300">
+          <div className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 shadow-sm">
             Candidate Links:{" "}
             <span className="text-amber-400 font-bold">{graphData?.inferredCount || 0}</span>
           </div>
@@ -133,37 +149,40 @@ export default function EvidenceGraphPage() {
       </div>
 
       {/* Controls & Filter Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-zinc-900/60 p-3 rounded-lg border border-zinc-800">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-800 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 text-xs text-zinc-400 mr-2">
-            <Filter className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-1.5 text-xs text-zinc-400 mr-2 font-medium">
+            <Filter className="w-3.5 h-3.5 text-zinc-500" />
             <span>Relationship:</span>
           </div>
           <button
+            type="button"
             onClick={() => setRelationshipType("all")}
-            className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
               relationshipType === "all"
-                ? "bg-cyan-950 text-cyan-300 border border-cyan-800"
+                ? "bg-cyan-950 text-cyan-300 border border-cyan-800 shadow-sm"
                 : "text-zinc-400 hover:bg-zinc-800"
             }`}
           >
             All Relationships
           </button>
           <button
+            type="button"
             onClick={() => setRelationshipType("explicit")}
-            className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
               relationshipType === "explicit"
-                ? "bg-purple-950 text-purple-300 border border-purple-800"
+                ? "bg-purple-950 text-purple-300 border border-purple-800 shadow-sm"
                 : "text-zinc-400 hover:bg-zinc-800"
             }`}
           >
             Explicit Provenance Only
           </button>
           <button
+            type="button"
             onClick={() => setRelationshipType("inferred")}
-            className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
               relationshipType === "inferred"
-                ? "bg-amber-950 text-amber-300 border border-amber-800"
+                ? "bg-amber-950 text-amber-300 border border-amber-800 shadow-sm"
                 : "text-zinc-400 hover:bg-zinc-800"
             }`}
           >
@@ -173,29 +192,30 @@ export default function EvidenceGraphPage() {
 
         {/* Search */}
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-2.5" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search nodes or IDs..."
-              className="pl-8 text-xs bg-zinc-950 border-zinc-700 h-8 w-48 md:w-64"
-            />
-          </div>
-          <Button type="submit" size="sm" className="h-8 text-xs bg-zinc-800 hover:bg-zinc-700">
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search nodes or IDs..."
+            leftIcon={<Search className="w-3.5 h-3.5 text-zinc-500" />}
+            className="text-xs bg-zinc-950 border-zinc-700 h-9 w-full md:w-64"
+          />
+          <Button type="submit" size="sm" variant="outline" className="h-9 text-xs">
             Filter
           </Button>
         </form>
       </div>
 
       {/* Notice Banner */}
-      <div className="p-3 rounded-md bg-amber-950/20 border border-amber-800/40 text-xs text-amber-300/90 flex items-start gap-2.5">
-        <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-        <div>
-          <strong>Causality Disclaimers:</strong> Solid lines represent cryptographic hash-chain
-          connections and explicit container references. Dashed amber lines indicate{" "}
-          <em>non-causal candidate relationships</em> inferred from temporal clustering. They do not
-          assert verified root cause.
+      <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-800/40 text-xs text-amber-300/90 flex items-start gap-3 shadow-sm">
+        <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+        <div className="leading-relaxed">
+          <strong className="text-amber-200 font-semibold block mb-0.5">
+            Causality Disclaimers:
+          </strong>{" "}
+          Solid lines represent cryptographic hash-chain connections and explicit container
+          references. Dashed amber lines indicate{" "}
+          <em className="text-amber-200">non-causal candidate relationships</em> inferred from
+          temporal clustering. They do not assert verified root cause.
         </div>
       </div>
 
@@ -212,7 +232,7 @@ export default function EvidenceGraphPage() {
               <select
                 value={selectedTypeFilter}
                 onChange={(e) => setSelectedTypeFilter(e.target.value)}
-                className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-200"
+                className="bg-zinc-900 border border-zinc-700 rounded-md px-2.5 py-1 text-xs text-zinc-200 outline-none focus:border-cyan-500"
               >
                 <option value="all">All Types</option>
                 <option value="incident">Incidents</option>
@@ -225,11 +245,15 @@ export default function EvidenceGraphPage() {
           </div>
 
           {loading ? (
-            <div className="py-16 text-center text-sm text-zinc-500">Loading graph topology...</div>
+            <LoadingState
+              message="Loading graph topology..."
+              description="Constructing cross-application relationship graph..."
+            />
           ) : filteredNodes.length === 0 ? (
-            <div className="py-16 text-center text-sm text-zinc-500 border border-zinc-800 rounded-lg">
-              No evidence nodes matched the current filter.
-            </div>
+            <EmptyState
+              title="No Evidence Nodes Found"
+              description="No evidence nodes matched the current filter. Try selecting 'All Relationships' or clearing the search."
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[640px] overflow-y-auto pr-1">
               {filteredNodes.map((node) => {
@@ -238,7 +262,7 @@ export default function EvidenceGraphPage() {
                   <div
                     key={node.id}
                     onClick={() => setSelectedNode(node)}
-                    className={`p-3.5 rounded-lg border cursor-pointer transition-all ${
+                    className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                       isSelected
                         ? "border-cyan-400 bg-cyan-950/30 ring-1 ring-cyan-400 shadow-lg shadow-cyan-950/40"
                         : `${getNodeColor(node.type)} hover:border-zinc-600`
@@ -251,27 +275,20 @@ export default function EvidenceGraphPage() {
                           {node.type}
                         </span>
                       </div>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] uppercase font-mono px-1.5 py-0"
-                      >
-                        {node.application}
-                      </Badge>
+                      <span className="text-[10px] font-mono text-zinc-500 truncate max-w-[120px]">
+                        {node.id}
+                      </span>
                     </div>
 
-                    <h3 className="text-xs font-semibold text-zinc-100 mt-2 line-clamp-1">
+                    <h4 className="text-xs font-semibold text-zinc-100 mt-2 truncate">
                       {node.label}
-                    </h3>
-                    <p className="text-[11px] font-mono text-zinc-500 truncate mt-0.5">
-                      ID: {node.id}
-                    </p>
+                    </h4>
 
-                    <div className="flex items-center justify-between text-[10px] font-mono text-zinc-500 mt-2 pt-2 border-t border-zinc-800/60">
-                      <span>{new Date(node.timestamp).toLocaleTimeString()}</span>
-                      {node.hash && (
-                        <span className="text-cyan-400">SHA: {node.hash.slice(0, 8)}...</span>
-                      )}
-                    </div>
+                    {node.application && (
+                      <span className="inline-block mt-2 text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-900/80 text-zinc-400 border border-zinc-800">
+                        {node.application}
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -279,108 +296,116 @@ export default function EvidenceGraphPage() {
           )}
         </div>
 
-        {/* Selected Node Inspector Sidebar */}
-        <div className="space-y-4">
-          <Card className="border-zinc-800 bg-zinc-900/50 sticky top-20">
-            <CardHeader className="pb-3 border-b border-zinc-800">
-              <CardTitle className="text-sm font-bold text-zinc-200 flex items-center justify-between">
-                <span>Node Inspector</span>
-                {selectedNode && (
-                  <Badge variant="outline" className="text-[10px] uppercase font-mono">
-                    {selectedNode.type}
-                  </Badge>
-                )}
+        {/* Selected Node Inspector */}
+        <div className="lg:col-span-1">
+          <Card className="border-zinc-800 bg-zinc-900/60 sticky top-20 shadow-md">
+            <CardHeader className="border-b border-zinc-800 pb-3">
+              <CardTitle className="text-sm font-bold text-zinc-200 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-cyan-400" />
+                Node Inspector
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-4 space-y-4 text-xs">
               {selectedNode ? (
                 <>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">Label</span>
-                    <p className="text-sm font-semibold text-zinc-100">{selectedNode.label}</p>
-                    <p className="text-xs font-mono text-purple-300 break-all">
-                      ID: {selectedNode.id}
-                    </p>
+                    <span className="text-[10px] uppercase font-mono text-zinc-500 block">
+                      Label
+                    </span>
+                    <h3 className="font-semibold text-zinc-100 text-sm">{selectedNode.label}</h3>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+                    <div>
+                      <span className="text-[10px] uppercase font-mono text-zinc-500 block">
+                        Type
+                      </span>
+                      <span className="font-mono text-cyan-400 capitalize">
+                        {selectedNode.type}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] uppercase font-mono text-zinc-500 block">
+                        Application
+                      </span>
+                      <span className="font-mono text-zinc-300">
+                        {selectedNode.application || "N/A"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">
-                      Application & Stream
+                    <span className="text-[10px] uppercase font-mono text-zinc-500 block">
+                      Node ID
                     </span>
-                    <p className="text-zinc-300 capitalize">
-                      {selectedNode.application} • Stream: {selectedNode.streamId || "N/A"}
+                    <p className="font-mono text-[11px] text-zinc-400 break-all bg-zinc-950 p-2 rounded border border-zinc-800 select-all">
+                      {selectedNode.id}
                     </p>
                   </div>
 
-                  {selectedNode.hash && (
+                  {selectedNode.metadata && Object.keys(selectedNode.metadata).length > 0 && (
                     <div className="space-y-1">
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase">
-                        Cryptographic Hash (SHA-256)
+                      <span className="text-[10px] uppercase font-mono text-zinc-500 block">
+                        Metadata
                       </span>
-                      <p className="font-mono text-[11px] text-cyan-400 break-all p-2 rounded bg-zinc-950 border border-zinc-800">
-                        {selectedNode.hash}
-                      </p>
+                      <pre className="p-3 rounded-lg bg-zinc-950 border border-zinc-800 font-mono text-[11px] text-zinc-300 overflow-x-auto max-h-48 leading-relaxed">
+                        {JSON.stringify(selectedNode.metadata, null, 2)}
+                      </pre>
                     </div>
                   )}
 
                   {/* Connected Edges */}
                   <div className="space-y-2 pt-2 border-t border-zinc-800">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">
+                    <span className="text-[10px] uppercase font-mono text-zinc-500 block font-semibold">
                       Connected Relationships
                     </span>
-                    <div className="space-y-1.5 max-h-48 overflow-y-auto">
-                      {(graphData?.edges || [])
-                        .filter((e) => e.source === selectedNode.id || e.target === selectedNode.id)
-                        .map((edge) => (
-                          <div
-                            key={edge.id}
-                            className={`p-2 rounded text-[11px] border ${
-                              edge.isNonCausalCandidate
-                                ? "bg-amber-950/20 border-amber-800/40 text-amber-300"
-                                : "bg-zinc-950 border-zinc-800 text-zinc-300"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between font-mono text-[10px] mb-0.5">
-                              <span className="font-bold">{edge.relationship}</span>
-                              <span
-                                className={
-                                  edge.isNonCausalCandidate ? "text-amber-400" : "text-purple-400"
-                                }
-                              >
-                                {edge.type}
-                              </span>
+                    {(() => {
+                      const edges = (graphData?.edges || []).filter(
+                        (e) => e.source === selectedNode.id || e.target === selectedNode.id
+                      );
+                      if (edges.length === 0) {
+                        return (
+                          <p className="text-zinc-500 text-[11px] italic">
+                            No direct edges connected.
+                          </p>
+                        );
+                      }
+                      return (
+                        <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                          {edges.map((edge, idx) => (
+                            <div
+                              key={idx}
+                              className="p-2 rounded bg-zinc-950 border border-zinc-800 text-[11px] space-y-0.5"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-mono text-cyan-400 text-[10px]">
+                                  {edge.relationship}
+                                </span>
+                                <span
+                                  className={`text-[9px] uppercase font-mono px-1 rounded ${
+                                    edge.type === "explicit"
+                                      ? "bg-purple-950 text-purple-300"
+                                      : "bg-amber-950 text-amber-300"
+                                  }`}
+                                >
+                                  {edge.type}
+                                </span>
+                              </div>
+                              <div className="text-zinc-400 truncate">
+                                {edge.source === selectedNode.id ? "→ Target: " : "← Source: "}
+                                <span className="font-mono text-zinc-300">
+                                  {edge.source === selectedNode.id ? edge.target : edge.source}
+                                </span>
+                              </div>
                             </div>
-                            <p className="text-[10px] text-zinc-400">{edge.description}</p>
-                          </div>
-                        ))}
-                    </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
-
-                  {/* Navigation Jump */}
-                  {selectedNode.type === "incident" && (
-                    <Link
-                      href={`/incidents/${selectedNode.id}`}
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs transition-colors mt-2"
-                    >
-                      Open Incident in TraceVault <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
-                  )}
-
-                  {selectedNode.type === "session" && (
-                    <a
-                      href={`http://localhost:3002/sessions/${selectedNode.id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition-colors mt-2"
-                    >
-                      Open Session in AgentLedger ↗
-                    </a>
-                  )}
                 </>
               ) : (
-                <div className="py-8 text-center text-zinc-500 text-xs">
-                  Click any evidence node to inspect its provenance and relationships.
-                </div>
+                <p className="text-zinc-500 italic">Select a node to inspect relationships.</p>
               )}
             </CardContent>
           </Card>

@@ -17,6 +17,12 @@ export async function POST(request: NextRequest) {
       }
 
       const buffer = Buffer.from(await file.arrayBuffer());
+      if (buffer.length > 20971520) {
+        return NextResponse.json(
+          { error: "Bundle file exceeds maximum size limit of 20MB" },
+          { status: 413 }
+        );
+      }
       const filename = file.name.toLowerCase();
 
       if (filename.endsWith(".zip")) {

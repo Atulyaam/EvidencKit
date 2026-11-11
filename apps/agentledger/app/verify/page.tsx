@@ -66,13 +66,31 @@ export default function VerifyBundlePage() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <ShieldCheck className="w-6 h-6 text-purple-400" /> Independent Evidence Verifier
+          <ShieldCheck className="w-6 h-6 text-purple-400" /> EvidenceKit Cryptographic Verifier
         </h1>
         <p className="text-xs text-zinc-400">
           Verify any EvidenceKit export bundle from TraceVault or AgentLedger. Validates RFC 8785
-          canonical digests and the continuous SHA-256 hash-chain without trusted server state.
+          canonical digests, continuous SHA-256 hash-chains, and Ed25519 digital signatures.
         </p>
       </div>
+
+      {/* Air-gapped offline CLI card */}
+      <Card className="bg-zinc-900/40 border-zinc-800">
+        <CardHeader className="pb-3 border-b border-zinc-800">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-zinc-200">
+            <span>🛡️</span> Air-Gapped Offline Verification (Zero Network)
+          </CardTitle>
+          <p className="text-xs text-zinc-400">
+            For air-gapped or high-security offline verification without network access, run the
+            standalone verification CLI locally:
+          </p>
+        </CardHeader>
+        <CardContent className="p-4 pt-3">
+          <div className="p-3 bg-zinc-950 rounded-lg border border-zinc-800 font-mono text-xs text-purple-400 select-all">
+            pnpm verify-bundle &lt;path-to-bundle.json|path-to-bundle.zip&gt;
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Upload File Card */}
@@ -89,7 +107,7 @@ export default function VerifyBundlePage() {
                 {fileName ? fileName : "Click to select or drop bundle JSON"}
               </span>
               <span className="text-[10px] text-zinc-500 mt-1">
-                Accepts evidencekit-export v1.0 bundles
+                Accepts evidencekit-export v1.0 and v2.0 bundles
               </span>
               <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
             </label>
@@ -99,12 +117,13 @@ export default function VerifyBundlePage() {
         {/* Action / Paste Option */}
         <Card className="bg-zinc-900/50 border-zinc-800">
           <CardHeader className="pb-3 border-b border-zinc-800">
-            <CardTitle className="text-sm font-semibold">Verification Controls</CardTitle>
+            <CardTitle className="text-sm font-semibold">Server-Side Verification</CardTitle>
           </CardHeader>
           <CardContent className="p-5 space-y-4">
             <p className="text-xs text-zinc-400">
-              The verifier recomputes all SHA-256 digests in strict sequence order, compares against
-              previous hashes, and verifies that the chain head matches the bundle manifest.
+              The verifier recomputes all SHA-256 digests in strict sequence order, checks
+              signatures against trusted key registry, and verifies chain head hash matches the
+              bundle manifest.
             </p>
 
             <div className="flex items-center gap-2 pt-2">
@@ -114,7 +133,7 @@ export default function VerifyBundlePage() {
                 className="flex-1 bg-purple-600 hover:bg-purple-500 text-white text-xs h-9 flex items-center justify-center gap-1.5"
               >
                 <ShieldCheck className="w-4 h-4" />{" "}
-                {loading ? "Verifying..." : "Verify Bundle Integrity"}
+                {loading ? "Verifying..." : "Run Server Verification"}
               </Button>
               <Button
                 variant="outline"
@@ -180,7 +199,7 @@ export default function VerifyBundlePage() {
                 <p className="text-xs text-zinc-300 mt-0.5">
                   {result.valid
                     ? "All events in the bundle were verified sequentially with zero tampering. Hash chain is unbroken."
-                    : "The bundle contains sequence gaps, invalid hashes, or modified payloads."}
+                    : "The bundle contains sequence gaps, invalid hashes, untrusted keys, or modified payloads."}
                 </p>
               </div>
             </div>
@@ -223,18 +242,25 @@ export default function VerifyBundlePage() {
                   </span>
                   <span
                     className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
-                      result.signature_verification?.status === "verified"
+                      result.signature_verification?.status === "verified" ||
+                      result.signature_verification?.status === "VERIFIED"
                         ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
-                        : result.signature_verification?.status === "unsigned"
+                        : result.signature_verification?.status === "unsigned" ||
+                            result.signature_verification?.status === "UNSIGNED"
                           ? "bg-zinc-900 text-zinc-400 border border-zinc-800"
                           : "bg-red-950 text-red-300 border border-red-800"
                     }`}
                   >
-                    {result.signature_verification?.status === "verified"
+                    {result.signature_verification?.status === "verified" ||
+                    result.signature_verification?.status === "VERIFIED"
                       ? "Ed25519 Signed & Verified"
-                      : result.signature_verification?.status === "unsigned"
-                        ? "Unsigned Bundle (Legacy v1.0)"
-                        : "Signature Invalid / Failed"}
+                      : result.signature_verification?.status === "untrusted_key" ||
+                          result.signature_verification?.status === "UNTRUSTED_KEY"
+                        ? "Untrusted Public Key"
+                        : result.signature_verification?.status === "unsigned" ||
+                            result.signature_verification?.status === "UNSIGNED"
+                          ? "Unsigned Bundle (Legacy v1.0)"
+                          : "Signature Invalid / Failed"}
                   </span>
                 </div>
                 {result.signature_verification?.keyId && (

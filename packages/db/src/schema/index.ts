@@ -172,3 +172,25 @@ export const exports = pgTable(
     streamIdx: index("exports_stream_idx").on(table.streamId)
   })
 );
+
+export const policies = pgTable(
+  "policies",
+  {
+    id: varchar("id", { length: 128 }).primaryKey(),
+    version: varchar("version", { length: 64 }).notNull(),
+    workspaceId: varchar("workspace_id", { length: 128 })
+      .references(() => workspaces.id, { onDelete: "cascade" })
+      .notNull(),
+    name: varchar("name", { length: 256 }).notNull(),
+    description: text("description"),
+    defaultDecision: varchar("default_decision", { length: 64 })
+      .notNull()
+      .default("REQUIRE_APPROVAL"),
+    rules: jsonb("rules").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
+  },
+  (table) => ({
+    workspaceIdx: index("policies_workspace_idx").on(table.workspaceId)
+  })
+);

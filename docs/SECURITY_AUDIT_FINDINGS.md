@@ -4,7 +4,7 @@
 **Lead Auditor:** Senior Application Security Engineer & Cryptographic Reviewer  
 **Audit Date:** 2026-11-11  
 **Classification:** STRICTLY EVIDENCE-BACKED CODE AUDIT  
-**Commit Inspected:** `2366644` (Branch: `feature/phase-4.5-governance-and-differentiation`)  
+**Commit Inspected:** `2366644` (Branch: `feature/phase-4.5-governance-and-differentiation`)
 
 ---
 
@@ -13,6 +13,7 @@
 An exhaustive, code-level vulnerability assessment was performed across all packages and applications. The review validated core cryptographic strengths (e.g. strict canonicalization via RFC 8785, SHA-256 hash chaining, path traversal prevention in `agent-sandbox-service.ts`), but identified **4 Critical/High vulnerabilities** and **5 Medium/Low weaknesses** requiring immediate remediation.
 
 ### Vulnerability Severity Distribution
+
 - **Critical**: 1
 - **High**: 3
 - **Medium**: 3
@@ -24,6 +25,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ## 2. Detailed Findings Register
 
 ### SEC-001: Hardcoded Authentication Bypass via Unauthenticated Header / Cookie Spoofing
+
 - **Finding ID**: SEC-001
 - **Severity**: **Critical**
 - **Affected Component**: `@evidencekit/evidence-server` (Authorization Subsystem)
@@ -59,6 +61,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-002: Digital Signature Public-Key Substitution (Self-Signed Manifest Forgery)
+
 - **Finding ID**: SEC-002
 - **Severity**: **High**
 - **Affected Component**: `@evidencekit/core` (Signatures Subsystem)
@@ -98,6 +101,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-003: Signature Stripping Downgrade Bypass
+
 - **Finding ID**: SEC-003
 - **Severity**: **High**
 - **Affected Component**: `@evidencekit/core` (Signatures Subsystem)
@@ -129,6 +133,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-004: Insecure Direct Object Reference (IDOR) on Workspace Queries
+
 - **Finding ID**: SEC-004
 - **Severity**: **High**
 - **Affected Component**: `@evidencekit/evidence-server` (Incident & Graph Services)
@@ -157,6 +162,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-005: Ephemeral Server Signing Key Generation on Startup
+
 - **Finding ID**: SEC-005
 - **Severity**: **Medium**
 - **Affected Component**: `@evidencekit/evidence-server` (Export Bundle Service)
@@ -180,6 +186,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-006: False Offline Verification Architecture
+
 - **Finding ID**: SEC-006
 - **Severity**: **Medium**
 - **Affected Component**: `apps/tracevault` & `apps/agentledger` (Verify Bundle Pages)
@@ -204,6 +211,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-007: Missing Workspace Parameter in Tool Call Route
+
 - **Finding ID**: SEC-007
 - **Severity**: **Medium**
 - **Affected Component**: `apps/agentledger` (Tool Execution API)
@@ -232,6 +240,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-008: Unauthenticated Approval Request Injection
+
 - **Finding ID**: SEC-008
 - **Severity**: **Low**
 - **Affected Component**: `apps/agentledger` (Approvals API)
@@ -256,6 +265,7 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
 ---
 
 ### SEC-009: Private Network Database Host IP in Committed Environment File
+
 - **Finding ID**: SEC-009
 - **Severity**: **Informational**
 - **Affected Component**: Root Environment Configuration
@@ -269,4 +279,3 @@ An exhaustive, code-level vulnerability assessment was performed across all pack
   Default to `localhost:5432` in `.env.example`, and document WSL2 port forwarding in `POSTGRESQL_SETUP_GUIDE.md`.
 - **Required Regression Test**: None (Configuration management).
 - **Verification Status**: **INFORMATIONAL RECOMMENDATION**.
-

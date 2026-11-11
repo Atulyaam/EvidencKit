@@ -2,15 +2,15 @@
   "manifest": {
     "format_name": "evidencekit-export",
     "format_version": "2.0",
-    "export_id": "exp_1793950070908",
-    "stream_id": "case_f416ab843139",
+    "export_id": "exp_1794406526240",
+    "stream_id": "case_9ce45f8f47de",
     "stream_type": "tracevault.case",
     "workspace_id": "default",
-    "created_at": "2026-11-06T07:27:50.908Z",
+    "created_at": "2026-11-11T14:15:26.240Z",
     "event_count": 5,
     "first_sequence": 0,
     "last_sequence": 4,
-    "chain_head_hash": "db8b40b4368b6478d4d03f5e9479d375e9ac8d82c6fe342df68bcbe8a3110817",
+    "chain_head_hash": "50807ce868079e5db4653749d7e757f0a952ae85ecb47c25bbcb7afb2f921e25",
     "hash_algorithm": "sha-256",
     "canonicalization": "RFC8785-JCS",
     "artifact_manifest": []
@@ -18,21 +18,21 @@
   "signature": {
     "algorithm": "Ed25519",
     "key_id": "ek-signer-prod-2026",
-    "public_key": "MCowBQYDK2VwAyEAJU77BOGf5moPTG8aKNrUtV79/cy3YsDkj6eAqU/4L2E=",
-    "public_key_fingerprint": "695bd86158dd7e06462222094392374b5107500bdc2a1ca093253f1526bd7706",
-    "signature_value": "W9TFgbn1GD6uLexkPquy95GOVlBLYZZaaEH4x86OfiaTqlnRCbCOsh5AO00XK2yJF/yswBkgD4oMLmMGjOQwBA==",
-    "signed_at": "2026-11-06T07:27:50.911Z"
+    "public_key": "MCowBQYDK2VwAyEAD7snTsh4hxZCQ5oauVVL4JipX3WenX4sKT0OxOnjBJs=",
+    "public_key_fingerprint": "2a5f63c26746ec657a1add6c6e6f812caf846c3f73312a0f71149edb777f6047",
+    "signature_value": "VMIi01Ysqt7GwOYGBVLiamNM6hkvUlTYpquhrbEz2isrEiFghsZQ82UY+Fq668jw0RhqxoSxykp+dUkDWBjiCQ==",
+    "signed_at": "2026-11-11T14:15:26.242Z"
   },
   "events": [
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "3502e004-ae6b-4234-b591-aba40f00da76",
+        "event_id": "7d12acca-d53c-4b7d-8e9d-c244a186b87b",
         "stream_type": "tracevault.case",
-        "stream_id": "case_f416ab843139",
+        "stream_id": "case_9ce45f8f47de",
         "event_name": "app.log.info",
         "occurred_at": "2026-11-05T14:02:10.000Z",
-        "observed_at": "2026-11-06T07:27:50.267Z",
+        "observed_at": "2026-11-11T14:15:25.672Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "api-gateway",
@@ -61,17 +61,17 @@
       },
       "stream_sequence": 0,
       "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "event_hash": "42f828069f928a3532b97ebd757ca5a397d4255f2ff0896ba5a36c88aaa2dcad"
+      "event_hash": "cd7d33786fa1598c97cc43c47e63894c80bd41573b0b7833ed16e31739433217"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "e9954c10-6e63-4fd2-b296-b224ed8fa2f7",
+        "event_id": "4c94e0d6-b1a9-4b36-bdd7-c305acfc51f2",
         "stream_type": "tracevault.case",
-        "stream_id": "case_f416ab843139",
+        "stream_id": "case_9ce45f8f47de",
         "event_name": "app.log.warning",
         "occurred_at": "2026-11-05T14:02:15.000Z",
-        "observed_at": "2026-11-06T07:27:50.268Z",
+        "observed_at": "2026-11-11T14:15:25.672Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -100,18 +100,18 @@
         ]
       },
       "stream_sequence": 1,
-      "previous_hash": "42f828069f928a3532b97ebd757ca5a397d4255f2ff0896ba5a36c88aaa2dcad",
-      "event_hash": "4a60f624ccea6f2c561b7e7d4ef4e85a0a65aa4944e49046c9d7dae4be4ee673"
+      "previous_hash": "cd7d33786fa1598c97cc43c47e63894c80bd41573b0b7833ed16e31739433217",
+      "event_hash": "123d5af8ae1e3cef4d880be589cd5b8c5a8efcd329cabeb24c50907483487b58"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "27e0d190-a7c6-4073-8cdd-a7f712c13393",
+        "event_id": "b80be553-ae1b-4910-97fd-9e6ccff1e8d1",
         "stream_type": "tracevault.case",
-        "stream_id": "case_f416ab843139",
+        "stream_id": "case_9ce45f8f47de",
         "event_name": "app.log.error",
         "occurred_at": "2026-11-05T14:02:18.000Z",
-        "observed_at": "2026-11-06T07:27:50.268Z",
+        "observed_at": "2026-11-11T14:15:25.672Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -137,18 +137,18 @@
         ]
       },
       "stream_sequence": 2,
-      "previous_hash": "4a60f624ccea6f2c561b7e7d4ef4e85a0a65aa4944e49046c9d7dae4be4ee673",
-      "event_hash": "8bb0bd4369b283b9328934f051c19018170b363ae1eef596824475ecfb7e37a6"
+      "previous_hash": "123d5af8ae1e3cef4d880be589cd5b8c5a8efcd329cabeb24c50907483487b58",
+      "event_hash": "ca6b6d4cb4a825b8c098967d0acb44fd516180a198100d40b90c49e40d623d1f"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "cc05cb69-216d-4979-8612-8f62a1091b6d",
+        "event_id": "fbb8c801-e919-4e96-94fc-946fede977d7",
         "stream_type": "tracevault.case",
-        "stream_id": "case_f416ab843139",
+        "stream_id": "case_9ce45f8f47de",
         "event_name": "app.log.critical",
         "occurred_at": "2026-11-05T14:02:22.000Z",
-        "observed_at": "2026-11-06T07:27:50.268Z",
+        "observed_at": "2026-11-11T14:15:25.672Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "api-gateway",
@@ -174,18 +174,18 @@
         ]
       },
       "stream_sequence": 3,
-      "previous_hash": "8bb0bd4369b283b9328934f051c19018170b363ae1eef596824475ecfb7e37a6",
-      "event_hash": "946c08f8b114b02ad52db9b1d791b9b9bfff3ec12d071e955b9d1e1ba8abf12d"
+      "previous_hash": "ca6b6d4cb4a825b8c098967d0acb44fd516180a198100d40b90c49e40d623d1f",
+      "event_hash": "e2c54c8e736497a1faf2d1aa9bf592e9bf7feb09022bb8ed02f722509d25a2d7"
     },
     {
       "event": {
         "schema_version": "1.0",
-        "event_id": "c59e0e4f-7315-4e4e-8331-07fbdea147e1",
+        "event_id": "7277d47c-e767-4986-9e95-205914daa67c",
         "stream_type": "tracevault.case",
-        "stream_id": "case_f416ab843139",
+        "stream_id": "case_9ce45f8f47de",
         "event_name": "app.log.error",
         "occurred_at": "2026-11-05T14:03:00.000Z",
-        "observed_at": "2026-11-06T07:27:50.268Z",
+        "observed_at": "2026-11-11T14:15:25.672Z",
         "time_confidence": "source_timestamp",
         "source": {
           "system": "order-service",
@@ -210,17 +210,17 @@
         ]
       },
       "stream_sequence": 4,
-      "previous_hash": "946c08f8b114b02ad52db9b1d791b9b9bfff3ec12d071e955b9d1e1ba8abf12d",
-      "event_hash": "db8b40b4368b6478d4d03f5e9479d375e9ac8d82c6fe342df68bcbe8a3110817"
+      "previous_hash": "e2c54c8e736497a1faf2d1aa9bf592e9bf7feb09022bb8ed02f722509d25a2d7",
+      "event_hash": "50807ce868079e5db4653749d7e757f0a952ae85ecb47c25bbcb7afb2f921e25"
     }
   ],
   "verification_report": {
     "status": "verified",
-    "stream_id": "case_f416ab843139",
+    "stream_id": "case_9ce45f8f47de",
     "total_events": 5,
     "first_sequence": 0,
     "last_sequence": 4,
-    "head_hash": "db8b40b4368b6478d4d03f5e9479d375e9ac8d82c6fe342df68bcbe8a3110817",
-    "verified_at": "2026-11-06T07:27:50.908Z"
+    "head_hash": "50807ce868079e5db4653749d7e757f0a952ae85ecb47c25bbcb7afb2f921e25",
+    "verified_at": "2026-11-11T14:15:26.240Z"
   }
 }

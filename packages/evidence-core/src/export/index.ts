@@ -7,7 +7,10 @@ import {
   SignatureReceiptSchema,
   signExportManifest,
   verifyManifestSignature,
-  SignatureVerificationResult
+  SignatureVerificationResult,
+  TrustedKeyRegistry,
+  VerifySignatureOptions,
+  SIGNATURE_DISCLAIMER
 } from "../signatures/index";
 
 export const ExportManifestSchema = z.object({
@@ -126,16 +129,40 @@ export interface ImportValidationResult {
   errors: string[];
 }
 
+export interface ValidateImportBundleOptions {
+  artifacts?: Map<string, Uint8Array | Buffer>;
+  trustedRegistry?: TrustedKeyRegistry;
+  trustedPublicKeys?: string[];
+  allowUnsigned?: boolean;
+  requireTrustedSigner?: boolean;
+}
+
 /**
  * Validates and independently verifies an imported evidence bundle.
  * Validates manifest, event schema, SHA-256 chain, artifacts, and Ed25519 digital signature.
+ * Prevents signature stripping (SEC-003) and enforces signer trust (SEC-002).
  */
 export function validateImportBundle(
   bundleJson: unknown,
-  providedArtifacts?: Map<string, Uint8Array | Buffer>
+  artifactsOrOptions?: Map<string, Uint8Array | Buffer> | ValidateImportBundleOptions
 ): ImportValidationResult {
   const errors: string[] = [];
   const artifactErrors: string[] = [];
+
+  let providedArtifacts: Map<string, Uint8Array | Buffer> | undefined;
+  let verifyOptions: VerifySignatureOptions | undefined;
+
+  if (artifactsOrOptions instanceof Map) {
+    providedArtifacts = artifactsOrOptions;
+  } else if (artifactsOrOptions && typeof artifactsOrOptions === "object") {
+    providedArtifacts = artifactsOrOptions.artifacts;
+    verifyOptions = {
+      trustedRegistry: artifactsOrOptions.trustedRegistry,
+      trustedPublicKeys: artifactsOrOptions.trustedPublicKeys,
+      allowUnsigned: artifactsOrOptions.allowUnsigned,
+      requireTrustedSigner: artifactsOrOptions.requireTrustedSigner
+    };
+  }
 
   if (typeof bundleJson !== "object" || bundleJson === null) {
     return {
@@ -152,6 +179,9 @@ export function validateImportBundle(
       signature_verification: {
         valid: false,
         status: "error",
+        evidenceIntegrity: false,
+        signatureValidity: false,
+        signerTrusted: false,
         error: "Invalid bundle payload",
         disclaimer: "No signature could be evaluated."
       },
@@ -191,6 +221,9 @@ export function validateImportBundle(
       signature_verification: {
         valid: false,
         status: "error",
+        evidenceIntegrity: false,
+        signatureValidity: false,
+        signerTrusted: false,
         error: "Missing events array",
         disclaimer: "Signature could not be evaluated."
       },
@@ -229,30 +262,65 @@ export function validateImportBundle(
   const rawSig = raw.signature as SignatureReceipt | undefined;
   let signatureVerification: SignatureVerificationResult;
 
-  if (rawSig) {
+  if (
+    manifest?.format_version &&
+    manifest.format_version !== "1.0" &&
+    manifest.format_version !== "2.0"
+  ) {
+    signatureVerification = {
+      valid: false,
+      status: "UNSUPPORTED_VERSION",
+      evidenceIntegrity: false,
+      signatureValidity: false,
+      signerTrusted: false,
+      error: `Unsupported bundle format_version: '${manifest.format_version}'. Supported versions are 1.0 and 2.0.`,
+      disclaimer: SIGNATURE_DISCLAIMER
+    };
+    errors.push(signatureVerification.error!);
+  } else if (rawSig) {
     const sigParse = SignatureReceiptSchema.safeParse(rawSig);
     if (!sigParse.success) {
       signatureVerification = {
         valid: false,
-        status: "invalid",
+        status: "INVALID_SIGNATURE",
+        evidenceIntegrity: verification.status === "verified",
+        signatureValidity: false,
+        signerTrusted: false,
         error: `Malformed signature receipt: ${sigParse.error.message}`,
-        disclaimer: "Signature is malformed."
+        disclaimer: SIGNATURE_DISCLAIMER
       };
       errors.push(`Invalid signature receipt: ${sigParse.error.message}`);
     } else {
       signatureVerification = verifyManifestSignature(
         manifest as unknown as Record<string, unknown>,
-        sigParse.data
+        sigParse.data,
+        verifyOptions
       );
       if (!signatureVerification.valid) {
         errors.push(`Digital signature verification failed: ${signatureVerification.error}`);
       }
     }
+  } else if (manifest.format_version === "2.0") {
+    // SEC-003: Signature stripping detected!
+    signatureVerification = {
+      valid: false,
+      status: "UNSIGNED",
+      evidenceIntegrity: verification.status === "verified",
+      signatureValidity: false,
+      signerTrusted: false,
+      error:
+        "Signature stripping detected: bundle manifest format_version is 2.0 but digital signature is missing",
+      disclaimer: SIGNATURE_DISCLAIMER
+    };
+    if (signatureVerification.error) {
+      errors.push(signatureVerification.error);
+    }
   } else {
     // Legacy unsigned bundle v1.0
     signatureVerification = verifyManifestSignature(
       manifest as unknown as Record<string, unknown>,
-      null
+      null,
+      { allowUnsigned: verifyOptions?.allowUnsigned ?? true, ...verifyOptions }
     );
   }
 
